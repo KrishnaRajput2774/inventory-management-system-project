@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title>Suppliers - Business Network</title>
+    <style>
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .products-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .products-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .partnership-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .partnership-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .attention-card {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .attention-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .table-hover:hover {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .supplier-avatar {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            border: none;
+            color: white;
+        }
+        .alert-error {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            border: none;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert-success rounded-2xl p-4 mb-6 shadow-lg">
+        <div class="flex items-center">
+            <i class="bi bi-check-circle-fill mr-3 text-xl"></i>
+            <span th:text="${success}"></span>
+        </div>
+    </div>
+    <div th:if="${error}" class="alert-error rounded-2xl p-4 mb-6 shadow-lg">
+        <div class="flex items-center">
+            <i class="bi bi-exclamation-triangle-fill mr-3 text-xl"></i>
+            <span th:text="${error}"></span>
+        </div>
+    </div>
+
+    <!-- Enhanced Header with CTAs -->
+    <div class="mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Supplier Network</h1>
+            <p class="mt-2 text-lg text-gray-600">Manage your supplier partnerships and business relationships</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <a href="/suppliers/create"
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
+                <i class="bi bi-plus-circle mr-2"></i>Add New Supplier
+            </a>
+            <button onclick="refreshSuppliers()"
+                    class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                <i class="bi bi-arrow-clockwise mr-2"></i>Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Supplier Metrics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Suppliers Card -->
+        <div class="metric-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Total Suppliers</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${totalSuppliers ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-building text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium">Partners</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-people text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Products Card -->
+        <div class="products-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Total Products</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-box text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium" th:text="'Avg: ' + ${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">Avg: 0.0</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-boxes text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partnership Duration Card -->
+        <div class="partnership-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Avg Partnership</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-calendar-heart text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium">Months</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-handshake text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attention Needed Card -->
+        <div class="attention-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Need Attention</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${suppliersNeedingAttention ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-exclamation-triangle text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium">Low Products</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-flag text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Performers Section -->
+    <div th:unless="${#lists.isEmpty(topSuppliers)}" class="mb-8">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Top Performing Suppliers</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Most Products</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div th:each="supplier : ${topSuppliers}" class="text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+                    <div class="w-12 h-12 supplier-avatar rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="bi bi-building text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 text-sm truncate" th:text="${supplier.name}">Supplier Name</h4>
+                    <p class="text-xs text-gray-600" th:text="${supplier.productsCount} + ' products'">0 products</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suppliers Table -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        <div class="px-6 py-6 border-b border-gray-200/50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900">All Suppliers</h3>
+                    <p class="mt-1 text-sm text-gray-600">Complete supplier directory with management tools</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="supplierSearch" placeholder="Search suppliers..."
+                           class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200/50">
+                <thead class="bg-gray-50/50 backdrop-blur-sm">
+                <tr>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact Info</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Products</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Partnership</th>
+                    <th scope="col" class="relative px-6 py-4"><span class="sr-only">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200/30">
+                <!-- Empty State -->
+                <tr th:if="${#lists.isEmpty(suppliers)}">
+                    <td colspan="5" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-4">
+                                <i class="bi bi-building text-gray-400 text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No suppliers found</h3>
+                            <p class="text-sm text-gray-500 mb-6">Get started by adding your first supplier to build your network.</p>
+                            <a href="/suppliers/create"
+                               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                                <i class="bi bi-plus-circle mr-2"></i>Add First Supplier
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Supplier Rows -->
+                <tr th:each="supplier : ${suppliers}" class="table-hover">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-12 w-12">
+                                <div class="h-12 w-12 supplier-avatar rounded-xl flex items-center justify-center">
+                                    <i class="bi bi-building text-white text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-bold text-gray-900">
+                                    <a th:href="@{/suppliers/{id}(id=${supplier.id})}"
+                                       th:text="${supplier.name}"
+                                       class="hover:text-blue-600 transition-colors duration-150"></a>
+                                </div>
+                                <div class="text-xs text-gray-500" th:text="'ID: #' + ${supplier.id}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 font-medium" th:text="${supplier.email}"></div>
+                        <div class="text-sm text-gray-500" th:text="${supplier.contactNumber}"></div>
+                        <div class="text-xs text-gray-400 max-w-xs truncate" th:text="${supplier.address}"></div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="inline-flex px-3 py-1.5 text-sm font-bold rounded-xl bg-blue-100 text-blue-800"
+                                  th:text="${supplier.productsCount ?: 0}"></span>
+                            <span class="ml-2 text-xs text-gray-500">products</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div th:if="${supplier.createdAt != null}">
+                            <span th:text="${#temporals.format(supplier.createdAt, 'MMM yyyy')}">Jan 2024</span>
+                            <div class="text-xs text-gray-400" th:text="'(' + ${#numbers.formatInteger(T(java.time.temporal.ChronoUnit).MONTHS.between(supplier.createdAt, T(java.time.LocalDateTime).now()), 0)} + ' months)'">
+                                (0 months)
+                            </div>
+                        </div>
+                        <span th:unless="${supplier.createdAt != null}" class="text-gray-400">Unknown</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center justify-end space-x-2">
+                            <a th:href="@{/suppliers/{id}(id=${supplier.id})}"
+                               class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
+                                <i class="bi bi-eye mr-1"></i>View
+                            </a>
+                            <a th:href="@{/suppliers/{id}/products(id=${supplier.id})}"
+                               class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
+                                <i class="bi bi-box mr-1"></i>Products
+                            </a>
+
+                            <!-- Delete Button -->
+                            <form th:action="@{/suppliers/{id}/delete(id=${supplier.id})}" method="post" style="display: inline;">
+                                <button type="submit"
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-150"
+                                        onclick="return confirm('Are you sure you want to delete this supplier? This action cannot be undone.')">
+                                    <i class="bi bi-trash mr-1"></i>Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions and Insights Section -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Supplier Insights -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="bi bi-graph-up mr-2"></i>Supplier Insights
+            </h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Average Products per Supplier</span>
+                    <span class="text-sm font-semibold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">0.0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Partnership Duration</span>
+                    <span class="text-sm font-semibold text-purple-600"
+                          th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)} + ' months'">0 months</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Suppliers Needing Attention</span>
+                    <span class="text-sm font-semibold"
+                          th:classappend="${suppliersNeedingAttention > 0 ? 'text-red-600' : 'text-green-600'}"
+                          th:text="${suppliersNeedingAttention ?: 0}">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Network Health Score</span>
+                    <div class="flex items-center">
+                        <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                            <div class="h-2 bg-green-500 rounded-full"
+                                 th:style="'width: ' + ${totalSuppliers > 0 ? ((totalSuppliers - suppliersNeedingAttention) * 100 / totalSuppliers) : 100} + '%'"></div>
+                        </div>
+                        <span class="text-sm font-semibold text-green-600"
+                              th:text="${totalSuppliers > 0 ? #numbers.formatDecimal(((totalSuppliers - suppliersNeedingAttention) * 100 / totalSuppliers), 0, 0) : 100} + '%'">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="bi bi-lightning mr-2"></i>Quick Actions
+            </h3>
+            <div class="space-y-3">
+                <a href="/suppliers/create"
+                   class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                    <i class="bi bi-plus-circle mr-2"></i>Add New Supplier
+                </a>
+                <a href="/products/create"
+                   class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                    <i class="bi bi-box mr-2"></i>Add Product
+                </a>
+                <button onclick="exportSuppliers()"
+                        class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center">
+                    <i class="bi bi-download mr-2"></i>Export Suppliers
+                </button>
+                <a href="/orders/create"
+                   class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                    <i class="bi bi-cart-plus mr-2"></i>Create Purchase Order
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network Health Section -->
+    <div class="mt-8">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6">
+                <i class="bi bi-heart-pulse mr-2"></i>Supplier Network Health Dashboard
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                    <div class="text-3xl font-bold text-green-600" th:text="${totalSuppliers ?: 0}">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Total Partners</div>
+                    <div class="text-xs text-green-600 mt-1">Network Size</div>
+                </div>
+                <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <div class="text-3xl font-bold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">0.0</div>
+                    <div class="text-sm text-gray-600 mt-1">Avg Products</div>
+                    <div class="text-xs text-blue-600 mt-1">Per Supplier</div>
+                </div>
+                <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
+                    <div class="text-3xl font-bold text-purple-600" th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)}">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Avg Partnership</div>
+                    <div class="text-xs text-purple-600 mt-1">Months</div>
+                </div>
+                <div class="text-center p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl border border-red-100">
+                    <div class="text-3xl font-bold"
+                         th:classappend="${suppliersNeedingAttention > 0 ? 'text-red-600' : 'text-green-600'}"
+                         th:text="${suppliersNeedingAttention ?: 0}">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Need Attention</div>
+                    <div class="text-xs"
+                         th:classappend="${suppliersNeedingAttention > 0 ? 'text-red-600' : 'text-green-600'}"
+                         th:text="${suppliersNeedingAttention > 0 ? 'Action Required' : 'All Good'}">All Good</div>
+                </div>
+            </div>
+
+            <!-- Network Performance Indicators -->
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Network Stability</span>
+                        <i class="bi bi-shield-check text-green-500"></i>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                            <div class="bg-green-500 h-2 rounded-full"
+                                 th:style="'width: ' + ${totalSuppliers > 0 ? ((totalSuppliers - suppliersNeedingAttention) * 100 / totalSuppliers) : 100} + '%'"></div>
+                        </div>
+                        <span class="text-sm font-semibold text-green-600"
+                              th:text="${totalSuppliers > 0 ? #numbers.formatDecimal(((totalSuppliers - suppliersNeedingAttention) * 100 / totalSuppliers), 0, 0) : 100} + '%'">100%</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Product Diversity</span>
+                        <i class="bi bi-collection text-blue-500"></i>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                            <div class="bg-blue-500 h-2 rounded-full"
+                                 th:style="'width: ' + ${avgProductsPerSupplier != null ? (avgProductsPerSupplier * 10 > 100 ? 100 : avgProductsPerSupplier * 10) : 0} + '%'">
+                            </div>
+                        </div>
+                        <span class="text-sm font-semibold text-blue-600"
+                              th:text="${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">0.0</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Partnership Maturity</span>
+                        <i class="bi bi-award text-purple-500"></i>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                            <div class="bg-purple-500 h-2 rounded-full"
+                                 th:style="'width: ' + ${avgPartnershipMonths > 0 ? Math.min((avgPartnershipMonths * 2), 100) : 0} + '%'"></div>
+                        </div>
+                        <span class="text-sm font-semibold text-purple-600"
+                              th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)} + 'M'">0M</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert-success, .alert-error');
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
+
+        // Add loading state to action buttons
+        document.querySelectorAll('form button[type="submit"]').forEach(function(button) {
+            button.addEventListener('click', function() {
+                button.disabled = true;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-hourglass mr-1"></i>Processing...';
+
+                // Reset after 10 seconds if form doesn't submit
+                setTimeout(function() {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }, 10000);
+            });
+        });
+
+        // Refresh suppliers function
+        function refreshSuppliers() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-arrow-clockwise mr-2"></i>Refreshing...';
+            button.disabled = true;
+
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+
+        // Export suppliers function
+        function exportSuppliers() {
+            const suppliers = document.querySelectorAll('tbody tr:not(:first-child)');
+            if (suppliers.length === 0) {
+                alert('No suppliers to export');
+                return;
+            }
+
+            let csvContent = "ID,Name,Email,Contact,Address,Products,Partnership Start\n";
+
+            suppliers.forEach(function(row) {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) {
+                    const id = cells[0].querySelector('.text-xs') ? cells[0].querySelector('.text-xs').textContent.replace('ID: #', '') : '';
+                    const name = cells[0].querySelector('a') ? cells[0].querySelector('a').textContent : '';
+                    const email = cells[1].querySelector('.font-medium') ? cells[1].querySelector('.font-medium').textContent : '';
+                    const contact = cells[1].querySelectorAll('div')[1] ? cells[1].querySelectorAll('div')[1].textContent : '';
+                    const address = cells[1].querySelectorAll('div')[2] ? cells[1].querySelectorAll('div')[2].textContent : '';
+                    const products = cells[2].querySelector('span') ? cells[2].querySelector('span').textContent : '';
+                    const partnership = cells[3].querySelector('span') ? cells[3].querySelector('span').textContent : '';
+
+                    csvContent += `"${id}","${name}","${email}","${contact}","${address}","${products}","${partnership}"\n`;
+                }
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'suppliers_export_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('supplierSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('tbody tr:not(:first-child)');
+                    let visibleCount = 0;
+
+                    rows.forEach(function(row) {
+                        const text = row.textContent.toLowerCase();
+                        const isVisible = text.includes(searchTerm);
+                        row.style.display = isVisible ? '' : 'none';
+                        if (isVisible) visibleCount++;
+                    });
+
+                    // Update search feedback
+                    const feedback = document.getElementById('searchFeedback');
+                    if (!feedback) {
+                        const feedbackEl = document.createElement('div');
+                        feedbackEl.id = 'searchFeedback';
+                        feedbackEl.className = 'text-xs text-gray-500 mt-1';
+                        searchInput.parentNode.appendChild(feedbackEl);
+                    }
+                    document.getElementById('searchFeedback').textContent =
+                        searchTerm ? `${visibleCount} suppliers found` : '';
+                });
+            }
+        });
+
+        // Add tooltips for metric cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.metric-card, .products-card, .partnership-card, .attention-card');
+            cards.forEach(function(card) {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05) translateY(-2px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

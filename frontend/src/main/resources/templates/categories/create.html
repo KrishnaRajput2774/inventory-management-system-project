@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title>Create Category</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Create Product Category</h1>
+            <p class="mt-1 text-sm text-gray-500">Add a new category to organize your products</p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+            <a href="/categories" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                <i class="bi bi-arrow-left mr-2"></i>
+                Back to Categories
+            </a>
+        </div>
+    </div>
+
+    <div class="max-w-2xl">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-8">
+                <form th:action="@{/categories/create}" th:object="${category}" method="post" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            Category Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text"
+                               id="name"
+                               th:field="*{name}"
+                               required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                               placeholder="Enter category name">
+                        <div th:if="${#fields.hasErrors('name')}" class="mt-2 text-sm text-red-600" th:errors="*{name}"></div>
+                        <p class="mt-2 text-sm text-gray-500">Enter a unique name for the product category</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:justify-end gap-3 pt-6 border-t border-gray-200">
+                        <a href="/categories"
+                           class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+                            Cancel
+                        </a>
+                        <button type="submit"
+                                class="inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                            <i class="bi bi-save mr-2"></i>
+                            Save Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg">
+            <div class="px-6 py-4 border-b border-blue-200">
+                <h3 class="text-lg font-medium text-blue-900">Category Guidelines</h3>
+            </div>
+            <div class="px-6 py-4">
+                <ul class="space-y-2 text-sm text-blue-800">
+                    <li class="flex items-start">
+                        <i class="bi bi-check-circle text-blue-600 mr-2 mt-0.5 flex-shrink-0"></i>
+                        Category names should be descriptive and unique
+                    </li>
+                    <li class="flex items-start">
+                        <i class="bi bi-check-circle text-blue-600 mr-2 mt-0.5 flex-shrink-0"></i>
+                        Use title case (e.g., "Electronic Devices" instead of "electronic devices")
+                    </li>
+                    <li class="flex items-start">
+                        <i class="bi bi-check-circle text-blue-600 mr-2 mt-0.5 flex-shrink-0"></i>
+                        Avoid special characters and numbers unless necessary
+                    </li>
+                    <li class="flex items-start">
+                        <i class="bi bi-check-circle text-blue-600 mr-2 mt-0.5 flex-shrink-0"></i>
+                        Keep names concise but meaningful
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

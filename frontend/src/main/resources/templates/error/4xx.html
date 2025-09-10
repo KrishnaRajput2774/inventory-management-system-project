@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title>Error</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 4rem;"></i>
+        </div>
+
+        <h1 class="display-4">Oops!</h1>
+        <p class="lead">Something went wrong with your request.</p>
+
+        <div th:if="${errorMessage}" class="alert alert-warning mx-auto" style="max-width: 600px;">
+            <p th:text="${errorMessage}" class="mb-0"></p>
+        </div>
+
+        <div class="mt-4">
+            <a href="/dashboard" class="btn btn-primary me-3">
+                <i class="bi bi-house"></i> Go to Dashboard
+            </a>
+            <button onclick="history.back()" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Go Back
+            </button>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">What can you do?</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check text-success"></i> Check the URL for typos</li>
+                        <li><i class="bi bi-check text-success"></i> Go back to the previous page</li>
+                        <li><i class="bi bi-check text-success"></i> Visit our dashboard</li>
+                        <li><i class="bi bi-check text-success"></i> Contact support if the problem persists</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

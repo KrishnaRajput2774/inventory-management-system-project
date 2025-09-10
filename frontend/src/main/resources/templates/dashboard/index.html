@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}" lang="en">
+
+<head>
+    <title>Analytics Dashboard</title>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .profit-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .profit-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .loss-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+        .income-card {
+            background: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .income-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .orders-card {
+            background: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .orders-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            font-size: 14px;
+            color: #6B7280;
+        }
+        .error-message {
+            color: #ef4444;
+            text-align: center;
+            padding: 2rem;
+            font-size: 14px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close:hover {
+            color: #000;
+        }
+
+        /* Progress Bar Styles */
+        .stock-progress {
+            width: 100%;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .stock-progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .stock-low { background-color: #ef4444; }
+        .stock-medium { background-color: #f59e0b; }
+        .stock-good { background-color: #10b981; }
+
+        /* Stock Item Styles */
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .stock-item:hover {
+            background-color: #f8fafc;
+        }
+        .stock-item.low {
+            background-color: #fef2f2;
+            border-left-color: #ef4444;
+        }
+        .stock-item.medium {
+            background-color: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+        .stock-item.good {
+            background-color: #f0fdf4;
+            border-left-color: #10b981;
+        }
+
+        .stock-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .stock-badge.low {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .stock-badge.medium {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        .stock-badge.good {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+
+        /* Category Colors */
+        .category-electronics { background-color: #3b82f6; }
+        .category-clothing { background-color: #ec4899; }
+        .category-food { background-color: #10b981; }
+        .category-books { background-color: #f59e0b; }
+        .category-home { background-color: #8b5cf6; }
+        .category-other { background-color: #6b7280; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Small Chart Container */
+        .small-chart-container {
+            position: relative;
+            height: 250px;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Enhanced Header with CTAs -->
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+            <p class="mt-2 text-lg text-gray-600">Real-time business insights and performance metrics</p>
+        </div>
+        <div class="flex space-x-4">
+            <a href="/products/create"
+               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                <i class="bi bi-plus-circle mr-2"></i>Add Product
+            </a>
+            <a href="/orders/create"
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
+                <i class="bi bi-plus-circle mr-2"></i>Create New Order
+            </a>
+        </div>
+    </div>
+
+    <!-- Key Metrics Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Net Profit Card -->
+        <div class="profit-card rounded-2xl text-white p-6 shadow-xl" onclick="openProfitModal()">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Net Profit (This Month)</p>
+                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(monthlyProfit?.amount ?: 0, 0, 0)}">₹0</p>
+                    <div class="flex items-center mt-2">
+                        <i th:class="${monthlyProfit?.isIncrease ?: false} ? 'bi bi-arrow-up text-emerald-200 mr-1' : 'bi bi-arrow-down text-red-200 mr-1'"></i>
+                        <span th:class="${monthlyProfit?.isIncrease ?: false} ? 'text-emerald-200 text-sm font-medium' : 'text-red-200 text-sm font-medium'"
+                              th:text="${#numbers.formatDecimal(monthlyProfit?.percentageChange ?: 0, 1, 1)} + '% vs last month'">0.0% vs last month</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-trending-up text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Revenue Card -->
+        <div class="income-card rounded-2xl text-white p-6 shadow-xl" onclick="openRevenueModal()">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Monthly Revenue</p>
+                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(monthlyRevenue?.amount ?: 0, 0, 0)}">₹0</p>
+                    <div class="flex items-center mt-2">
+                        <i th:class="${monthlyRevenue?.isIncrease ?: false} ? 'bi bi-arrow-up text-blue-200 mr-1' : 'bi bi-arrow-down text-red-200 mr-1'"></i>
+                        <span th:class="${monthlyRevenue?.isIncrease ?: false} ? 'text-blue-200 text-sm font-medium' : 'text-red-200 text-sm font-medium'"
+                              th:text="${#numbers.formatDecimal(monthlyRevenue?.percentageChange ?: 0, 1, 1)} + '% growth'">0.0% growth</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-currency-rupee text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Orders Card -->
+        <div class="orders-card rounded-2xl text-white p-6 shadow-xl" onclick="window.location.href='/orders'">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Orders (This Month)</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${monthlyOrders?.count ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-arrow-up text-pink-200 mr-1"></i>
+                        <span class="text-pink-200 text-sm font-medium" th:text="'+' + ${monthlyOrders?.newOrders ?: 0} + ' new orders'">+0 new orders</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-receipt text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Products Card -->
+        <div class="metric-card rounded-2xl text-white p-6 shadow-xl" onclick="window.location.href='/products'">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Total Products</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${productCount ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i th:class="${lowStockCount > 0} ? 'bi bi-exclamation-triangle text-orange-200 mr-1' : 'bi bi-check-circle text-green-200 mr-1'"></i>
+                        <span th:class="${lowStockCount > 0} ? 'text-orange-200 text-sm font-medium' : 'text-green-200 text-sm font-medium'"
+                              th:text="${lowStockCount != null ? lowStockCount : 0} + ' low stock items'"> 0 low stock items
+                        </span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-boxes text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 1: Profit by Category & Stock Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Profit by Category -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Profit by Category</h3>
+            <div class="small-chart-container">
+                <canvas id="categoryProfitChart"></canvas>
+                <div id="categoryProfitLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+            <div class="mt-4 space-y-3" id="categoryLegend">
+                <!-- Category legend will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Stock Overview Section -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Stock Overview</h3>
+                <div th:class="${lowStockCount == 0} ? 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium' : 'bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium'">
+                    <span th:text="${lowStockCount == 0} ? 'Sufficient Stock' : 'Low Stock Alert'">Stock Status</span>
+                </div>
+            </div>
+
+            <!-- Stock Statistics -->
+            <div class="mb-6">
+                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Total Products</span>
+                    <span class="font-semibold" th:text="${productCount ?: 0}">0</span>
+                </div>
+                <div class="stock-progress">
+                    <div class="stock-progress-bar"
+                         th:class="${lowStockCount == 0 ? 'stock-good' : (lowStockCount <= 5 ? 'stock-medium' : 'stock-low')}"
+                         th:style="${'width: ' + (productCount > 0 ? ((productCount - lowStockCount) * 100 / productCount) : 100) + '%'}">
+                    </div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span th:text="${productCount > 0 ? #numbers.formatDecimal(((productCount - lowStockCount) * 100 / productCount), 0, 0) : 0} + '% In Stock'">100% In Stock</span>
+                    <span th:text="${productCount > 0 ? #numbers.formatDecimal((lowStockCount * 100 / productCount), 0, 0) : 0} + '% Low Stock'">0% Low Stock</span>
+                </div>
+            </div>
+
+            <!-- Stock Items Display -->
+            <div class="space-y-2" id="stockItemsList">
+                <h4 class="font-medium text-gray-900 mb-3">Stock Status by Product</h4>
+                <div id="stockPlaceholder" class="text-center text-gray-500 py-4">
+                    Loading stock details...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Top Selling Products & Most Profitable Products -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Top Selling Products Chart -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Top Selling Products</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Units Sold</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="topSellingChart"></canvas>
+                <div id="topSellingLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Most Profitable Products Chart -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Most Profitable Products</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Profit Margin</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="profitableChart"></canvas>
+                <div id="profitableLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: Loss-Making Products & Stock Levels Chart -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Loss-Making Products Chart -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Loss-Making Products</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Loss Amount</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="lossChart"></canvas>
+                <div id="lossLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Levels Chart -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Stock Levels Chart</h3>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-1">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span class="text-xs text-gray-600">Low</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span class="text-xs text-gray-600">Medium</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span class="text-xs text-gray-600">Good</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="stockChart"></canvas>
+                <div id="stockLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 4: Additional Charts (Inventory Turnover & Orders by Channel) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Inventory Turnover Chart -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Inventory Turnover</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Turnover Ratio</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="inventoryTurnoverChart"></canvas>
+                <div id="inventoryTurnoverLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders by Channel Chart -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Orders by Channel</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Order Count</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="ordersByChannelChart"></canvas>
+                <div id="ordersByChannelLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Trend Chart (Full Width Row) -->
+    <div class="mb-8">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Sales Trend Analysis</h3>
+                <div class="flex items-center space-x-2">
+                    <button class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg font-medium" id="weekBtn">Week</button>
+                    <button class="px-3 py-1 text-sm text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="monthBtn">Month</button>
+                    <button class="px-3 py-1 text-sm text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="yearBtn">Year</button>
+                </div>
+            </div>
+            <div class="chart-container" style="height: 250px;">
+                <canvas id="salesTrendChart"></canvas>
+                <div id="salesTrendLoading" class="loading-spinner">
+                    <div>Loading chart...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profit Modal -->
+    <div id="profitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-xl font-bold text-gray-900">Profit Analysis</h2>
+                <span class="close" onclick="closeProfitModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="mb-6">
+                    <div class="flex space-x-4 mb-4">
+                        <button class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium" id="profitWeekBtn">Week</button>
+                        <button class="px-4 py-2 text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="profitMonthBtn">Month</button>
+                        <button class="px-4 py-2 text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="profitYearBtn">Year</button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 mb-6" id="profitMetrics">
+                        <!-- Profit metrics will be populated by JavaScript -->
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600" id="currentPeriodProfit">₹0</div>
+                            <div class="text-sm text-gray-600">This Month</div>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600" id="quarterProfit">₹0</div>
+                            <div class="text-sm text-gray-600">This Quarter</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600" id="yearProfit">₹0</div>
+                            <div class="text-sm text-gray-600">This Year</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold mb-4">Top 5 Products Contributing to Profit</h3>
+                <div class="space-y-3" id="topProfitProducts">
+                    <!-- Top profit products will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Modal -->
+    <div id="revenueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-xl font-bold text-gray-900">Revenue Analysis</h2>
+                <span class="close" onclick="closeRevenueModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="grid grid-cols-3 gap-4 mb-6" id="revenueMetrics">
+                    <!-- Revenue metrics will be populated by JavaScript -->
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-6" id="orderMetrics">
+                    <!-- Order metrics will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+    <script>
+        // Enhanced stock overview functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStockOverview();
+        });
+
+        function loadStockOverview() {
+            fetch('/dashboard/stock-overview')
+                .then(response => response.json())
+                .then(data => {
+                    updateStockItemsList(data);
+                })
+                .catch(error => {
+                    console.error('Error loading stock overview:', error);
+                    document.getElementById('stockPlaceholder').innerHTML =
+                        '<div class="text-red-500">Error loading stock data</div>';
+                });
+        }
+
+        function updateStockItemsList(stockData) {
+            const container = document.getElementById('stockItemsList');
+            const placeholder = document.getElementById('stockPlaceholder');
+
+            if (!stockData.stockItems || stockData.stockItems.length === 0) {
+                placeholder.innerHTML = '<div class="text-gray-500">No stock data available</div>';
+                return;
+            }
+
+            // Remove placeholder
+            placeholder.style.display = 'none';
+
+            // Create stock items HTML
+            let stockItemsHtml = '';
+            stockData.stockItems.forEach(item => {
+                const statusClass = item.status.toLowerCase();
+                stockItemsHtml += `
+                    <div class="stock-item ${statusClass}">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium text-sm text-gray-900">${item.name}</span>
+                                <span class="stock-badge ${statusClass}">${item.status}</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-gray-500">${item.category}</span>
+                                <span class="text-xs font-medium" style="color: ${item.statusColor}">
+                                    ${item.quantity} / ${item.threshold}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Update container
+            const existingItems = container.querySelector('.stock-items-container');
+            if (existingItems) {
+                existingItems.innerHTML = stockItemsHtml;
+            } else {
+                const itemsContainer = document.createElement('div');
+                itemsContainer.className = 'stock-items-container';
+                itemsContainer.innerHTML = stockItemsHtml;
+                container.appendChild(itemsContainer);
+            }
+        }
+    </script>
+</th:block>
+
+</body>
+</html>

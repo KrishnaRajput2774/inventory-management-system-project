@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title th:text="'Customer - ' + ${customer.name}">Customer Detail</title>
+    <style>
+        .copy-btn {
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+        .field-row:hover .copy-btn {
+            opacity: 1;
+        }
+        .glassmorphism {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .stat-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Breadcrumb Navigation -->
+    <nav class="mb-4 px-2" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-2 text-sm text-gray-500">
+            <li><a href="/" class="hover:text-gray-700 transition-colors">Dashboard</a></li>
+            <li class="flex items-center">
+                <i class="bi bi-chevron-right mx-2 text-xs"></i>
+                <a href="/customers" class="hover:text-gray-700 transition-colors">Customers</a>
+            </li>
+            <li class="flex items-center">
+                <i class="bi bi-chevron-right mx-2 text-xs"></i>
+                <span class="text-gray-900 font-medium" th:text="${customer.name}">Customer Name</span>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="mb-6 px-2">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center space-x-4">
+                <!-- Dynamic Avatar -->
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                    <span th:text="${customer.name.substring(0,2).toUpperCase()}">KR</span>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-semibold text-gray-900" th:text="${customer.name}">Customer Name</h1>
+                    <div class="flex items-center mt-1 space-x-2">
+                        <p class="text-sm text-gray-600">Customer details and information</p>
+                        <!-- Customer Status Badge -->
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="bi bi-check-circle mr-1"></i>Active
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <a href="/customers"
+                   class="inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                    <i class="bi bi-arrow-left mr-2"></i>
+                    <span class="hidden sm:inline">Back to Customers</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+
+                <a th:href="@{/customers/{id}/orders(id=${customer.customerId})}"
+                   class="inline-flex items-center px-3 sm:px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                    <i class="bi bi-receipt mr-2"></i>
+                    <span class="hidden sm:inline">View Orders</span>
+                    <span class="sm:hidden">Orders</span>
+                </a>
+
+                <a th:href="@{/orders/create(customerId=${customer.customerId})}"
+                   class="inline-flex items-center px-3 sm:px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                    <i class="bi bi-plus mr-2"></i>
+                    <span class="hidden sm:inline">New Order</span>
+                    <span class="sm:hidden">New</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-2">
+        <!-- Customer Information Card -->
+        <div class="lg:col-span-2">
+            <div class="glassmorphism rounded-xl shadow-lg overflow-hidden">
+                <div class="px-4 sm:px-6 py-4 border-b border-gray-200/20 bg-gradient-to-r from-blue-50/50 to-indigo-50/50">
+                    <h3 class="flex items-center text-base sm:text-lg font-medium text-gray-900">
+                        <i class="bi bi-person-badge mr-2 text-blue-600"></i>
+                        Customer Information
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">Personal details and contact information</p>
+                </div>
+
+                <div class="px-4 sm:px-6 py-6 space-y-4">
+                    <!-- Customer ID -->
+                    <div class="field-row flex items-center justify-between p-4 bg-white/50 border border-gray-200/50 rounded-lg hover:bg-gray-50/50 hover:shadow-sm transition-all duration-200">
+                        <div class="flex items-center">
+                            <i class="bi bi-hash text-blue-500 mr-3 text-lg"></i>
+                            <div>
+                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Customer ID</dt>
+                                <dd class="text-sm font-semibold text-gray-900" th:text="${customer.customerId}">12345</dd>
+                            </div>
+                        </div>
+                        <button class="copy-btn p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                onclick="copyToClipboard(this.previousElementSibling.querySelector('dd').textContent)"
+                                title="Copy to clipboard">
+                            <i class="bi bi-clipboard text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="field-row flex items-center justify-between p-4 bg-white/50 border border-gray-200/50 rounded-lg hover:bg-gray-50/50 hover:shadow-sm transition-all duration-200">
+                        <div class="flex items-center">
+                            <i class="bi bi-person text-blue-500 mr-3 text-lg"></i>
+                            <div>
+                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Full Name</dt>
+                                <dd class="text-sm font-semibold text-gray-900" th:text="${customer.name}">John Doe</dd>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="field-row flex items-center justify-between p-4 bg-white/50 border border-gray-200/50 rounded-lg hover:bg-gray-50/50 hover:shadow-sm transition-all duration-200">
+                        <div class="flex items-center">
+                            <i class="bi bi-envelope text-blue-500 mr-3 text-lg"></i>
+                            <div>
+                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Email Address</dt>
+                                <dd class="text-sm font-semibold">
+                                    <a th:href="'mailto:' + ${customer.email}"
+                                       th:text="${customer.email}"
+                                       class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-150">john@example.com</a>
+                                </dd>
+                            </div>
+                        </div>
+                        <button class="copy-btn p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                onclick="copyToClipboard(this.previousElementSibling.querySelector('a').textContent)"
+                                title="Copy email">
+                            <i class="bi bi-clipboard text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div class="field-row flex items-center justify-between p-4 bg-white/50 border border-gray-200/50 rounded-lg hover:bg-gray-50/50 hover:shadow-sm transition-all duration-200">
+                        <div class="flex items-center">
+                            <i class="bi bi-telephone text-blue-500 mr-3 text-lg"></i>
+                            <div>
+                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Phone Number</dt>
+                                <dd class="text-sm font-semibold text-gray-900" th:text="${customer.contactNumber}">+1 234 567 8900</dd>
+                            </div>
+                        </div>
+                        <button class="copy-btn p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                onclick="copyToClipboard(this.previousElementSibling.querySelector('dd').textContent)"
+                                title="Copy phone number">
+                            <i class="bi bi-clipboard text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Address with Map Link -->
+                    <div class="field-row flex items-start justify-between p-4 bg-white/50 border border-gray-200/50 rounded-lg hover:bg-gray-50/50 hover:shadow-sm transition-all duration-200">
+                        <div class="flex items-start">
+                            <i class="bi bi-geo-alt text-blue-500 mr-3 text-lg mt-0.5"></i>
+                            <div>
+                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Address</dt>
+                                <dd class="text-sm font-semibold text-gray-900">
+                                    <a th:href="'https://maps.google.com/?q=' + ${#strings.replace(customer.address, ' ', '+')}"
+                                       target="_blank"
+                                       th:text="${customer.address}"
+                                       class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-150">
+                                        123 Main St, City, State 12345
+                                    </a>
+                                    <i class="bi bi-box-arrow-up-right ml-1 text-xs"></i>
+                                </dd>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats and Profile Column -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Enhanced Stats Card -->
+            <div class="glassmorphism rounded-xl shadow-lg overflow-hidden">
+                <div class="px-4 sm:px-6 py-4 border-b border-gray-200/20 bg-gradient-to-r from-green-50/50 to-emerald-50/50">
+                    <h3 class="flex items-center text-base sm:text-lg font-medium text-gray-900">
+                        <i class="bi bi-graph-up mr-2 text-green-600"></i>
+                        Customer Analytics
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">Key metrics and insights</p>
+                </div>
+
+                <div class="px-4 sm:px-6 py-6 space-y-4">
+                    <!-- Total Orders -->
+                    <div class="stat-card text-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 hover:shadow-md transition-all duration-200">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="bi bi-receipt text-white text-sm"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900" th:text="${customer.orders != null ? #lists.size(customer.orders) : 0}">12</h4>
+                        <p class="text-xs text-gray-600 uppercase tracking-wide">Total Orders</p>
+                    </div>
+
+                    <!-- Total Spent (Mock Data) -->
+                    <div class="stat-card text-center bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 hover:shadow-md transition-all duration-200">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="bi bi-currency-dollar text-white text-sm"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900" th:text="'₹' + ${totalSpent}"></h4>
+                        <p class="text-xs text-gray-600 uppercase tracking-wide">Total Spent</p>
+                    </div>
+
+                    <!-- Last Order Date (Mock Data) -->
+                    <div class="stat-card text-center bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 hover:shadow-md transition-all duration-200">
+                        <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="bi bi-calendar-event text-white text-sm"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-900" th:text="${lastOrder}"></h4>
+                        <p class="text-xs text-gray-600 uppercase tracking-wide">Last Order</p>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="pt-2">
+                        <a th:href="@{/customers/{id}/orders(id=${customer.customerId})}"
+                           class="w-full inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                            <i class="bi bi-arrow-right mr-2"></i>View All Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Profile Card -->
+            <div class="glassmorphism rounded-xl shadow-lg overflow-hidden">
+                <div class="px-4 sm:px-6 py-6 text-center">
+                    <!-- Large Avatar -->
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <span class="text-white font-bold text-2xl" th:text="${customer.name.substring(0,2).toUpperCase()}">KR</span>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-900" th:text="${customer.name}">Customer Name</h3>
+                    <p class="text-sm text-gray-500 mb-4" th:text="'ID: ' + ${customer.customerId}">ID: 12345</p>
+
+                    <!-- Customer Tags -->
+                    <div class="flex flex-wrap justify-center gap-2 mb-4">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="bi bi-check-circle mr-1"></i>Active
+                        </span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-yellow-500 text-white">
+                            <i class="bi bi-star-fill mr-1"></i>VIP
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Copy Functionality -->
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Show a temporary success message
+                showToast('Copied to clipboard!');
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        function showToast(message) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // Remove toast after 2 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 2000);
+        }
+    </script>
+</div>
+</body>
+</html>

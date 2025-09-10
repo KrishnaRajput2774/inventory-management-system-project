@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title>Customers - Product Management System</title>
+    <style>
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
+        }
+        .active-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .vip-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+        .revenue-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        .attention-card {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .customer-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        .status-active { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); }
+        .status-inactive { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        .status-vip { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .status-premium { background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); }
+        .status-new { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .table-row:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+        .success-alert {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            border: none;
+        }
+        .error-alert {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            color: white;
+            border: none;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+<div layout:fragment="content">
+
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}" class="success-alert rounded-xl p-4 mb-6 shadow-lg animate-fade-in">
+        <div class="flex items-center">
+            <i class="bi bi-check-circle-fill mr-3 text-xl"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+    </div>
+    <div th:if="${errorMessage}" class="error-alert rounded-xl p-4 mb-6 shadow-lg animate-fade-in">
+        <div class="flex items-center">
+            <i class="bi bi-exclamation-triangle-fill mr-3 text-xl"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 mb-8">
+        <div class="animate-fade-in">
+            <h1 class="text-4xl font-bold text-gray-900 mb-3">Customer Management</h1>
+            <p class="text-lg text-gray-600">Manage your customer relationships and track engagement metrics</p>
+        </div>
+        <div class="flex flex-wrap gap-3 animate-fade-in">
+            <a href="/customers/create"
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold pulse">
+                <i class="bi bi-plus-circle-fill mr-2"></i>New Customer
+            </a>
+            <button onclick="exportCustomers()"
+                    class="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                <i class="bi bi-download mr-2"></i>Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+
+        <!-- Total Customers -->
+        <div class="metric-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Total Customers</p>
+                    <p class="text-4xl font-bold mt-2" th:text="${totalCustomers ?: 0}">0</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-people-fill text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-sm">Registered Users</span>
+                    </div>
+                </div>
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-people-fill text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Customers -->
+        <div class="metric-card active-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Active Customers</p>
+                    <p class="text-4xl font-bold mt-2" th:text="${activeCustomers ?: 0}">0</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-check-circle-fill text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-sm">Recent Activity</span>
+                    </div>
+                </div>
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-lightning-charge-fill text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIP Customers -->
+        <div class="metric-card vip-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">VIP Customers</p>
+                    <p class="text-4xl font-bold mt-2" th:text="${vipCustomers ?: 0}">0</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-star-fill text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-sm">High Value</span>
+                    </div>
+                </div>
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-award-fill text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Revenue -->
+        <div class="metric-card revenue-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Total Revenue</p>
+                    <p class="text-4xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalRevenue ?: 0, 1, 0)}">₹0</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-currency-dollar text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-sm">Customer Value</span>
+                    </div>
+                </div>
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-cash-stack text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Need Attention -->
+        <div class="metric-card attention-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.4s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Need Attention</p>
+                    <p class="text-4xl font-bold mt-2" th:text="${customersNeedingAttention ?: 0}">0</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-exclamation-triangle-fill text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-sm">Inactive Users</span>
+                    </div>
+                </div>
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-flag-fill text-3xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Customers Showcase -->
+    <div th:unless="${#lists.isEmpty(topCustomers)}" class="mb-8 animate-fade-in" style="animation-delay: 0.5s;">
+        <div class="glass-card rounded-2xl shadow-2xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Top Performing Customers</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600 font-medium">Highest Revenue</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div th:each="customer : ${topCustomers}"
+                     class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 text-center p-5 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105">
+                    <div class="w-14 h-14 customer-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-person-fill text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-sm mb-1" th:text="${customer.name}">Customer Name</h4>
+                    <p class="text-xs text-gray-600 font-medium" th:text="'₹' + ${#numbers.formatDecimal(customer.revenue ?: 0, 1, 0)}">₹0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in" style="animation-delay: 0.6s;">
+
+        <!-- Table Header -->
+        <div class="px-6 py-6 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-gray-100">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">Customer Directory</h3>
+                    <p class="text-sm text-gray-600 mt-1">Manage all your customers in one place</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <input type="text" id="customerSearch" placeholder="Search customers..."
+                           class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm shadow-sm">
+                    <div id="searchFeedback" class="text-xs text-gray-500"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Content -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="bg-gray-50/80">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Customer</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Contact</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Revenue</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Orders</th>
+                    <th class="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200/50">
+
+                <!-- Empty State -->
+                <tr th:if="${#lists.isEmpty(customers)}">
+                    <td colspan="6" class="px-6 py-20 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-4">
+                                <i class="bi bi-people text-gray-400 text-4xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">No Customers Found</h3>
+                            <p class="text-gray-500 mb-6 max-w-md">Start building your customer base by adding your first customer. Track interactions and grow your business relationships.</p>
+                            <a href="/customers/create"
+                               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                                <i class="bi bi-plus-circle-fill mr-2"></i>Create First Customer
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Customer Rows -->
+                <tr th:each="customer : ${customers}" class="table-row">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 customer-icon rounded-xl flex items-center justify-center mr-4">
+                                <i class="bi bi-person-fill text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-gray-900">
+                                    <a th:href="@{/customers/{id}(id=${customer.customerId})}"
+                                       th:text="${customer.name}"
+                                       class="hover:text-blue-600 transition-colors duration-200"></a>
+                                </div>
+                                <div class="text-xs text-gray-500" th:text="'ID: ' + ${customer.customerId}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900" th:text="${customer.email}">email@example.com</div>
+                        <div class="text-xs text-gray-500" th:text="${customer.contactNumber}">+1234567890</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex px-3 py-1 text-xs font-bold rounded-full text-white"
+                              th:classappend="'status-' + ${#strings.toLowerCase(customer.customerStatus ?: 'new')}"
+                              th:text="${customer.customerStatus ?: 'NEW'}">NEW</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-800"
+                                  th:text="'₹' + ${#numbers.formatDecimal(customer.revenue ?: 0, 1, 0)}">₹0</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900" th:text="${customer.orderCount ?: 0} + ' orders'">0 orders</div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end space-x-2">
+                            <a th:href="@{/customers/{id}(id=${customer.customerId})}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 transition-colors duration-200">
+                                <i class="bi bi-eye-fill mr-1"></i>View
+                            </a>
+                            <a th:href="@{/customers/{id}/orders(id=${customer.customerId})}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-200">
+                                <i class="bi bi-receipt mr-1"></i>Orders
+                            </a>
+                            <a th:href="@{/orders/create(customerId=${customer.customerId})}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-green-600 bg-green-100 hover:bg-green-200 transition-colors duration-200">
+                                <i class="bi bi-plus-circle mr-1"></i>New Order
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Analytics & Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+
+        <!-- Customer Analytics -->
+        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.7s;">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">
+                <i class="bi bi-graph-up text-blue-600 mr-2"></i>Customer Analytics
+            </h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Average Revenue per Customer</span>
+                    <span class="text-lg font-bold text-blue-600" th:text="'₹' + ${#numbers.formatDecimal(avgRevenuePerCustomer ?: 0, 1, 0)}">₹0</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Active Customers</span>
+                    <span class="text-lg font-bold text-green-600" th:text="${activeCustomers ?: 0}">0</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Retention Rate</span>
+                    <span class="text-lg font-bold text-orange-600" th:text="${#numbers.formatDecimal(retentionRate ?: 0, 1, 1)} + '%'">0%</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">New This Month</span>
+                    <span class="text-lg font-bold text-purple-600" th:text="${newCustomersThisMonth ?: 0}">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.8s;">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">
+                <i class="bi bi-lightning-charge-fill text-yellow-500 mr-2"></i>Quick Actions
+            </h3>
+            <div class="space-y-3">
+                <a href="/customers/create"
+                   class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block">
+                    <i class="bi bi-plus-circle-fill mr-2"></i>Create New Customer
+                </a>
+                <a href="/orders/create"
+                   class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block">
+                    <i class="bi bi-cart-plus-fill mr-2"></i>Create New Order
+                </a>
+                <button onclick="exportCustomers()"
+                        class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                    <i class="bi bi-download mr-2"></i>Export Customer Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Auto-hide flash messages
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.success-alert, .error-alert');
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+
+        // Enhanced search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('customerSearch');
+            const searchFeedback = document.getElementById('searchFeedback');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('tbody tr:not(:first-child)');
+                    let visibleCount = 0;
+
+                    rows.forEach(function(row) {
+                        const text = row.textContent.toLowerCase();
+                        const isVisible = text.includes(searchTerm);
+                        row.style.display = isVisible ? '' : 'none';
+                        if (isVisible) visibleCount++;
+                    });
+
+                    // Update search feedback
+                    if (searchTerm) {
+                        searchFeedback.textContent = `${visibleCount} customers found`;
+                        searchFeedback.className = 'text-xs text-blue-600 font-medium';
+                    } else {
+                        searchFeedback.textContent = '';
+                    }
+                });
+            }
+        });
+
+        // Export function
+        function exportCustomers() {
+            // CSV export functionality
+            let csvContent = "Customer ID,Name,Email,Contact,Revenue,Orders,Status\n";
+
+            const rows = document.querySelectorAll('tbody tr:not(:first-child)');
+            rows.forEach(function(row) {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) {
+                    const customerId = cells[0].querySelector('.text-gray-500').textContent.replace('ID: ', '').trim();
+                    const name = cells[0].querySelector('a').textContent.trim();
+                    const email = cells[1].querySelector('.text-gray-900').textContent.trim();
+                    const contact = cells[1].querySelector('.text-gray-500').textContent.trim();
+                    const status = cells[2].textContent.trim();
+                    const revenue = cells[3].textContent.trim();
+                    const orders = cells[4].textContent.trim();
+
+                    csvContent += `"${customerId}","${name}","${email}","${contact}","${revenue}","${orders}","${status}"\n`;
+                }
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `customers_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all metric cards
+        document.querySelectorAll('.metric-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</th:block>
+</body>
+</html>

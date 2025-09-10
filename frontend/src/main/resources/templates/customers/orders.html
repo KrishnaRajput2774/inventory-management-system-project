@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title th:text="'Orders - ' + ${customer.name}">Customer Orders</title>
+    <style>
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .completed-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .completed-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .pending-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .pending-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .lifetime-revenue-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .lifetime-revenue-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .avg-order-card {
+            background: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .avg-order-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .table-hover:hover {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .customer-info-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            border: none;
+            color: white;
+        }
+        .alert-error {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            border: none;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert-success rounded-2xl p-4 mb-6 shadow-lg">
+        <div class="flex items-center">
+            <i class="bi bi-check-circle-fill mr-3 text-xl"></i>
+            <span th:text="${success}"></span>
+        </div>
+    </div>
+    <div th:if="${error}" class="alert-error rounded-2xl p-4 mb-6 shadow-lg">
+        <div class="flex items-center">
+            <i class="bi bi-exclamation-triangle-fill mr-3 text-xl"></i>
+            <span th:text="${error}"></span>
+        </div>
+    </div>
+
+    <!-- Enhanced Header with CTAs -->
+    <div class="mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900" th:text="'Orders for ' + ${customer.name}">Customer Orders</h1>
+            <p class="mt-2 text-lg text-gray-600">Complete order history and analytics for this customer</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <a th:href="@{/customers/{id}(id=${customer.customerId})}"
+               class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                <i class="bi bi-arrow-left mr-2"></i>Back to Customer
+            </a>
+            <a th:href="@{/orders/create(customerId=${customer.customerId})}"
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
+                <i class="bi bi-plus-circle mr-2"></i>Create New Order
+            </a>
+        </div>
+    </div>
+
+    <!-- Customer Information Card -->
+    <div class="mb-8 customer-info-card rounded-2xl p-6 shadow-xl">
+        <div class="flex items-start justify-between">
+            <div class="flex-1">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                        <i class="bi bi-person-fill text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900" th:text="${customer.name}">Customer Name</h3>
+                        <p class="text-gray-600">Customer Profile</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="flex items-center">
+                        <i class="bi bi-envelope text-blue-600 mr-2"></i>
+                        <span class="text-gray-700" th:text="${customer.email}">email@example.com</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-telephone text-blue-600 mr-2"></i>
+                        <span class="text-gray-700" th:text="${customer.contactNumber}">+1234567890</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-calendar text-blue-600 mr-2"></i>
+                        <span class="text-gray-700">Customer since 2024</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <!-- Total Orders Card -->
+        <div class="metric-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Total Orders</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${totalOrders ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-receipt text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium">All time</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-bag text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Orders Card -->
+        <div class="completed-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Completed</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${completedOrders ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-currency-dollar text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium" th:text="'₹' + ${#numbers.formatDecimal(completedRevenue ?: 0, 0, 0)}">₹0 revenue</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-check-circle text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Orders Card -->
+        <div class="pending-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Processing</p>
+                    <p class="text-3xl font-bold mt-2" th:text="${pendingOrders ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-clock text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium" th:text="${#numbers.formatDecimal(avgProcessingDays ?: 0, 1, 1)} + ' days avg'">0.0 days avg</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-hourglass-split text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lifetime Revenue Card -->
+        <div class="lifetime-revenue-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Lifetime Revenue</p>
+                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(lifetimeRevenue ?: 0, 0, 0)}">₹0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-trending-up text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium">Total earned</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-wallet2 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Order Value Card -->
+        <div class="avg-order-card rounded-2xl text-white p-6 shadow-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium">Avg Order Value</p>
+                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(avgOrderValue ?: 0, 0, 0)}">₹0</p>
+                    <div class="flex items-center mt-2">
+                        <i class="bi bi-graph-up text-white/60 mr-1"></i>
+                        <span class="text-white/80 text-sm font-medium">Per order</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-calculator text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        <div class="px-6 py-6 border-b border-gray-200/50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900">Orders History</h3>
+                    <p class="mt-1 text-sm text-gray-600">Complete list of customer orders with real-time status</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Live Updates</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200/50">
+                <thead class="bg-gray-50/50 backdrop-blur-sm">
+                <tr>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order ID</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Type</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Items</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Amount</th>
+                    <th scope="col" class="relative px-6 py-4"><span class="sr-only">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200/30">
+                <!-- Empty State -->
+                <tr th:if="${#lists.isEmpty(orders)}">
+                    <td colspan="7" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-4">
+                                <i class="bi bi-inbox text-gray-400 text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No orders found</h3>
+                            <p class="text-sm text-gray-500 mb-6">This customer hasn't placed any orders yet. Create their first order to get started.</p>
+                            <a th:href="@{/orders/create(customerId=${customer.customerId})}"
+                               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                                <i class="bi bi-plus-circle mr-2"></i>Create First Order
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Order Rows -->
+                <tr th:each="order : ${orders}" class="table-hover">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a th:href="@{/orders/{id}(id=${order.orderId})}"
+                           th:text="'#' + ${order.orderId}"
+                           class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors duration-150 bg-blue-50 px-3 py-1 rounded-lg"></a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}"></td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full"
+                              th:classappend="${order.orderType.name() == 'SALE' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}"
+                              th:text="${order.orderType}"></span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-3 py-1.5 text-xs font-semibold rounded-xl"
+                              th:classappend="${order.orderStatus.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                                             (order.orderStatus.name() == 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                                             (order.orderStatus.name() == 'CREATED' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'))}"
+                              th:text="${order.orderStatus}"></span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-800"
+                              th:text="${order.orderItems != null ? #lists.size(order.orderItems) : 0} + ' items'"></span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 1, 2)}"></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center justify-end space-x-2">
+                            <a th:href="@{/orders/{id}(id=${order.orderId})}"
+                               class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
+                                <i class="bi bi-eye mr-1"></i>View Details
+                            </a>
+                            <div th:if="${order.orderStatus.name() == 'CREATED' || order.orderStatus.name() == 'PROCESSING'}" class="flex space-x-1">
+                                <form th:action="@{/orders/{id}/complete-and-edit(id=${order.orderId})}" method="post">
+                                    <button type="submit"
+                                            class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-green-600 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-150">
+                                        <i class="bi bi-check mr-1"></i>Complete
+                                    </button>
+                                </form>
+
+                                <form th:action="@{/orders/{id}/cancel-and-edit(id=${order.orderId})}" method="post">
+                                    <button type="submit" onclick="return confirm('Are you sure you want to cancel this order?')"
+                                            class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-150">
+                                        <i class="bi bi-x mr-1"></i>Cancel
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Quick Stats -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="bi bi-graph-up mr-2"></i>Quick Insights
+            </h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Processing Time</span>
+                    <span class="text-sm font-semibold text-yellow-600"
+                          th:text="${#numbers.formatDecimal(avgProcessingDays ?: 0, 1, 1)} + ' days'">0.0 days</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="bi bi-lightning mr-2"></i>Quick Actions
+            </h3>
+            <div class="space-y-3">
+                <a th:href="@{/orders/create(customerId=${customer.customerId})}"
+                   class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                    <i class="bi bi-plus-circle mr-2"></i>Create New Order
+                </a>
+                <a th:href="@{/customers/{id}(id=${customer.customerId})}"
+                   class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                    <i class="bi bi-person mr-2"></i>View Customer Profile
+                </a>
+                <a th:href="@{/customers/{id}/edit(id=${customer.customerId})}"
+                   class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                    <i class="bi bi-pencil mr-2"></i>Edit Customer Info
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert-success, .alert-error');
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
+
+        // Add loading state to action buttons
+        document.querySelectorAll('form button[type="submit"]').forEach(function(button) {
+            button.addEventListener('click', function() {
+                button.disabled = true;
+                button.innerHTML = '<i class="bi bi-hourglass mr-1"></i>Processing...';
+            });
+        });
+
+        // Smooth scroll to table when orders exist
+        if (document.querySelector('tbody tr:not(:first-child)')) {
+            document.addEventListener('DOMContentLoaded', function() {
+                const table = document.querySelector('.overflow-x-auto');
+                if (table && window.location.hash === '#orders') {
+                    table.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

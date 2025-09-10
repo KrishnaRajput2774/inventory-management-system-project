@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title th:text="'Orders - ' + ${customer.name}">Customer Orders</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2" th:text="'Orders for ' + ${customer.name}">Customer Orders</h1>
+        <div class="btn-group">
+            <a th:href="@{/customers/{id}(id=${customer.customerId})}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Customer
+            </a>
+            <a th:href="@{/orders/create(customerId=${customer.customerId})}" class="btn btn-primary">
+                <i class="bi bi-plus"></i> New Order
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <strong>Customer:</strong> <span th:text="${customer.name}"></span> |
+        <strong>Email:</strong> <span th:text="${customer.email}"></span> |
+        <strong>Contact:</strong> <span th:text="${customer.contactNumber}"></span>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Items</th>
+                        <th>Total Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td>
+                            <a th:href="@{/orders/{id}(id=${order.orderId})}"
+                               th:text="'#' + ${order.orderId}" class="text-decoration-none fw-bold"></a>
+                        </td>
+                        <td th:text="${#temporals.format(order.orderDate, 'MMM dd, yyyy HH:mm')}"></td>
+                        <td>
+                                    <span class="badge"
+                                          th:classappend="${order.orderType.name() == 'SALE' ? 'bg-success' : 'bg-info'}"
+                                          th:text="${order.orderType}"></span>
+                        </td>
+                        <td>
+                                    <span class="badge"
+                                          th:classappend="${order.orderStatus.name() == 'COMPLETED' ? 'bg-success' :
+                                                         (order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' : 'bg-warning')}"
+                                          th:text="${order.orderStatus}"></span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary" th:text="${order.orderItems != null ? #lists.size(order.orderItems) : 0}"></span>
+                        </td>
+                        <td>
+                            <strong class="text-success" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></strong>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a th:href="@{/orders/{id}(id=${order.orderId})}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <div th:if="${order.orderStatus.name() == 'PENDING'}" class="btn-group">
+                                    <form th:action="@{/orders/{id}/complete(id=${order.orderId})}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/orders/{id}/cancel(id=${order.orderId})}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Cancel this order?')">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                            No orders found for this customer
+                            <br>
+                            <a th:href="@{/orders/create(customerId=${customer.customerId})}"
+                               class="btn btn-primary btn-sm mt-2">Create First Order</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Statistics -->
+    <div th:unless="${#lists.isEmpty(orders)}" class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-graph-up"></i> Order Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-2">
+                            <h4 class="text-primary" th:text="${#lists.size(orders)}">0</h4>
+                            <small class="text-muted">Total Orders</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-success" th:text="${orders.stream().filter(o -> o.orderStatus.name() == 'COMPLETED').count()}">0</h4>
+                            <small class="text-muted">Completed</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-warning" th:text="${orders.stream().filter(o -> o.orderStatus.name() == 'PENDING').count()}">0</h4>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-danger" th:text="${orders.stream().filter(o -> o.orderStatus.name() == 'CANCELLED').count()}">0</h4>
+                            <small class="text-muted">Cancelled</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-info" th:text="'$' + ${#numbers.formatDecimal(orders.stream().filter(o -> o.orderStatus.name() == 'COMPLETED').mapToDouble(o -> o.totalAmount).sum(), 1, 2)}">$0.00</h4>
+                            <small class="text-muted">Total Value</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-secondary" th:text="'$' + ${#numbers.formatDecimal(orders.stream().filter(o -> o.orderStatus.name() == 'COMPLETED').mapToDouble(o -> o.totalAmount).average().orElse(0), 1, 2)}">$0.00</h4>
+                            <small class="text-muted">Average Value</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

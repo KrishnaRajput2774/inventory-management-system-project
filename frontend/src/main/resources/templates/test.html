@@ -1,0 +1,31 @@
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org" lang="en"
+          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+          layout:decorate="~{_layout}">
+    <head>
+        <title>Test Page</title>
+    </head>
+    <body>
+    <div layout:fragment="content">
+        <h1>Test Page</h1>
+        <p>If you can see this, the layout system is working correctly!</p>
+
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i>
+            Layout and templates are working properly!
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5>System Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Server Time:</strong> <span th:text="${#temporals.format(T(java.time.LocalDateTime).now(), 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+                <p><strong>Application Name:</strong> Inventory Management System UI</p>
+                <p><strong>Template Engine:</strong> Thymeleaf</p>
+                <p><strong>Layout Dialect:</strong> Working</p>
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>

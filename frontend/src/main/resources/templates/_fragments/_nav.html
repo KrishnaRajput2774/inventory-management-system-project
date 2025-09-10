@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<nav th:fragment="nav" class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+            <a href="/dashboard" class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-boxes text-white"></i>
+                </div>
+                <span class="text-xl font-bold text-gray-900">IMS</span>
+            </a>
+
+            <div class="relative">
+                <button id="user-menu-btn" class="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900">
+                    <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                        <i class="bi bi-person-circle text-gray-600"></i>
+                    </div>
+                    <span>Admin</span>
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="bi bi-gear mr-2"></i>Settings
+                    </a>
+                    <hr class="my-1">
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="bi bi-box-arrow-right mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    document.getElementById('user-menu-btn').addEventListener('click', () => {
+        document.getElementById('user-dropdown').classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#user-menu-btn')) {
+            document.getElementById('user-dropdown').classList.add('hidden');
+        }
+    });
+</script>
+</body>
+</html>

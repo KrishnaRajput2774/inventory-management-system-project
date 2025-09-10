@@ -1,0 +1,150 @@
+<!-- 4xx Error Page -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title>Error</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="min-h-96 flex items-center justify-center">
+        <div class="max-w-md w-full text-center">
+            <!-- Error Icon -->
+            <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-yellow-100 mb-6">
+                <i class="bi bi-exclamation-triangle-fill text-yellow-600 text-3xl"></i>
+            </div>
+
+            <!-- Error Content -->
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Oops!</h1>
+            <p class="text-lg text-gray-600 mb-6">Something went wrong with your request.</p>
+
+            <!-- Error Message -->
+            <div th:if="${errorMessage}" class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+                <p class="text-sm text-yellow-800" th:text="${errorMessage}"></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/dashboard"
+                   class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                    <i class="bi bi-house mr-2"></i>
+                    Go to Dashboard
+                </a>
+                <button onclick="history.back()"
+                        class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                    <i class="bi bi-arrow-left mr-2"></i>
+                    Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-16">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">What can you do?</h3>
+            </div>
+            <div class="px-6 py-4">
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-check-circle text-green-500 text-lg"></i>
+                        </div>
+                        <p class="ml-3 text-sm text-gray-700">Check the URL for typos</p>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-check-circle text-green-500 text-lg"></i>
+                        </div>
+                        <p class="ml-3 text-sm text-gray-700">Go back to the previous page</p>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-check-circle text-green-500 text-lg"></i>
+                        </div>
+                        <p class="ml-3 text-sm text-gray-700">Visit our dashboard</p>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-check-circle text-green-500 text-lg"></i>
+                        </div>
+                        <p class="ml-3 text-sm text-gray-700">Contact support if the problem persists</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<!-- ================================================== -->
+
+<!-- 5xx Server Error Page -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title>Server Error</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="min-h-96 flex items-center justify-center">
+        <div class="max-w-md w-full text-center">
+            <!-- Error Icon -->
+            <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-red-100 mb-6">
+                <i class="bi bi-exclamation-octagon-fill text-red-600 text-3xl"></i>
+            </div>
+
+            <!-- Error Content -->
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Server Error</h1>
+            <p class="text-lg text-gray-600 mb-6">We're experiencing some technical difficulties.</p>
+
+            <!-- Error Message -->
+            <div th:if="${errorMessage}" class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+                <p class="text-sm text-red-800" th:text="${errorMessage}"></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/dashboard"
+                   class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                    <i class="bi bi-house mr-2"></i>
+                    Go to Dashboard
+                </a>
+                <button onclick="location.reload()"
+                        class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                    <i class="bi bi-arrow-clockwise mr-2"></i>
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="mt-16">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">We're working on it</h3>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+                <p class="text-sm text-gray-700">
+                    Our team has been notified of this issue and is working to resolve it as quickly as possible.
+                    Please try again in a few moments.
+                </p>
+                <p class="text-sm text-gray-700">
+                    If the problem persists, please contact our support team with details about what you were trying to do.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

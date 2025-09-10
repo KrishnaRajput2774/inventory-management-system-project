@@ -1,0 +1,48 @@
+server:
+  port: 8081
+
+backend:
+  base-url: http://localhost:8080
+
+spring:
+  application:
+    name: inventory-management-system-ui
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+
+  web:
+    resources:
+      static-locations: classpath:/static/
+      cache:
+        period: 3600
+
+  main:
+    banner-mode: console
+
+logging:
+  level:
+    root: DEBUG
+    com.rk.inventory_management_system.ui: DEBUG
+    org.springframework.web.client: DEBUG
+    org.thymeleaf: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

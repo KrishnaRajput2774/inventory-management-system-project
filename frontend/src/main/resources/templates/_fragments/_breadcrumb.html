@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<div th:fragment="breadcrumb" class="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+    <a href="/dashboard" class="hover:text-primary-600 flex items-center">
+        <i class="bi bi-house-door mr-1"></i>Home
+    </a>
+    <i class="bi bi-chevron-right text-gray-400"></i>
+    <th:block th:each="item : ${breadcrumbItems}">
+        <a th:if="${!item.active}" th:href="${item.url}" th:text="${item.name}"
+           class="hover:text-primary-600"></a>
+        <span th:if="${item.active}" th:text="${item.name}" class="font-medium text-gray-800"></span>
+        <i th:if="${!itemStat.last}" class="bi bi-chevron-right text-gray-400"></i>
+    </th:block>
+</div>
+</body>
+</html>

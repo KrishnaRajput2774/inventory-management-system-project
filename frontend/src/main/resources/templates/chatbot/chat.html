@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title>AI Assistant</title>
+    <style>
+        /* Compact chat styles */
+        .chat-container {
+            height: calc(100vh - 160px);
+            max-height: 700px;
+            min-height: 400px;
+        }
+
+        .chat-messages {
+            height: calc(100% - 80px);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        /* Message animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-appear {
+            animation: slideIn 0.2s ease-out;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f3f4f6;
+            border-radius: 12px;
+        }
+
+        .typing-indicator span {
+            height: 6px;
+            width: 6px;
+            background: #6b7280;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* Compact message bubbles */
+        .message-bubble {
+            max-width: 75%;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: white;
+            border-radius: 16px 16px 4px 16px;
+            padding: 8px 14px;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+        }
+
+        .assistant-message {
+            background: white;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px 16px 16px 4px;
+            padding: 8px 14px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Model selection styles */
+        .model-select {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 13px;
+            min-width: 120px;
+            cursor: pointer;
+        }
+
+        .model-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+
+        .model-select option:disabled {
+            color: #9ca3af;
+            background: #f9fafb;
+        }
+
+        /* Compact model badges */
+        .model-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .model-llama {
+            background: #10b981;
+            color: white;
+        }
+
+        .model-mistral {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .model-gemma {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        /* Compact input area */
+        .chat-input-area {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 12px;
+        }
+
+        .chat-input {
+            resize: none;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            transition: all 0.2s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Compact buttons */
+        .btn-send {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-send:hover:not(:disabled) {
+            background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Empty state */
+        .empty-chat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6b7280;
+            padding: 20px;
+        }
+
+        .empty-chat-icon {
+            width: 60px;
+            height: 60px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        /* Quick actions */
+        .quick-action {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-action:hover {
+            border-color: #4f46e5;
+            background: #f9fafb;
+            transform: translateY(-1px);
+        }
+
+        /* Compact header */
+        .chat-header {
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: between;
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #92400e;
+            margin-left: 8px;
+        }
+
+        .status-available {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+<div layout:fragment="content">
+
+    <!-- Compact Header -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">AI Assistant</h1>
+            <p class="text-sm text-gray-600">Chat with AI to help manage your inventory</p>
+        </div>
+
+        <div class="flex gap-2">
+            <!-- Model Selection - Always visible -->
+            <div class="flex items-center bg-white rounded-lg px-3 py-1.5 shadow-sm border">
+                <i class="bi bi-cpu text-xs mr-1.5 text-gray-600"></i>
+                <span class="text-xs font-medium text-gray-700 mr-2">Model:</span>
+
+                <select id="modelSelect" name="model" class="model-select">
+                    <th:block th:each="modelName : ${availableModels}">
+                        <option th:value="${modelName}"
+                                th:text="${modelName}"
+                                th:selected="${modelName == selectedModel1}">
+                        </option>
+                    </th:block>
+                </select>
+
+                <span id="modelStatus" class="status-indicator status-available">
+                    <i class="bi bi-check-circle-fill text-xs mr-1"></i>Available
+                </span>
+            </div>
+
+            <!-- Clear Chat Button -->
+            <form th:action="@{/chat/clear}" method="post" class="inline">
+                <button type="submit"
+                        onclick="return confirm('Clear all chat history?')"
+                        class="px-3 py-1.5 bg-white text-gray-600 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-all flex items-center font-medium">
+                    <i class="bi bi-trash text-xs mr-1.5"></i>Clear
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Chat Container -->
+    <div class="bg-white rounded-xl shadow-lg chat-container overflow-hidden">
+
+        <!-- Chat Messages Area -->
+        <div class="chat-messages p-4" id="chatMessages">
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(chatHistory)}" class="empty-chat">
+                <div class="empty-chat-icon">
+                    <i class="bi bi-chat-dots text-2xl text-gray-400"></i>
+                </div>
+                <h3 class="text-base font-semibold text-gray-900 mb-2">Start a Conversation</h3>
+                <p class="text-sm text-gray-600 mb-4 text-center max-w-sm">
+                    Ask about inventory, get insights, or request help with products.
+                </p>
+
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <button class="quick-action" onclick="setQuickMessage('What products are low in stock?')">
+                        📦 Low stock
+                    </button>
+                    <button class="quick-action" onclick="setQuickMessage('Show sales summary')">
+                        📊 Sales summary
+                    </button>
+                    <button class="quick-action" onclick="setQuickMessage('Inventory tips')">
+                        💡 Tips
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat History -->
+            <div th:each="msg : ${chatHistory}" class="message-appear">
+                <!-- User Message -->
+                <div th:if="${msg.role == 'user'}" class="flex justify-end mb-3">
+                    <div class="flex flex-col items-end max-w-[75%]">
+                        <div class="flex items-center mb-1 text-xs text-gray-500">
+                            <span th:text="${msg.timestamp}">10:30</span>
+                        </div>
+                        <div class="user-message message-bubble">
+                            <p th:text="${msg.content}">User message</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assistant Message -->
+                <div th:if="${msg.role == 'assistant'}" class="flex justify-start mb-3">
+                    <div class="flex items-start space-x-2 max-w-[75%]">
+                        <!-- Compact AI Avatar -->
+                        <div class="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-sm mt-0.5">
+                            <i class="bi bi-robot text-xs"></i>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <div class="flex items-center mb-1 text-xs text-gray-500">
+                                <span class="model-badge model-llama" th:text="${msg.model ?: 'llama3'}">llama3</span>
+                                <span class="mx-1.5">•</span>
+                                <span th:text="${msg.timestamp}">10:31</span>
+                            </div>
+                            <div class="assistant-message message-bubble">
+                                <p th:text="${msg.content}">AI response</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll anchor -->
+            <div id="chat-bottom"></div>
+        </div>
+
+        <!-- Compact Input Area -->
+        <div class="chat-input-area">
+            <form th:action="@{/chat/send}" method="post" id="chatForm">
+                <!-- Dynamic model field -->
+                <input type="hidden" name="model" id="hiddenModelInput" th:value="${selectedModel ?: 'llama3'}">
+
+                <div class="flex gap-2">
+                    <textarea name="message"
+                              id="messageInput"
+                              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg chat-input focus:border-indigo-500"
+                              placeholder="Type your message..."
+                              rows="1"
+                              maxlength="1000"
+                              required></textarea>
+
+                    <button type="submit"
+                            id="sendButton"
+                            class="btn-send flex items-center">
+                        <i class="bi bi-send text-sm"></i>
+                        <span class="ml-1.5 hidden sm:inline">Send</span>
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs text-gray-500">
+                        Press Enter to send, Shift+Enter for new line
+                    </span>
+                    <span class="text-xs text-gray-500">
+                        <span id="charCount">0</span>/1000
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alert for model limitation -->
+    <div th:if="${errorMessage}" class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start">
+        <i class="bi bi-exclamation-triangle text-amber-600 text-sm mr-2 mt-0.5"></i>
+        <div class="flex-1">
+            <p class="text-amber-800 text-sm" th:text="${errorMessage}"></p>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg px-6 py-4 shadow-xl">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p class="text-sm text-gray-600 mt-2">AI is thinking...</p>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Compact chat functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const charCount = document.getElementById('charCount');
+            const chatForm = document.getElementById('chatForm');
+            const sendButton = document.getElementById('sendButton');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const modelSelect = document.getElementById('modelSelect');
+            const modelStatus = document.getElementById('modelStatus');
+            const hiddenModelInput = document.getElementById('hiddenModelInput');
+
+            // Auto-scroll to bottom
+            if (chatMessages) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Character counter
+            if (messageInput && charCount) {
+                messageInput.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
+            }
+
+            // Auto-resize textarea
+            if (messageInput) {
+                messageInput.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+                });
+            }
+
+            // Model selection handler
+            if (modelSelect) {
+                modelSelect.addEventListener('change', function() {
+                    const selectedModel = this.value;
+
+                    if (selectedModel !== 'llama3' && selectedModel !== "phi4-mini:latest") {
+                        // Show warning for unavailable models
+                        showNotification('This model is not yet available. Using Llama 3 instead.', 'warning');
+
+                        // Update status indicator
+                        if (modelStatus) {
+                            modelStatus.className = 'status-indicator';
+                            modelStatus.innerHTML = '<i class="bi bi-clock text-xs mr-1"></i>Coming Soon';
+                        }
+
+                        // Reset to llama3 after showing message
+                        setTimeout(() => {
+                            this.value = 'llama3';
+                            if (hiddenModelInput) {
+                                hiddenModelInput.value = 'llama3';
+                            }
+                            if (modelStatus) {
+                                modelStatus.className = 'status-indicator status-available';
+                                modelStatus.innerHTML = '<i class="bi bi-check-circle-fill text-xs mr-1"></i>Available';
+                            }
+                        }, 2000);
+                    } else {
+                        // Update status for llama3
+                        if (modelStatus) {
+                            modelStatus.className = 'status-indicator status-available';
+                            modelStatus.innerHTML = '<i class="bi bi-check-circle-fill text-xs mr-1"></i>Available';
+                        }
+                        if (hiddenModelInput) {
+                            hiddenModelInput.value = selectedModel;
+                        }
+                    }
+                });
+
+                // Initialize hidden input
+                if (hiddenModelInput) {
+                    hiddenModelInput.value = modelSelect.value;
+                }
+            }
+
+            // Handle form submission
+            if (chatForm) {
+                chatForm.addEventListener('submit', function(e) {
+                    if (messageInput && !messageInput.value.trim()) {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // Ensure we're using an available model
+                    if (hiddenModelInput && modelSelect) {
+                        if (modelSelect.value !== 'llama3') {
+                            hiddenModelInput.value = 'llama3';
+                        } else {
+                            hiddenModelInput.value = modelSelect.value;
+                        }
+                    }
+
+                    // Show loading
+                    if (loadingOverlay) {
+                        loadingOverlay.classList.remove('hidden');
+                    }
+
+                    // Disable send button
+                    if (sendButton) {
+                        sendButton.disabled = true;
+                        sendButton.innerHTML = '<i class="bi bi-hourglass-split text-sm"></i><span class="ml-1.5 hidden sm:inline">Sending...</span>';
+                    }
+                });
+            }
+
+            // Handle Enter key
+            if (messageInput) {
+                messageInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (this.value.trim()) {
+                            chatForm.submit();
+                        }
+                    }
+                });
+            }
+
+            // Check for URL hash to scroll
+            if (window.location.hash === '#chat-bottom') {
+                setTimeout(() => {
+                    if (chatMessages) {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                }, 100);
+            }
+        });
+
+        // Quick message helper
+        function setQuickMessage(message) {
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.value = message;
+                messageInput.focus();
+                messageInput.dispatchEvent(new Event('input'));
+            }
+        }
+
+        // Show notification helper
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const bgColor = type === 'warning' ? 'bg-amber-500' :
+                           type === 'success' ? 'bg-green-500' :
+                           type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+
+            notification.className = `fixed top-20 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm`;
+            notification.style.animation = 'slideIn 0.3s ease-out';
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="bi bi-${type === 'warning' ? 'exclamation-triangle' : 'info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Add fade out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(20px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</th:block>
+
+</body>
+</html>
