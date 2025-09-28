@@ -47,18 +47,33 @@ public class DashboardController {
 
             // Calculate key metrics using real data
             model.addAttribute("customerCount", customers.size());
+            log.info("customerCount: {}",customers.size());
             model.addAttribute("productCount", products.size());
+            log.info("productCount: {}",products.size());
+
             model.addAttribute("supplierCount", suppliers.size());
+            log.info("supplierCount: {}",suppliers.size());
+
             model.addAttribute("categoryCount", categories.size());
+            log.info("categoryCount: {}",categories.size());
+
 
             // Enhanced analytics with real data
             model.addAttribute("monthlyProfit", calculateMonthlyProfit(orders));
+            log.info("monthlyProfit: {}",calculateMonthlyProfit(orders));
+
             model.addAttribute("monthlyRevenue", calculateMonthlyRevenue(orders));
+            log.info("monthlyRevenue: {}",calculateMonthlyRevenue(orders));
+
             model.addAttribute("monthlyOrders", calculateMonthlyOrders(orders));
+            log.info("monthlyOrders: {}",calculateMonthlyOrders(orders));
+
             model.addAttribute("lowStockCount", calculateLowStockProducts(products));
+            log.info("calculateLowStockProducts: {}",calculateLowStockProducts(products));
 
             // Add stock overview data
             model.addAttribute("stockOverviewData", getStockOverviewData(products));
+            log.info("stockOverviewData: {}",getStockOverviewData(products));
 
         } catch (Exception exception) {
             log.error("Error loading dashboard data: ", exception);
@@ -197,6 +212,7 @@ public class DashboardController {
 
     private Map<String, Object> calculateMonthlyProfit(List<OrderDto> orders) {
         LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        log.info("calculateMonthlyProfit startOfMonth: {}",startOfMonth);
 
         double currentMonthProfit = orders.stream()
                 .filter(order -> order.getCreatedAt().isAfter(startOfMonth))
@@ -208,7 +224,7 @@ public class DashboardController {
                     return profit * item.getQuantity();
                 })
                 .sum();
-
+        log.info("currentMonthProfit: {}",currentMonthProfit);
         // Calculate previous month for comparison
         LocalDateTime startOfPrevMonth = startOfMonth.minusMonths(1);
         LocalDateTime endOfPrevMonth = startOfMonth.minusDays(1);
@@ -224,20 +240,23 @@ public class DashboardController {
                     return profit * item.getQuantity();
                 })
                 .sum();
+            log.info("prevMonthProfit: {}",prevMonthProfit);
 
         double percentageChange = prevMonthProfit != 0 ?
                 ((currentMonthProfit - prevMonthProfit) / prevMonthProfit) * 100 : 0;
+        log.info("percentageChange: {}",percentageChange);
 
         Map<String, Object> result = new HashMap<>();
         result.put("amount", currentMonthProfit);
         result.put("percentageChange", percentageChange);
         result.put("isIncrease", percentageChange >= 0);
-
+        log.info("result: {}",result);
         return result;
     }
 
     private Map<String, Object> calculateMonthlyRevenue(List<OrderDto> orders) {
         LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        log.info("calculateMonthlyRevenue startOfMonth: {}",startOfMonth);
 
         double currentMonthRevenue = orders.stream()
                 .filter(order -> order.getCreatedAt().isAfter(startOfMonth))
@@ -245,6 +264,7 @@ public class DashboardController {
                 .filter(order -> order.getOrderType() == OrderType.SALE)
                 .mapToDouble(OrderDto::getTotalPrice)
                 .sum();
+        log.info("CurrentMonthRevenue: {}",currentMonthRevenue);
 
         // Calculate previous month for comparison
         LocalDateTime startOfPrevMonth = startOfMonth.minusMonths(1);
@@ -258,24 +278,33 @@ public class DashboardController {
                 .mapToDouble(OrderDto::getTotalPrice)
                 .sum();
 
+        log.info("prevMonthRevenue: {}",prevMonthRevenue);
+
+
         double percentageChange = prevMonthRevenue != 0 ?
                 ((currentMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100 : 0;
+
+        log.info("percentageChange: {}",percentageChange);
 
         Map<String, Object> result = new HashMap<>();
         result.put("amount", currentMonthRevenue);
         result.put("percentageChange", percentageChange);
         result.put("isIncrease", percentageChange >= 0);
 
+        log.info("result: {}",result);
         return result;
     }
 
     private Map<String, Object> calculateMonthlyOrders(List<OrderDto> orders) {
         LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        log.info("calculateMonthlyOrders startOfMonth: {}",startOfMonth);
 
         long currentMonthOrders = orders.stream()
                 .filter(order -> order.getCreatedAt().isAfter(startOfMonth))
                 .filter(order -> order.getOrderType() == OrderType.SALE)
                 .count();
+
+        log.info("currentMonthOrders: {}",currentMonthOrders);
 
         // Calculate new orders this week
         LocalDateTime startOfWeek = LocalDateTime.now().minusDays(7);
@@ -284,19 +313,24 @@ public class DashboardController {
                 .filter(order -> order.getOrderType() == OrderType.SALE)
                 .count();
 
+        log.info("newOrdersThisWeek: {}",newOrdersThisWeek);
+
         Map<String, Object> result = new HashMap<>();
         result.put("count", currentMonthOrders);
         result.put("newOrders", newOrdersThisWeek);
+        log.info("result: {}",result);
 
         return result;
     }
 
     private int calculateLowStockProducts(List<ProductDto> products) {
-        return (int) products.stream()
+        int lowstockProducts = (int) products.stream()
                 .filter(product -> product.getLowStockThreshold() != null ?
                         product.getStockQuantity() <= product.getLowStockThreshold() :
                         product.getStockQuantity() < 10)
                 .count();
+        log.info("calculateLowStockProducts: {}",lowstockProducts);
+        return lowstockProducts;
     }
 
     private Map<String, Object> getStockOverviewData(List<ProductDto> products) {

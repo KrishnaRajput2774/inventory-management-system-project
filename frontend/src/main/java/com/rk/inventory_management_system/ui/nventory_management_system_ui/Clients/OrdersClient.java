@@ -1,7 +1,6 @@
 package com.rk.inventory_management_system.ui.nventory_management_system_ui.Clients;
 
 import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.OrderDto;
-import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -62,11 +61,12 @@ public class OrdersClient {
                 .body(OrderDto.class);
     }
 
-    public String updateStatus(Long orderId, String orderStatus) {
+    public void updateStatus(Long orderId, String orderStatus) {
         log.debug("Updating order status to {}, of {}",orderStatus,orderId);
 
-        return restClient.post()
-                .uri(PREFIX_URL+"/{orderID}/status?orderStatus={orderStatus}",orderId,orderStatus)
+        restClient.post()
+                .uri(PREFIX_URL + "/{orderId}/status?orderStatus={orderStatus}",
+                        orderId, orderId, orderStatus)
                 .retrieve()
                 .body(String.class);
     }

@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import java.util.Arrays;
 
 @Slf4j
 @Configuration
 public class RestClientConfig {
+
 
     @Bean
     public RestClient restClient() {
@@ -28,7 +28,7 @@ public class RestClientConfig {
                         String token = getTokenFromCookies(httpRequest);
                         if (token != null && !token.trim().isEmpty()) {
                             // Forward the entire cookie header to preserve all cookies
-                            String cookieHeader = getCookieHeader(httpRequest);
+                            String cookieHeader =   getCookieHeader(httpRequest);
                             if (cookieHeader != null) {
                                 request.getHeaders().set("Cookie", cookieHeader);
                                 log.debug("Forwarding cookies to proxy: {}", cookieHeader);
@@ -44,6 +44,8 @@ public class RestClientConfig {
                 })
                 .build();
     }
+
+
 
     private String getTokenFromCookies(HttpServletRequest request) {
         if (request.getCookies() != null) {

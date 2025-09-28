@@ -1,628 +1,558 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{_layout}">
-
 <head>
     <title>AI Assistant</title>
     <style>
-        /* Compact chat styles */
-        .chat-container {
-            height: calc(100vh - 160px);
-            max-height: 700px;
-            min-height: 400px;
+        .typing-indicator::after {
+            content: '';
+            animation: typing 1.5s infinite;
         }
-
-        .chat-messages {
-            height: calc(100% - 80px);
-            overflow-y: auto;
-            scroll-behavior: smooth;
-        }
-
-        /* Custom scrollbar */
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: #f3f4f6;
-            border-radius: 3px;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: #9ca3af;
-            border-radius: 3px;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: #6b7280;
-        }
-
-        /* Message animations */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message-appear {
-            animation: slideIn 0.2s ease-out;
-        }
-
-        /* Typing indicator */
-        .typing-indicator {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 12px;
-            background: #f3f4f6;
-            border-radius: 12px;
-        }
-
-        .typing-indicator span {
-            height: 6px;
-            width: 6px;
-            background: #6b7280;
-            border-radius: 50%;
-            display: inline-block;
-            margin: 0 1px;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
         @keyframes typing {
+            0%, 60%, 100% { content: ''; }
+            20% { content: '.'; }
+            40% { content: '..'; }
+            80% { content: '...'; }
+        }
+        .message-bubble {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .streaming-text {
+            border-right: 2px solid #0284c7;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .loading-dots span {
+            animation: dot-animation 1.4s infinite ease-in-out both;
+        }
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes dot-animation {
             0%, 80%, 100% {
-                transform: scale(1);
+                transform: scale(0.8);
                 opacity: 0.5;
             }
             40% {
-                transform: scale(1.2);
+                transform: scale(1);
                 opacity: 1;
             }
         }
-
-        /* Compact message bubbles */
-        .message-bubble {
-            max-width: 75%;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            line-height: 1.4;
-            font-size: 14px;
+        /* Better formatting for tables */
+        .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
         }
-
-        .user-message {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-            color: white;
-            border-radius: 16px 16px 4px 16px;
-            padding: 8px 14px;
-            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
-        }
-
-        .assistant-message {
-            background: white;
-            color: #1f2937;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px 16px 16px 4px;
-            padding: 8px 14px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Model selection styles */
-        .model-select {
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-size: 13px;
-            min-width: 120px;
-            cursor: pointer;
-        }
-
-        .model-select:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-        }
-
-        .model-select option:disabled {
-            color: #9ca3af;
-            background: #f9fafb;
-        }
-
-        /* Compact model badges */
-        .model-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .model-llama {
-            background: #10b981;
-            color: white;
-        }
-
-        .model-mistral {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .model-gemma {
-            background: #8b5cf6;
-            color: white;
-        }
-
-        /* Compact input area */
-        .chat-input-area {
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            padding: 12px;
-        }
-
-        .chat-input {
-            resize: none;
-            font-size: 14px;
-            border: 1px solid #d1d5db;
-            transition: all 0.2s;
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-        }
-
-        /* Compact buttons */
-        .btn-send {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-send:hover:not(:disabled) {
-            background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
-
-        .btn-send:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Empty state */
-        .empty-chat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #6b7280;
-            padding: 20px;
-        }
-
-        .empty-chat-icon {
-            width: 60px;
-            height: 60px;
+        .message-content table th {
             background: #f3f4f6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        /* Quick actions */
-        .quick-action {
-            padding: 6px 12px;
-            background: white;
+            padding: 8px;
+            text-align: left;
             border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-weight: 600;
         }
-
-        .quick-action:hover {
-            border-color: #4f46e5;
-            background: #f9fafb;
-            transform: translateY(-1px);
+        .message-content table td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
         }
-
-        /* Compact header */
-        .chat-header {
-            padding: 12px 16px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: between;
-        }
-
-        /* Status indicator */
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 8px;
-            background: #fef3c7;
-            border: 1px solid #fbbf24;
+        .message-content pre {
+            background: #1f2937;
+            color: white;
+            padding: 12px;
             border-radius: 6px;
-            font-size: 11px;
-            color: #92400e;
-            margin-left: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
         }
-
-        .status-available {
-            background: #d1fae5;
-            border-color: #10b981;
-            color: #065f46;
+        .message-content ul, .message-content ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .message-content li {
+            margin: 5px 0;
         }
     </style>
 </head>
-
-<body class="bg-gray-50">
+<body>
 <div layout:fragment="content">
-
-    <!-- Compact Header -->
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">AI Assistant</h1>
-            <p class="text-sm text-gray-600">Chat with AI to help manage your inventory</p>
-        </div>
-
-        <div class="flex gap-2">
-            <!-- Model Selection - Always visible -->
-            <div class="flex items-center bg-white rounded-lg px-3 py-1.5 shadow-sm border">
-                <i class="bi bi-cpu text-xs mr-1.5 text-gray-600"></i>
-                <span class="text-xs font-medium text-gray-700 mr-2">Model:</span>
-
-                <select id="modelSelect" name="model" class="model-select">
-                    <th:block th:each="modelName : ${availableModels}">
-                        <option th:value="${modelName}"
-                                th:text="${modelName}"
-                                th:selected="${modelName == selectedModel1}">
-                        </option>
-                    </th:block>
-                </select>
-
-                <span id="modelStatus" class="status-indicator status-available">
-                    <i class="bi bi-check-circle-fill text-xs mr-1"></i>Available
-                </span>
-            </div>
-
-            <!-- Clear Chat Button -->
-            <form th:action="@{/chat/clear}" method="post" class="inline">
-                <button type="submit"
-                        onclick="return confirm('Clear all chat history?')"
-                        class="px-3 py-1.5 bg-white text-gray-600 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-all flex items-center font-medium">
-                    <i class="bi bi-trash text-xs mr-1.5"></i>Clear
-                </button>
-            </form>
-        </div>
+    <!-- Page Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">AI Assistant</h1>
+        <p class="text-sm text-gray-600 mt-1">Chat with AI to get insights about your inventory, orders, and customers</p>
     </div>
 
     <!-- Main Chat Container -->
-    <div class="bg-white rounded-xl shadow-lg chat-container overflow-hidden">
+    <div class="bg-white rounded-lg shadow-md">
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-4 rounded-t-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="bi bi-robot text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold">AI Assistant</h2>
+                        <div class="flex items-center space-x-2 text-xs text-primary-100">
+                            <span class="flex items-center">
+                                <span class="relative flex h-2 w-2 mr-1">
+                                    <span th:if="${serviceStatus == 'online'}"
+                                          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span th:classappend="${serviceStatus == 'online' ? 'bg-green-400' : 'bg-red-400'}"
+                                          class="relative inline-flex rounded-full h-2 w-2"></span>
+                                </span>
+                                <span th:text="${serviceStatus == 'online' ? 'Online' : 'Offline'}">Status</span>
+                            </span>
+                            <span>•</span>
+                            <span id="activeModel">llama3.1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <select id="modelSelect"
+                            class="bg-primary-800 text-white text-sm rounded px-3 py-1 border border-primary-600 focus:outline-none focus:ring-2 focus:ring-white/20">
+                        <option th:each="model : ${availableModels}" th:value="${model}" th:text="${model}">llama3.1</option>
+                    </select>
+                    <button onclick="toggleStreamMode()"
+                            class="bg-primary-800 hover:bg-primary-900 px-3 py-1 rounded text-sm transition-colors border border-primary-600">
+                        <i class="bi bi-broadcast mr-1"></i>
+                        <span id="streamToggle">Stream: ON</span>
+                    </button>
+                    <button onclick="clearChat()"
+                            class="bg-primary-800 hover:bg-primary-900 px-3 py-1 rounded text-sm transition-colors border border-primary-600">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Chat Messages Area -->
-        <div class="chat-messages p-4" id="chatMessages">
-
-            <!-- Empty State -->
-            <div th:if="${#lists.isEmpty(chatHistory)}" class="empty-chat">
-                <div class="empty-chat-icon">
-                    <i class="bi bi-chat-dots text-2xl text-gray-400"></i>
-                </div>
-                <h3 class="text-base font-semibold text-gray-900 mb-2">Start a Conversation</h3>
-                <p class="text-sm text-gray-600 mb-4 text-center max-w-sm">
-                    Ask about inventory, get insights, or request help with products.
-                </p>
-
-                <!-- Quick Actions -->
-                <div class="flex flex-wrap gap-2 justify-center">
-                    <button class="quick-action" onclick="setQuickMessage('What products are low in stock?')">
-                        📦 Low stock
-                    </button>
-                    <button class="quick-action" onclick="setQuickMessage('Show sales summary')">
-                        📊 Sales summary
-                    </button>
-                    <button class="quick-action" onclick="setQuickMessage('Inventory tips')">
-                        💡 Tips
-                    </button>
-                </div>
-            </div>
-
-            <!-- Chat History -->
-            <div th:each="msg : ${chatHistory}" class="message-appear">
-                <!-- User Message -->
-                <div th:if="${msg.role == 'user'}" class="flex justify-end mb-3">
-                    <div class="flex flex-col items-end max-w-[75%]">
-                        <div class="flex items-center mb-1 text-xs text-gray-500">
-                            <span th:text="${msg.timestamp}">10:30</span>
-                        </div>
-                        <div class="user-message message-bubble">
-                            <p th:text="${msg.content}">User message</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Assistant Message -->
-                <div th:if="${msg.role == 'assistant'}" class="flex justify-start mb-3">
-                    <div class="flex items-start space-x-2 max-w-[75%]">
-                        <!-- Compact AI Avatar -->
-                        <div class="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-sm mt-0.5">
-                            <i class="bi bi-robot text-xs"></i>
-                        </div>
-
-                        <div class="flex flex-col">
-                            <div class="flex items-center mb-1 text-xs text-gray-500">
-                                <span class="model-badge model-llama" th:text="${msg.model ?: 'llama3'}">llama3</span>
-                                <span class="mx-1.5">•</span>
-                                <span th:text="${msg.timestamp}">10:31</span>
-                            </div>
-                            <div class="assistant-message message-bubble">
-                                <p th:text="${msg.content}">AI response</p>
+        <div id="chatMessages" class="h-[500px] overflow-y-auto p-4 space-y-4 chat-container bg-gray-50">
+            <!-- Welcome Message -->
+            <div class="flex justify-center">
+                <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 max-w-2xl shadow-sm">
+                    <div class="flex items-start space-x-3">
+                        <div class="text-2xl">👋</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800 mb-2">Welcome! How can I help you today?</h3>
+                            <p class="text-gray-600 text-sm mb-3">I can assist you with:</p>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="flex items-center space-x-2 text-gray-700">
+                                    <i class="bi bi-search text-primary-600"></i>
+                                    <span>Finding products</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-gray-700">
+                                    <i class="bi bi-box text-green-600"></i>
+                                    <span>Checking inventory</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-gray-700">
+                                    <i class="bi bi-graph-up text-purple-600"></i>
+                                    <span>Sales analytics</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-gray-700">
+                                    <i class="bi bi-people text-orange-600"></i>
+                                    <span>Customer insights</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Scroll anchor -->
-            <div id="chat-bottom"></div>
         </div>
 
-        <!-- Compact Input Area -->
-        <div class="chat-input-area">
-            <form th:action="@{/chat/send}" method="post" id="chatForm">
-                <!-- Dynamic model field -->
-                <input type="hidden" name="model" id="hiddenModelInput" th:value="${selectedModel ?: 'llama3'}">
-
-                <div class="flex gap-2">
-                    <textarea name="message"
-                              id="messageInput"
-                              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg chat-input focus:border-indigo-500"
-                              placeholder="Type your message..."
-                              rows="1"
-                              maxlength="1000"
-                              required></textarea>
-
-                    <button type="submit"
-                            id="sendButton"
-                            class="btn-send flex items-center">
-                        <i class="bi bi-send text-sm"></i>
-                        <span class="ml-1.5 hidden sm:inline">Send</span>
-                    </button>
+        <!-- Typing Status -->
+        <div id="typingStatus" class="hidden px-4 py-2 bg-gray-50 border-t">
+            <div class="flex items-center text-sm text-gray-500">
+                <div class="loading-dots flex space-x-1 mr-2">
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
                 </div>
+                AI is thinking...
+            </div>
+        </div>
 
-                <div class="flex justify-between items-center mt-2">
-                    <span class="text-xs text-gray-500">
-                        Press Enter to send, Shift+Enter for new line
-                    </span>
-                    <span class="text-xs text-gray-500">
-                        <span id="charCount">0</span>/1000
-                    </span>
+        <!-- Input Area -->
+        <div class="border-t bg-white p-4 rounded-b-lg">
+            <form id="chatForm" class="flex space-x-2">
+                <div class="flex-1 relative">
+                    <textarea
+                            id="messageInput"
+                            rows="2"
+                            placeholder="Ask about products, inventory, orders, or customers..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                            onkeydown="handleKeyPress(event)"></textarea>
+                    <div id="charCount" class="absolute bottom-2 right-2 text-xs text-gray-400">0/5000</div>
                 </div>
+                <button type="submit" id="sendButton"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 disabled:bg-gray-400">
+                    <i class="bi bi-send"></i>
+                    <span>Send</span>
+                </button>
             </form>
-        </div>
-    </div>
 
-    <!-- Alert for model limitation -->
-    <div th:if="${errorMessage}" class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start">
-        <i class="bi bi-exclamation-triangle text-amber-600 text-sm mr-2 mt-0.5"></i>
-        <div class="flex-1">
-            <p class="text-amber-800 text-sm" th:text="${errorMessage}"></p>
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg px-6 py-4 shadow-xl">
-            <div class="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
+            <!-- Quick Actions -->
+            <div class="mt-3 flex flex-wrap gap-2">
+                <span class="text-xs text-gray-500 mr-1">Quick actions:</span>
+                <button onclick="sendQuickMessage('Show all products in stock')"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium transition-colors">
+                    <i class="bi bi-box-seam mr-1"></i>All products
+                </button>
+                <button onclick="sendQuickMessage('What items are low on stock?')"
+                        class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium transition-colors">
+                    <i class="bi bi-exclamation-triangle mr-1"></i>Low stock
+                </button>
+                <button onclick="sendQuickMessage('Show recent orders')"
+                        class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium transition-colors">
+                    <i class="bi bi-receipt mr-1"></i>Recent orders
+                </button>
+                <button onclick="sendQuickMessage('Top selling products')"
+                        class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium transition-colors">
+                    <i class="bi bi-graph-up-arrow mr-1"></i>Top sellers
+                </button>
+                <button onclick="sendQuickMessage('Customer analytics')"
+                        class="bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-medium transition-colors">
+                    <i class="bi bi-people mr-1"></i>Customers
+                </button>
             </div>
-            <p class="text-sm text-gray-600 mt-2">AI is thinking...</p>
         </div>
     </div>
 </div>
 
 <th:block layout:fragment="scripts">
-    <script>
-        // Compact chat functionality
+    <script th:inline="javascript">
+        let isStreaming = true;
+        let conversationHistory = [];
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageInput = document.getElementById('messageInput');
+            const input = document.getElementById('messageInput');
             const charCount = document.getElementById('charCount');
-            const chatForm = document.getElementById('chatForm');
-            const sendButton = document.getElementById('sendButton');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const modelSelect = document.getElementById('modelSelect');
-            const modelStatus = document.getElementById('modelStatus');
-            const hiddenModelInput = document.getElementById('hiddenModelInput');
 
-            // Auto-scroll to bottom
-            if (chatMessages) {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            // Character counter
-            if (messageInput && charCount) {
-                messageInput.addEventListener('input', function() {
-                    charCount.textContent = this.value.length;
-                });
-            }
-
-            // Auto-resize textarea
-            if (messageInput) {
-                messageInput.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 80) + 'px';
-                });
-            }
-
-            // Model selection handler
-            if (modelSelect) {
-                modelSelect.addEventListener('change', function() {
-                    const selectedModel = this.value;
-
-                    if (selectedModel !== 'llama3' && selectedModel !== "phi4-mini:latest") {
-                        // Show warning for unavailable models
-                        showNotification('This model is not yet available. Using Llama 3 instead.', 'warning');
-
-                        // Update status indicator
-                        if (modelStatus) {
-                            modelStatus.className = 'status-indicator';
-                            modelStatus.innerHTML = '<i class="bi bi-clock text-xs mr-1"></i>Coming Soon';
-                        }
-
-                        // Reset to llama3 after showing message
-                        setTimeout(() => {
-                            this.value = 'llama3';
-                            if (hiddenModelInput) {
-                                hiddenModelInput.value = 'llama3';
-                            }
-                            if (modelStatus) {
-                                modelStatus.className = 'status-indicator status-available';
-                                modelStatus.innerHTML = '<i class="bi bi-check-circle-fill text-xs mr-1"></i>Available';
-                            }
-                        }, 2000);
-                    } else {
-                        // Update status for llama3
-                        if (modelStatus) {
-                            modelStatus.className = 'status-indicator status-available';
-                            modelStatus.innerHTML = '<i class="bi bi-check-circle-fill text-xs mr-1"></i>Available';
-                        }
-                        if (hiddenModelInput) {
-                            hiddenModelInput.value = selectedModel;
-                        }
-                    }
-                });
-
-                // Initialize hidden input
-                if (hiddenModelInput) {
-                    hiddenModelInput.value = modelSelect.value;
+            input.addEventListener('input', function() {
+                charCount.textContent = `${this.value.length}/5000`;
+                if (this.value.length >= 5000) {
+                    charCount.classList.add('text-red-500');
+                } else {
+                    charCount.classList.remove('text-red-500');
                 }
-            }
-
-            // Handle form submission
-            if (chatForm) {
-                chatForm.addEventListener('submit', function(e) {
-                    if (messageInput && !messageInput.value.trim()) {
-                        e.preventDefault();
-                        return false;
-                    }
-
-                    // Ensure we're using an available model
-                    if (hiddenModelInput && modelSelect) {
-                        if (modelSelect.value !== 'llama3') {
-                            hiddenModelInput.value = 'llama3';
-                        } else {
-                            hiddenModelInput.value = modelSelect.value;
-                        }
-                    }
-
-                    // Show loading
-                    if (loadingOverlay) {
-                        loadingOverlay.classList.remove('hidden');
-                    }
-
-                    // Disable send button
-                    if (sendButton) {
-                        sendButton.disabled = true;
-                        sendButton.innerHTML = '<i class="bi bi-hourglass-split text-sm"></i><span class="ml-1.5 hidden sm:inline">Sending...</span>';
-                    }
-                });
-            }
-
-            // Handle Enter key
-            if (messageInput) {
-                messageInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        if (this.value.trim()) {
-                            chatForm.submit();
-                        }
-                    }
-                });
-            }
-
-            // Check for URL hash to scroll
-            if (window.location.hash === '#chat-bottom') {
-                setTimeout(() => {
-                    if (chatMessages) {
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }
-                }, 100);
-            }
+            });
         });
 
-        // Quick message helper
-        function setQuickMessage(message) {
-            const messageInput = document.getElementById('messageInput');
-            if (messageInput) {
-                messageInput.value = message;
-                messageInput.focus();
-                messageInput.dispatchEvent(new Event('input'));
-            }
+        // Toggle streaming mode
+        function toggleStreamMode() {
+            isStreaming = !isStreaming;
+            document.getElementById('streamToggle').textContent = `Stream: ${isStreaming ? 'ON' : 'OFF'}`;
         }
 
-        // Show notification helper
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            const bgColor = type === 'warning' ? 'bg-amber-500' :
-                           type === 'success' ? 'bg-green-500' :
-                           type === 'error' ? 'bg-red-500' : 'bg-blue-500';
-
-            notification.className = `fixed top-20 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm`;
-            notification.style.animation = 'slideIn 0.3s ease-out';
-            notification.innerHTML = `
-                <div class="flex items-center">
-                    <i class="bi bi-${type === 'warning' ? 'exclamation-triangle' : 'info-circle'} mr-2"></i>
-                    <span>${message}</span>
+        // Clear chat
+        function clearChat() {
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.innerHTML = `
+                <div class="flex justify-center">
+                    <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 max-w-2xl shadow-sm">
+                        <p class="text-gray-600 text-sm">
+                            💬 Chat cleared. How can I help you today?
+                        </p>
+                    </div>
                 </div>
             `;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'fadeOut 0.3s ease-out';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            conversationHistory = [];
         }
 
-        // Add fade out animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                from { opacity: 1; transform: translateX(0); }
-                to { opacity: 0; transform: translateX(20px); }
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                document.getElementById('chatForm').dispatchEvent(new Event('submit'));
             }
-        `;
-        document.head.appendChild(style);
+        }
+
+        // Quick message buttons
+        function sendQuickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+        }
+
+        // Add message to chat
+        function addMessage(message, isUser = false, isError = false) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} message-bubble`;
+
+            const bubbleClass = isUser
+                ? 'bg-primary-600 text-white'
+                : (isError ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-white border border-gray-200 text-gray-800');
+
+            messageDiv.innerHTML = `
+                <div class="max-w-3xl">
+                    <div class="flex items-start space-x-2">
+                        ${!isUser ? `
+                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="bi bi-robot text-primary-600"></i>
+                            </div>
+                        ` : ''}
+                        <div class="${bubbleClass} rounded-lg px-4 py-3 shadow-sm">
+                            <div class="message-content">${message}</div>
+                            <div class="text-xs opacity-70 mt-1">${new Date().toLocaleTimeString()}</div>
+                        </div>
+                        ${isUser ? `
+                            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="bi bi-person text-gray-600"></i>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            conversationHistory.push({ text: message, isUser, timestamp: new Date() });
+            return messageDiv;
+        }
+
+        // Show/hide typing status
+        function showTypingStatus() {
+            document.getElementById('typingStatus').classList.remove('hidden');
+        }
+
+        function hideTypingStatus() {
+            document.getElementById('typingStatus').classList.add('hidden');
+        }
+
+        // CRITICAL FIX: Proper formatting for streamed content
+        function formatMessage(text) {
+            // First, ensure proper spacing by adding spaces where needed
+            text = text.replace(/([a-z])([A-Z])/g, '$1 $2'); // Add space between camelCase
+            text = text.replace(/(\d)([A-Z])/g, '$1 $2'); // Add space between number and capital letter
+            text = text.replace(/([a-zA-Z])(\d)/g, '$1 $2'); // Add space between letter and number
+
+            // Fix table formatting - detect pipe separators
+            if (text.includes('|')) {
+                // Split by double newline to separate paragraphs from tables
+                const parts = text.split(/\n\n|\r\n\r\n/);
+                text = parts.map(part => {
+                    if (part.includes('|')) {
+                        // This looks like a table, format it properly
+                        const lines = part.split(/\n|\r\n/);
+                        const tableLines = lines.filter(line => line.includes('|'));
+
+                        if (tableLines.length > 0) {
+                            let tableHtml = '<table class="w-full border-collapse my-2">';
+                            let isHeader = true;
+
+                            for (const line of tableLines) {
+                                // Skip separator lines (---|---|---)
+                                if (line.match(/^[\s\-|]+$/)) continue;
+
+                                const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell);
+                                if (cells.length > 0) {
+                                    tableHtml += '<tr>';
+                                    const tag = isHeader ? 'th' : 'td';
+                                    cells.forEach(cell => {
+                                        // Clean up formatting markers
+                                        cell = cell.replace(/\*\*/g, '');
+                                        tableHtml += `<${tag} class="${isHeader ? 'bg-gray-100 font-semibold' : ''} border border-gray-300 px-2 py-1">${cell}</${tag}>`;
+                                    });
+                                    tableHtml += '</tr>';
+                                    if (isHeader) isHeader = false;
+                                }
+                            }
+                            tableHtml += '</table>';
+                            return tableHtml;
+                        }
+                    }
+                    return part;
+                }).join('<br><br>');
+            }
+
+            // Handle code blocks
+            text = text.replace(/```sql([\s\S]*?)```/g, '<pre class="language-sql"><code>$1</code></pre>');
+            text = text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+
+            // Handle inline formatting
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Handle lists (both numbered and bulleted)
+            text = text.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+            text = text.replace(/^[-*]\s+(.+)$/gm, '<li>$1</li>');
+
+            // Convert newlines to breaks (but not within pre tags)
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = text;
+            const preTags = tempDiv.getElementsByTagName('pre');
+            for (let pre of preTags) {
+                pre.setAttribute('data-preserve', 'true');
+            }
+            text = tempDiv.innerHTML;
+            text = text.replace(/\n/g, '<br>');
+
+            // Handle special indicators
+            text = text.replace(/🔍\s*Searching database\.\.\./gi,
+                '<span class="text-blue-600 font-medium"><i class="bi bi-search animate-pulse mr-1"></i>Searching database...</span>');
+            text = text.replace(/✅\s*Found results!/gi,
+                '<span class="text-green-600 font-medium"><i class="bi bi-check-circle mr-1"></i>Found results!</span>');
+            text = text.replace(/⚠️/g, '<i class="bi bi-exclamation-triangle text-yellow-500"></i>');
+            text = text.replace(/❌/g, '<i class="bi bi-x-circle text-red-500"></i>');
+
+            return text;
+        }
+
+        // Handle form submission with proper streaming
+        document.getElementById('chatForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const message = input.value.trim();
+
+            if (!message || message.length > 5000) return;
+
+            // Save model selection
+            const selectedModel = document.getElementById('modelSelect').value;
+            document.getElementById('activeModel').textContent = selectedModel;
+
+            // Add user message
+            addMessage(message, true);
+
+            // Clear input
+            input.value = '';
+            document.getElementById('charCount').textContent = '0/5000';
+
+            // Disable input
+            input.disabled = true;
+            sendButton.disabled = true;
+
+            try {
+                const requestBody = {
+                    message: message,
+                    model: selectedModel,
+                    streaming: isStreaming
+                };
+
+                if (isStreaming) {
+                    // Streaming mode
+                    showTypingStatus();
+
+                    const response = await fetch('/chatbot/stream', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Stream request failed: ${response.statusText}`);
+                    }
+
+                    hideTypingStatus();
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let aiMessageDiv = null;
+                    let fullMessage = '';
+                    let buffer = '';
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        buffer += decoder.decode(value, { stream: true });
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop() || '';
+
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                let data = line.substring(6).trim();
+
+                                // Skip empty or [DONE]
+                                if (!data || data === '[DONE]') continue;
+
+                                // Handle nested "data: data: " format from your backend
+                                if (data.startsWith('data: ')) {
+                                    data = data.substring(6);
+                                }
+
+                                // Create message div on first chunk
+                                if (!aiMessageDiv) {
+                                    aiMessageDiv = addMessage('', false);
+                                }
+
+                                // IMPORTANT: Add space between tokens
+                                if (fullMessage && !fullMessage.endsWith(' ') && !data.startsWith(' ')) {
+                                    fullMessage += ' ';
+                                }
+
+                                fullMessage += data;
+                                const messageContent = aiMessageDiv.querySelector('.message-content');
+                                messageContent.innerHTML = formatMessage(fullMessage) + '<span class="streaming-text"></span>';
+
+                                // Auto-scroll
+                                document.getElementById('chatMessages').scrollTop =
+                                    document.getElementById('chatMessages').scrollHeight;
+                            }
+                        }
+                    }
+
+                    // Remove cursor and finalize formatting
+                    if (aiMessageDiv) {
+                        const messageContent = aiMessageDiv.querySelector('.message-content');
+                        messageContent.innerHTML = formatMessage(fullMessage);
+                    }
+
+                } else {
+                    // Non-streaming mode
+                    showTypingStatus();
+
+                    const response = await fetch('/chatbot/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const data = await response.json();
+                    hideTypingStatus();
+
+                    if (data.error) {
+                        addMessage(data.errorMessage || 'An error occurred.', false, true);
+                    } else {
+                        addMessage(formatMessage(data.message), false);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingStatus();
+                addMessage('Sorry, I encountered an error. Please try again.', false, true);
+            } finally {
+                input.disabled = false;
+                sendButton.disabled = false;
+                input.focus();
+            }
+        });
     </script>
 </th:block>
-
 </body>
 </html>

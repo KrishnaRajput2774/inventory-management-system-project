@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class Message {
-
-    private String content;
-    private String role;
-
+public class ModelListResponse {
+    private List<String> models;
+    private boolean success;
 }

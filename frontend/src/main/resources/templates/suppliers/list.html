@@ -94,16 +94,16 @@
     <!-- Enhanced Header with CTAs -->
     <div class="mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Supplier Network</h1>
-            <p class="mt-2 text-lg text-gray-600">Manage your supplier partnerships and business relationships</p>
+            <h1 class="text-xl font-bold text-gray-900">Supplier Network</h1>
+            <p class="mt-2 text-base text-gray-600">Manage your supplier partnerships and business relationships</p>
         </div>
         <div class="flex flex-wrap gap-3">
             <a href="/suppliers/create"
-               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
                 <i class="bi bi-plus-circle mr-2"></i>Add New Supplier
             </a>
             <button onclick="refreshSuppliers()"
-                    class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                    class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-3 py-1.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
                 <i class="bi bi-arrow-clockwise mr-2"></i>Refresh
             </button>
         </div>
@@ -112,107 +112,145 @@
     <!-- Supplier Metrics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Suppliers Card -->
-        <div class="metric-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="metric-card rounded-2xl text-white p-3 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Total Suppliers</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${totalSuppliers ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Total Suppliers</p>
+                    <p class="text-xl font-bold mt-2" th:text="${totalSuppliers ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-building text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Partners</span>
+                        <span class="text-white/80 text-xs font-medium">Partners</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-people text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-people text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Total Products Card -->
-        <div class="products-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="products-card rounded-2xl text-white p-3 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Total Products</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Total Products</p>
+                    <p class="text-xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-box text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium" th:text="'Avg: ' + ${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">Avg: 0.0</span>
+                        <span class="text-white/80 text-xs font-medium" th:text="'Avg: ' + ${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">Avg: 0.0</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-boxes text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-boxes text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Partnership Duration Card -->
-        <div class="partnership-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="partnership-card rounded-2xl text-white p-3 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Avg Partnership</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Avg Partnership</p>
+                    <p class="text-xl font-bold mt-2" th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-calendar-heart text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Months</span>
+                        <span class="text-white/80 text-xs font-medium">Months</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-handshake text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-handshake text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Attention Needed Card -->
-        <div class="attention-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="attention-card rounded-2xl text-white p-3 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Need Attention</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${suppliersNeedingAttention ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Need Attention</p>
+                    <p class="text-xl font-bold mt-2" th:text="${suppliersNeedingAttention ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-exclamation-triangle text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Low Products</span>
+                        <span class="text-white/80 text-xs font-medium">Low Products</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-flag text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-flag text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Performers Section -->
-    <div th:unless="${#lists.isEmpty(topSuppliers)}" class="mb-8">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Top Performing Suppliers</h3>
+
+    <div th:unless="${#lists.isEmpty(topSuppliers)}" class="mb-10 animate-fade-in" style="animation-delay: 0.5s;">
+        <div class="glass-card rounded-2xl shadow-lg border border-white/20 bg-white/80 backdrop-blur-lg p-3">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span class="text-sm text-gray-600">Most Products</span>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div th:each="supplier : ${topSuppliers}" class="text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-100">
-                    <div class="w-12 h-12 supplier-avatar rounded-full flex items-center justify-center mx-auto mb-2">
-                        <i class="bi bi-building text-white text-xl"></i>
+                    <div class="w-7 h-7 bg-gradient-to-r from-gray-600 to-slate-600 rounded-lg flex items-center justify-center shadow-md">
+                        <i class="bi bi-trophy-fill text-white text-sm"></i>
                     </div>
-                    <h4 class="font-semibold text-gray-900 text-sm truncate" th:text="${supplier.name}">Supplier Name</h4>
-                    <p class="text-xs text-gray-600" th:text="${supplier.productsCount} + ' products'">0 products</p>
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Top Performing Suppliers</h3>
+                        <p class="text-xs text-gray-500 font-medium">Suppliers with Most Products</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 bg-gradient-to-r from-stone-50 to-gray-50 px-3 py-1.5 rounded-full border border-stone-200">
+                    <div class="w-1.5 h-1.5 bg-gradient-to-r from-stone-500 to-gray-500 rounded-full"></div>
+                    <span class="text-xs text-stone-700 font-semibold">Most Products</span>
                 </div>
             </div>
+
+            <!-- Supplier Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div th:each="supplier, iterStat : ${topSuppliers}"
+                     class="group relative bg-gradient-to-br from-white to-gray-50/50 border border-gray-100 text-center p-3 rounded-xl hover:shadow-md hover:border-orange-200 transition-all duration-300 hover:scale-105 hover:bg-gradient-to-br hover:from-orange-50/30 hover:to-red-50/30">
+
+                    <!-- Ranking Badge -->
+                    <div class="absolute -top-1 -right-1 w-4 h-4
+                            bg-gradient-to-r from-blue-500 to-indigo-600
+                            rounded-full flex items-center justify-center shadow-sm">
+                        <span class="text-white text-xs font-bold" th:text="${iterStat.count}">1</span>
+                    </div>
+
+                    <!-- Supplier Icon -->
+                    <div class="relative mb-3">
+                        <div class="w-8 h-8 rounded-xl flex items-center justify-center mx-auto shadow-md
+                                bg-gradient-to-br from-blue-500 to-indigo-600
+                                group-hover:shadow-indigo-200 transition-all duration-300">
+                            <i class="bi bi-truck text-white text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Supplier Info -->
+                    <div class="space-y-1.5">
+                        <h4 class="font-bold text-gray-900 text-sm mb-1 line-clamp-1 group-hover:text-orange-700 transition-colors duration-300" th:text="${supplier.name}">Supplier Name</h4>
+
+                        <!-- Revenue with enhanced styling -->
+                        <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-lg px-2 py-1.5">
+                            <p class="text-xs text-emerald-700 font-bold" th:text="${supplier.productsCount} + ' Products'">0 Products</p>
+                        </div>
+                    </div>
+
+                    <!-- Hover effect overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
     <!-- Suppliers Table -->
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-        <div class="px-6 py-6 border-b border-gray-200/50">
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 mt-5 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200/50">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-xl font-semibold text-gray-900">All Suppliers</h3>
-                    <p class="mt-1 text-sm text-gray-600">Complete supplier directory with management tools</p>
+                    <h3 class="text-lg font-semibold text-gray-900">All Suppliers</h3>
+                    <p class="mt-1 text-xs text-gray-600">Complete supplier directory with management tools</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     <input type="text" id="supplierSearch" placeholder="Search suppliers..."
-                           class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                           class="px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                 </div>
             </div>
         </div>
@@ -221,10 +259,10 @@
             <table class="min-w-full divide-y divide-gray-200/50">
                 <thead class="bg-gray-50/50 backdrop-blur-sm">
                 <tr>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact Info</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Products</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Partnership</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact Info</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Products</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Partnership</th>
                     <th scope="col" class="relative px-6 py-4"><span class="sr-only">Actions</span></th>
                 </tr>
                 </thead>
@@ -248,59 +286,59 @@
 
                 <!-- Supplier Rows -->
                 <tr th:each="supplier : ${suppliers}" class="table-hover">
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-3.5 py-3 whitespace-nowrap">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-12 w-12">
-                                <div class="h-12 w-12 supplier-avatar rounded-xl flex items-center justify-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 supplier-avatar rounded-xl flex items-center justify-center">
                                     <i class="bi bi-building text-white text-xl"></i>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-bold text-gray-900">
+                            <div class="ml-2">
+                                <div class="text-xs font-bold text-gray-900">
                                     <a th:href="@{/suppliers/{id}(id=${supplier.id})}"
                                        th:text="${supplier.name}"
-                                       class="hover:text-blue-600 transition-colors duration-150"></a>
+                                       class="hove  r:text-blue-600 transition-colors duration-150"></a>
                                 </div>
                                 <div class="text-xs text-gray-500" th:text="'ID: #' + ${supplier.id}"></div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900 font-medium" th:text="${supplier.email}"></div>
-                        <div class="text-sm text-gray-500" th:text="${supplier.contactNumber}"></div>
-                        <div class="text-xs text-gray-400 max-w-xs truncate" th:text="${supplier.address}"></div>
+                    <td class="px-3.5 py-3">
+                        <div class="text-xs text-gray-900 font-medium" th:text="${supplier.email}"></div>
+                        <div class="text-xs text-gray-500" th:text="${supplier.contactNumber}"></div>
+                        <div class="text-[8px] text-gray-400 max-w-xs truncate" th:text="${supplier.address}"></div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-3.5 py-3 whitespace-nowrap">
                         <div class="flex items-center">
-                            <span class="inline-flex px-3 py-1.5 text-sm font-bold rounded-xl bg-blue-100 text-blue-800"
-                                  th:text="${supplier.productsCount ?: 0}"></span>
-                            <span class="ml-2 text-xs text-gray-500">products</span>
+                                <span class="inline-flex px-1 py-0.5 text-xs font-bold rounded-xl bg-blue-100 text-blue-800"
+                                      th:text="${supplier.productsCount ?: 0}"></span>
+                            <span class="ml-2 text-[10px] text-gray-500">products</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td class="px-3.5 py-3 whitespace-nowrap text-xs text-gray-500">
                         <div th:if="${supplier.createdAt != null}">
                             <span th:text="${#temporals.format(supplier.createdAt, 'MMM yyyy')}">Jan 2024</span>
-                            <div class="text-xs text-gray-400" th:text="'(' + ${#numbers.formatInteger(T(java.time.temporal.ChronoUnit).MONTHS.between(supplier.createdAt, T(java.time.LocalDateTime).now()), 0)} + ' months)'">
+                            <div class="text-[8px] text-gray-400" th:text="'(' + ${#numbers.formatInteger(T(java.time.temporal.ChronoUnit).MONTHS.between(supplier.createdAt, T(java.time.LocalDateTime).now()), 0)} + ' months)'">
                                 (0 months)
                             </div>
                         </div>
                         <span th:unless="${supplier.createdAt != null}" class="text-gray-400">Unknown</span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td class="px-3.5 py-3 whitespace-nowrap text-right text-xs font-medium">
                         <div class="flex items-center justify-end space-x-2">
                             <a th:href="@{/suppliers/{id}(id=${supplier.id})}"
-                               class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
+                               class="inline-flex items-center px-2 py-2 border border-transparent text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
                                 <i class="bi bi-eye mr-1"></i>View
                             </a>
                             <a th:href="@{/suppliers/{id}/products(id=${supplier.id})}"
-                               class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
+                               class="inline-flex items-center px-2 py-2 border border-gray-300 text-xs font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
                                 <i class="bi bi-box mr-1"></i>Products
                             </a>
 
                             <!-- Delete Button -->
                             <form th:action="@{/suppliers/{id}/delete(id=${supplier.id})}" method="post" style="display: inline;">
                                 <button type="submit"
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-150"
+                                        class="inline-flex items-center px-2 py-2 border border-transparent text-xs font-semibold rounded-lg text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-150"
                                         onclick="return confirm('Are you sure you want to delete this supplier? This action cannot be undone.')">
                                     <i class="bi bi-trash mr-1"></i>Delete
                                 </button>
@@ -317,27 +355,27 @@
     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Supplier Insights -->
         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <h3 class="text-base font-semibold text-gray-900 mb-4">
                 <i class="bi bi-graph-up mr-2"></i>Supplier Insights
             </h3>
             <div class="space-y-4">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Average Products per Supplier</span>
-                    <span class="text-sm font-semibold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">0.0</span>
+                    <span class="text-xs text-gray-600">Average Products per Supplier</span>
+                    <span class="text-xs font-semibold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">0.0</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Partnership Duration</span>
-                    <span class="text-sm font-semibold text-purple-600"
+                    <span class="text-xs text-gray-600">Partnership Duration</span>
+                    <span class="text-xs font-semibold text-purple-600"
                           th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)} + ' months'">0 months</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Suppliers Needing Attention</span>
-                    <span class="text-sm font-semibold"
+                    <span class="text-xs text-gray-600">Suppliers Needing Attention</span>
+                    <span class="text-xs font-semibold"
                           th:classappend="${suppliersNeedingAttention > 0 ? 'text-red-600' : 'text-green-600'}"
                           th:text="${suppliersNeedingAttention ?: 0}">0</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Network Health Score</span>
+                    <span class="text-xs text-gray-600">Network Health Score</span>
                     <div class="flex items-center">
                         <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
                             <div class="h-2 bg-green-500 rounded-full"
@@ -351,25 +389,25 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-2">
                 <i class="bi bi-lightning mr-2"></i>Quick Actions
             </h3>
             <div class="space-y-3">
                 <a href="/suppliers/create"
-                   class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                   class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
                     <i class="bi bi-plus-circle mr-2"></i>Add New Supplier
                 </a>
                 <a href="/products/create"
-                   class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                   class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-2 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
                     <i class="bi bi-box mr-2"></i>Add Product
                 </a>
                 <button onclick="exportSuppliers()"
-                        class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center">
+                        class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center">
                     <i class="bi bi-download mr-2"></i>Export Suppliers
                 </button>
                 <a href="/orders/create"
-                   class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                   class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-2 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
                     <i class="bi bi-cart-plus mr-2"></i>Create Purchase Order
                 </a>
             </div>
@@ -378,28 +416,28 @@
 
     <!-- Network Health Section -->
     <div class="mt-8">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-6">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-base font-semibold text-gray-900 mb-4">
                 <i class="bi bi-heart-pulse mr-2"></i>Supplier Network Health Dashboard
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                    <div class="text-3xl font-bold text-green-600" th:text="${totalSuppliers ?: 0}">0</div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                    <div class="text-2xl font-bold text-green-600" th:text="${totalSuppliers ?: 0}">0</div>
                     <div class="text-sm text-gray-600 mt-1">Total Partners</div>
                     <div class="text-xs text-green-600 mt-1">Network Size</div>
                 </div>
-                <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <div class="text-3xl font-bold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">0.0</div>
+                <div class="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <div class="text-2xl font-bold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerSupplier ?: 0, 1, 1)}">0.0</div>
                     <div class="text-sm text-gray-600 mt-1">Avg Products</div>
                     <div class="text-xs text-blue-600 mt-1">Per Supplier</div>
                 </div>
-                <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
-                    <div class="text-3xl font-bold text-purple-600" th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)}">0</div>
+                <div class="text-center p-3 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
+                    <div class="text-2xl font-bold text-purple-600" th:text="${#numbers.formatDecimal(avgPartnershipMonths ?: 0, 1, 0)}">0</div>
                     <div class="text-sm text-gray-600 mt-1">Avg Partnership</div>
                     <div class="text-xs text-purple-600 mt-1">Months</div>
                 </div>
-                <div class="text-center p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl border border-red-100">
-                    <div class="text-3xl font-bold"
+                <div class="text-center p-3 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl border border-red-100">
+                    <div class="text-2xl font-bold"
                          th:classappend="${suppliersNeedingAttention > 0 ? 'text-red-600' : 'text-green-600'}"
                          th:text="${suppliersNeedingAttention ?: 0}">0</div>
                     <div class="text-sm text-gray-600 mt-1">Need Attention</div>
@@ -410,8 +448,8 @@
             </div>
 
             <!-- Network Performance Indicators -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-4 bg-gray-50 rounded-xl">
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div class="p-3 bg-gray-50 rounded-xl">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-gray-700">Network Stability</span>
                         <i class="bi bi-shield-check text-green-500"></i>
@@ -426,7 +464,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 bg-gray-50 rounded-xl">
+                <div class="p-3 bg-gray-50 rounded-xl">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-gray-700">Product Diversity</span>
                         <i class="bi bi-collection text-blue-500"></i>
@@ -442,7 +480,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 bg-gray-50 rounded-xl">
+                <div class="p-3 bg-gray-50 rounded-xl">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-gray-700">Partnership Maturity</span>
                         <i class="bi bi-award text-purple-500"></i>

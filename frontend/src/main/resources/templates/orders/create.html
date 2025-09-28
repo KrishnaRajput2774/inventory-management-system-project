@@ -68,7 +68,7 @@
         /* Fixed Dropdown Styles */
         .search-dropdown {
             position: absolute;
-            z-index: 10000;
+            z-index: 100;
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(229, 231, 235, 0.8);
@@ -439,8 +439,8 @@
     <!-- Header Section -->
     <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 mb-8">
         <div class="animate-fade-in">
-            <h1 class="text-4xl font-bold text-gray-900 mb-3">Create New Order</h1>
-            <p class="text-lg text-gray-600">Configure order details and add products with smart inventory management</p>
+            <h1 class="text-xl font-bold text-gray-900 mb-3">Create New Order</h1>
+            <p class="text-sm text-gray-600">Configure order details and add products with smart inventory management</p>
         </div>
         <div class="flex flex-wrap gap-3 animate-fade-in">
             <a href="/orders" class="btn-primary">
@@ -669,7 +669,7 @@
                                     <div class="search-container">
                                         <input type="text" class="input-field w-full product-search"
                                                placeholder="Search products by name, code..." autocomplete="off">
-                                        <div class="search-dropdown product-dropdown" style="display: none;  z-index: 9999;"></div>
+                                        <div class="search-dropdown product-dropdown" style="display: none;  z-index: 10;"></div>
                                         <input type="hidden" name="orderItems[0].productDto.productId"
                                                class="product-id-input" required >
                                     </div>
@@ -704,7 +704,7 @@
                     </div>
 
                     <!-- Total Display -->
-                    <div class="total-display mt-6">
+                    <div class="total-display mt-6" style="z-index:0">
                         <div class="text-gray-700 font-bold mb-3 text-lg">Order Total</div>
                         <div class="total-amount">₹ <span id="totalPrice">0.00</span></div>
                     </div>

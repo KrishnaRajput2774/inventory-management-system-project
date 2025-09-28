@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+
+<head>
+    <title th:text="'Purchase Order #' + ${order.orderId}">Purchase Order Detail</title>
+    <style>
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+        }
+        .cost-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+        .total-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        }
+        .items-card {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+        .supplier-card {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        }
+        .pending-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .order-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        .supplier-icon {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+        .product-icon {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+        .table-row:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transition: background-color 0.2s ease;
+        }
+        .success-alert {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            border: none;
+        }
+        .error-alert {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            color: white;
+            border: none;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .status-completed { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); }
+        .status-created { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .status-processing { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .status-cancelled { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        .type-purchase { background: linear-gradient(135deg, #06b6d4 0%, #67e8f9 100%); }
+        .inventory-warning {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            animation: pulse 2s infinite;
+        }
+        .inventory-good {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+        .print-only {
+            display: none;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; }
+            .glass-card { background: white !important; box-shadow: none !important; border: 1px solid #ccc !important; }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-orange-50 to-amber-100 min-h-screen">
+<div layout:fragment="content">
+
+    <!-- Print Header (only visible when printing) -->
+    <div class="print-only mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">PURCHASE ORDER</h1>
+        <p class="text-lg text-gray-600" th:text="'PO #' + ${order.orderId}">PO #0</p>
+        <p class="text-sm text-gray-500" th:text="'Generated on ' + ${#temporals.format(T(java.time.LocalDateTime).now(), 'MMM dd, yyyy')}">Date</p>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}" class="success-alert rounded-xl p-4 mb-6 shadow-lg animate-fade-in no-print">
+        <div class="flex items-center">
+            <i class="bi bi-check-circle-fill mr-3 text-xl"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+    </div>
+    <div th:if="${errorMessage}" class="error-alert rounded-xl p-4 mb-6 shadow-lg animate-fade-in no-print">
+        <div class="flex items-center">
+            <i class="bi bi-exclamation-triangle-fill mr-3 text-xl"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-3 mb-8 no-print">
+        <div class="animate-fade-in">
+            <h1 class="text-xl font-bold text-gray-900" th:text="'Purchase Order #' + ${order.orderId}">Purchase Order Detail</h1>
+            <p class="text-sm text-gray-600">Inventory procurement and supplier management</p>
+        </div>
+        <div class="flex flex-wrap gap-1 animate-fade-in">
+            <button th:onclick="'printInvoice(' + ${order.orderId} + ')'" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-2 py-1 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                <i class="bi bi-printer-fill mr-2"></i><span class="text-xs">Print PO</span>
+            </button>
+            <form th:action="@{/invoices/download(orderIds=${order.orderId})}" method="get" style="display: inline;">
+                <input type="hidden" name="orderIds" th:value="${order.orderId}">
+                <button type="submit" class="bg-gradient-to-r from-amber-600 to-orange-700 text-white px-2 py-1 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold pulse">
+                    <i class="bi bi-file-earmark-text-fill mr-2"></i><span class="text-xs">Generate Invoice</span>
+                </button>
+            </form>
+            <a th:href="@{/orders}"
+               class="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-2 py-1 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                <i class="bi bi-arrow-left mr-2"></i><span class="text-xs">Back to Orders</span>
+            </a>
+            <a th:if="${order.supplier != null}"
+               th:href="@{/suppliers/{id}(id=${order.supplier.id})}"
+               class="bg-gradient-to-r from-orange-600 to-amber-700 text-white px-2 py-1 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                <i class="bi bi-truck mr-2"></i><span class="text-xs">View Supplier</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Purchase Analytics Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+        <!-- Total Order Value -->
+        <div class="metric-card total-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Total Order Value</p>
+                    <p class="text-lg font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-currency-rupee text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-xs">Purchase Amount</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-cart-plus text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Count -->
+        <div class="metric-card items-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Items Ordered</p>
+                    <p class="text-lg font-bold mt-2" th:text="${#lists.size(order.orderItems)}">0</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-boxes text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-xs">Products</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-box-seam text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Quantity -->
+        <div class="metric-card cost-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Total Quantity</p>
+                    <p class="text-lg font-bold mt-2"
+                       th:with="totalQty=${#aggregates.sum(order.orderItems.![quantity])}"
+                       th:text="${totalQty}">0</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-hash text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-xs">Units</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-123 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Item Cost -->
+        <div class="metric-card supplier-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Avg Item Cost</p>
+                    <p class="text-lg font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(#lists.size(order.orderItems) > 0 ? order.totalPrice / #lists.size(order.orderItems) : 0, 0, 2)}">₹0.00</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-calculator text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-sm">Per Item</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-graph-down text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Status -->
+        <div class="metric-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.4s;"
+             th:classappend="'status-' + ${#strings.toLowerCase(order.orderStatus)}">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Order Status</p>
+                    <p class="text-base font-bold mt-2" th:text="${order.orderStatus}">STATUS</p>
+                    <div class="flex items-center mt-3">
+                        <i class="bi bi-clipboard-check text-white/60 mr-2"></i>
+                        <span class="text-white/80 text-xs">Current</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i th:class="${order.orderStatus.name() == 'COMPLETED' ? 'bi bi-check-circle' : (order.orderStatus.name() == 'PROCESSING' ? 'bi bi-clock' : (order.orderStatus.name() == 'CANCELLED' ? 'bi bi-x-circle' : 'bi bi-plus-circle'))} + ' text-xl'"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Cards Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
+        <!-- Purchase Order Information Card -->
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.5s;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">
+                    <i class="bi bi-clipboard-data text-blue-600 mr-2"></i>Purchase Order Information
+                </h3>
+                <div class="w-8 h-8 order-icon rounded-xl flex items-center justify-center">
+                    <i class="bi bi-file-earmark-text text-white text-sm"></i>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">PO Number</span>
+                    <span class="text-sm font-bold text-blue-600" th:text="'PO-' + ${order.orderId}">#PO-0</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Order Date</span>
+                    <span class="text-xs font-bold text-gray-900" th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm') : 'N/A'}">N/A</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Order Type</span>
+                    <span class="inline-flex px-2 py-1 text-[10px] font-bold rounded-full text-white type-purchase"
+                          th:text="${order.orderType}">PURCHASE</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Status</span>
+                    <span class="inline-flex px-2 py-1 text-[10px] font-bold rounded-full text-white"
+                          th:classappend="'status-' + ${#strings.toLowerCase(order.orderStatus)}"
+                          th:text="${order.orderStatus}">STATUS</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Payment Method</span>
+                    <span class="text-xs font-bold text-gray-900" th:text="${order.paymentType ?: 'TBD'}">TBD</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Created By</span>
+                    <span class="text-xs font-bold text-gray-900">Admin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Supplier Information Card -->
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.6s;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">
+                    <i class="bi bi-truck text-orange-600 mr-2"></i>Supplier Details
+                </h3>
+                <div class="w-8 h-8 supplier-icon rounded-xl flex items-center justify-center">
+                    <i class="bi bi-building text-white text-sm"></i>
+                </div>
+            </div>
+            <div class="space-y-3" th:if="${order.supplier != null}">
+                <div class="flex justify-between items-center p-2 bg-orange-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Company Name</span>
+                    <a th:href="@{/suppliers/{id}(id=${order.supplier.id})}"
+                       th:text="${order.supplier.name}"
+                       class="text-xs font-bold text-orange-600 hover:text-orange-800">Supplier</a>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Contact Email</span>
+                    <a th:href="'mailto:' + ${order.supplier.email}"
+                       th:text="${order.supplier.email}"
+                       class="text-xs font-bold text-blue-600 hover:text-blue-800 truncate">email@supplier.com</a>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Phone Number</span>
+                    <a th:href="'tel:' + ${order.supplier.contactNumber}"
+                       th:text="${order.supplier.contactNumber}"
+                       class="text-xs font-bold text-gray-900">+91 XXXXXXXXXX</a>
+                </div>
+                <div class="p-2 bg-gray-50 rounded-lg">
+                    <span class="block text-xs font-medium text-gray-700 mb-2">Business Address</span>
+                    <span class="text-xs font-bold text-gray-900" th:text="${order.supplier.address ?: 'Address not provided'}">Address details...</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-blue-50 rounded-lg" th:if="${order.supplier.productsCount != null}">
+                    <span class="text-xs font-medium text-gray-700">Products Supplied</span>
+                    <span class="text-xs font-bold text-blue-600" th:text="${order.supplier.productsCount} + ' products'">0 products</span>
+                </div>
+            </div>
+            <div class="text-center p-2 bg-red-50 rounded-lg" th:if="${order.supplier == null}">
+                <i class="bi bi-exclamation-circle text-red-500 text-2xl mb-2"></i>
+                <p class="text-sm text-red-600 font-medium">No supplier information available</p>
+            </div>
+        </div>
+
+        <!-- Purchase Summary Card -->
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.7s;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">
+                    <i class="bi bi-graph-up text-green-600 mr-2"></i>Purchase Summary
+                </h3>
+                <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-pie-chart text-white text-sm"></i>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Total Items</span>
+                    <span class="text-base font-bold text-blue-600" th:text="${#lists.size(order.orderItems)}">0</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Total Units</span>
+                    <span class="text-base font-bold text-green-600"
+                          th:with="totalQty=${#aggregates.sum(order.orderItems.![quantity])}"
+                          th:text="${totalQty}">0</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-purple-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Order Value</span>
+                    <span class="text-xs font-bold text-purple-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg" th:with="lowStockCount=${order.orderItems.?[productDto.stockQuantity <= productDto.lowStockThreshold].size()}">
+                    <span class="text-xs font-medium text-gray-700">Low Stock Items</span>
+                    <span class="text-xs font-bold" th:classappend="${lowStockCount > 0 ? 'text-red-600' : 'text-indigo-600'}" th:text="${lowStockCount}">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Order Items - Card/Table View Toggle -->
+    <div class="glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in mb-6" style="animation-delay: 0.8s;">
+
+        <!-- Header with View Toggle -->
+        <div class="px-4 py-4 border-b border-gray-200/50 bg-gradient-to-r from-orange-50 to-amber-100">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">Purchase Order Items</h3>
+                    <p class="text-sm text-gray-600 mt-1">Detailed breakdown of ordered products and quantities</p>
+                </div>
+                <div class="flex items-center space-x-3 no-print">
+                    <!-- View Toggle Buttons -->
+                    <div class="flex bg-gray-200 rounded-lg p-1">
+                        <button id="cardViewBtn" class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 bg-white text-gray-900 shadow-sm">
+                            <i class="bi bi-grid-3x3-gap mr-1"></i>Cards
+                        </button>
+                        <button id="tableViewBtn" class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 text-gray-600 hover:text-gray-900">
+                            <i class="bi bi-table mr-1"></i>Table
+                        </button>
+                    </div>
+                    <input type="text" id="itemSearch" placeholder="Search items..."
+                           class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm shadow-sm">
+                    <div id="searchFeedback" class="text-sm text-gray-500"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card View (Default) -->
+        <div id="cardView" class="p-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="itemsGrid">
+                <div th:each="item : ${order.orderItems}" class="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-200 item-card">
+                    <!-- Product Header -->
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 product-icon rounded-lg flex items-center justify-center mr-3">
+                                <i class="bi bi-box text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 text-sm">
+                                    <a th:href="@{/products/{id}(id=${item.productDto.productId})}"
+                                       th:text="${item.productDto.name}"
+                                       class="hover:text-orange-600 transition-colors no-print">Product Name</a>
+                                    <span class="print-only" th:text="${item.productDto.name}">Product Name</span>
+                                </h4>
+                                <p class="text-xs text-gray-500" th:text="${item.productDto.brandName ?: 'N/A'}">Brand</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-orange-100 text-orange-800" th:text="${item.quantity} + ' units'">0 units</span>
+                        </div>
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <!-- Category & Brand -->
+                        <div class="bg-gray-50 rounded-lg p-2">
+                            <div class="text-xs text-gray-600 mb-1">Category</div>
+                            <div class="text-xs font-medium text-gray-900" th:text="${item.productDto.category?.name ?: 'Uncategorized'}">Category</div>
+                        </div>
+
+                        <!-- Stock Level -->
+                        <div class="bg-gray-50 rounded-lg p-2 flex items-center justify-center">
+                            <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full"
+                                  th:classappend="${item.productDto.stockQuantity <= item.productDto.lowStockThreshold ? 'inventory-warning text-white' : 'inventory-good text-white'}"
+                                  th:text="${item.productDto.stockQuantity} + ' in stock'">0 in stock</span>
+                            <i th:if="${item.productDto.stockQuantity <= item.productDto.lowStockThreshold}"
+                               class="bi bi-exclamation-triangle-fill text-red-500 ml-2"
+                               title="Low stock warning"></i>
+                        </div>
+                    </div>
+
+                    <!-- Price Information -->
+                    <div class="border-t border-gray-100 pt-3">
+                        <div class="flex justify-between items-center">
+                            <div class="text-xs text-gray-600">
+                                <div>Unit Price: <span class="font-medium text-gray-900" th:text="'₹' + ${#numbers.formatDecimal(item.priceAtOrderTime != null ? item.priceAtOrderTime : item.productDto.actualPrice, 0, 2)}">₹0.00</span></div>
+                                <div>SKU: <span class="font-medium text-gray-900" th:text="${item.productDto.productCode ?: 'N/A'}">N/A</span></div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-600 mb-1">Line Total</div>
+                                <div class="font-bold text-sm text-orange-600" th:text="'₹' + ${#numbers.formatDecimal((item.priceAtOrderTime != null ? item.priceAtOrderTime : item.productDto.actualPrice) * item.quantity, 0, 2)}">₹0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action -->
+                    <div class="mt-3 pt-2 border-t border-gray-100 no-print">
+                        <a th:href="@{/products/{id}(id=${item.productDto.productId})}"
+                           class="inline-flex items-center text-xs text-orange-600 hover:text-orange-800 font-medium">
+                            <i class="bi bi-eye mr-1"></i>View Product
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Card -->
+            <div class="mt-4 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4">
+                <h4 class="font-semibold text-gray-900 mb-3 text-sm">Purchase Order Summary</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <div class="text-xs text-gray-600">Total Items</div>
+                        <div class="text-sm font-bold text-orange-600" th:text="${#lists.size(order.orderItems)}">0</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-600">Total Units</div>
+                        <div class="text-sm font-bold text-green-600"
+                             th:with="totalQty=${#aggregates.sum(order.orderItems.![quantity])}"
+                             th:text="${totalQty}">0</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-600">Total Value</div>
+                        <div class="text-sm font-bold text-blue-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-600">Low Stock Items</div>
+                        <div class="text-sm font-bold"
+                             th:with="lowStockCount=${order.orderItems.?[productDto.stockQuantity <= productDto.lowStockThreshold].size()}"
+                             th:classappend="${lowStockCount > 0 ? 'text-red-600' : 'text-green-600'}"
+                             th:text="${lowStockCount}">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table View (Hidden by default) -->
+        <div id="tableView" class="hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50/80">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Product</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Brand</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Category</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Quantity</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Unit Price</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Line Total</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Stock Level</th>
+                        <th class="px-4 py-3 text-right text-xs font-bold text-gray-700 uppercase tracking-wider no-print">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200/50" id="itemsTableBody">
+                    <tr th:each="item : ${order.orderItems}" class="table-row item-row">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 product-icon rounded-xl flex items-center justify-center mr-4">
+                                    <i class="bi bi-box text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-gray-900">
+                                        <a th:href="@{/products/{id}(id=${item.productDto.productId})}"
+                                           th:text="${item.productDto.name}"
+                                           class="hover:text-orange-600 transition-colors duration-200 no-print">[[${item.productDto.name}]]</a>
+                                        <span class="print-only" th:text="${item.productDto.name}">Product Name</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500" th:text="${item.productDto.productCode ?: 'N/A'}">SKU: N/A</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-medium text-gray-900" th:text="${item.productDto.brandName ?: 'N/A'}">Brand</div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-medium text-gray-700" th:text="${item.productDto.category?.name ?: 'Uncategorized'}">Category</div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-orange-100 text-orange-800"
+                                      th:text="${item.quantity}">0</span>
+                                <span class="ml-2 text-xs text-gray-500">units</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-medium text-gray-900"
+                                 th:text="'₹' + ${#numbers.formatDecimal(item.priceAtOrderTime != null ? item.priceAtOrderTime : item.productDto.actualPrice, 0, 2)}">₹0.00</div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-bold text-gray-900"
+                                 th:text="'₹' + ${#numbers.formatDecimal((item.priceAtOrderTime != null ? item.priceAtOrderTime : item.productDto.actualPrice) * item.quantity, 0, 2)}">₹0.00</div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <span class="inline-flex px-3 py-1 text-xs font-bold rounded-full"
+                                      th:classappend="${item.productDto.stockQuantity <= item.productDto.lowStockThreshold ? 'inventory-warning text-white' : 'inventory-good text-white'}"
+                                      th:text="${item.productDto.stockQuantity}">0</span>
+                                <span class="ml-2 text-xs text-gray-500">in stock</span>
+                                <i th:if="${item.productDto.stockQuantity <= item.productDto.lowStockThreshold}"
+                                   class="bi bi-exclamation-triangle-fill text-red-500 ml-2"
+                                   title="Low stock warning"></i>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-right no-print">
+                            <a th:href="@{/products/{id}(id=${item.productDto.productId})}"
+                               class="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-orange-600 bg-orange-100 hover:bg-orange-200 transition-colors duration-200">
+                                <i class="bi bi-eye-fill mr-1"></i><span class="text-xs">View Product</span>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot class="bg-orange-50/80">
+                    <tr>
+                        <th colspan="5" class="px-4 py-3 text-right text-sm font-bold text-gray-900">Total Purchase Value:</th>
+                        <th class="px-4 py-3 text-sm font-bold text-orange-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</th>
+                        <th colspan="2" class="px-4 py-3"></th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(order.orderItems)}" class="text-center py-16">
+            <i class="bi bi-box text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Items Found</h3>
+            <p class="text-gray-500">This purchase order doesn't contain any items yet.</p>
+        </div>
+    </div>
+
+    <!-- Analytics & Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Order Management -->
+        <div class="glass-card rounded-2xl shadow-2xl p-5 animate-fade-in" style="animation-delay: 0.9s;">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">
+                <i class="bi bi-gear-fill text-blue-500 mr-2"></i>Order Management
+            </h3>
+            <div class="space-y-3">
+                <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                    <div class="flex items-center">
+                        <i class="bi bi-info-circle-fill text-blue-500 mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 text-sm">Purchase Order Status</h4>
+                            <p class="text-xs text-gray-600">
+                                <span th:if="${order.orderStatus.name() == 'CREATED'}">Order created and pending supplier confirmation.</span>
+                                <span th:if="${order.orderStatus.name() == 'PROCESSING'}">Order is being processed by the supplier.</span>
+                                <span th:if="${order.orderStatus.name() == 'COMPLETED'}">Order has been received and completed.</span>
+                                <span th:if="${order.orderStatus.name() == 'CANCELLED'}">Order has been cancelled.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Expected Delivery</span>
+                    <span class="text-xs font-bold text-gray-900" th:text="${order.createdAt != null ? #temporals.format(order.createdAt.plusDays(7), 'MMM dd, yyyy') : 'Within 7-10 business days'}">Within 7-10 business days</span>
+                </div>
+
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Tracking Status</span>
+                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full"
+                          th:classappend="${order.orderStatus.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' : (order.orderStatus.name() == 'PROCESSING' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')}"
+                          th:text="${order.orderStatus.name() == 'COMPLETED' ? 'Delivered' : (order.orderStatus.name() == 'PROCESSING' ? 'In Transit' : 'Pending')}">Pending</span>
+                </div>
+
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Payment Terms</span>
+                    <span class="text-xs font-bold text-gray-900">Net 30 Days</span>
+                </div>
+
+                <!-- Low Stock Alert -->
+                <div th:if="${order.orderItems.?[productDto.stockQuantity <= productDto.lowStockThreshold].size() > 0}"
+                     class="p-3 rounded-lg bg-red-50 border border-red-200">
+                    <div class="flex items-center">
+                        <i class="bi bi-exclamation-triangle-fill text-red-500 mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold text-red-900 text-sm">Low Stock Alert</h4>
+                            <p class="text-xs text-red-700" th:text="${order.orderItems.?[productDto.stockQuantity <= productDto.lowStockThreshold].size()} + ' items in this order are currently low on stock.'">Items are low on stock.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Timeline -->
+                <div class="mt-4">
+                    <h4 class="font-semibold text-gray-900 mb-3 text-sm">Order Timeline</h4>
+                    <div class="relative">
+                        <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+
+                        <!-- Created -->
+                        <div class="relative flex items-center pb-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="bi bi-check text-white text-sm"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-900">Order Created</p>
+                                <p class="text-xs text-gray-500" th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm') : 'N/A'}">Date</p>
+                            </div>
+                        </div>
+
+                        <!-- Processing -->
+                        <div class="relative flex items-center pb-3">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                                 th:classappend="${order.orderStatus.name() == 'PROCESSING' || order.orderStatus.name() == 'COMPLETED' ? 'bg-blue-500' : 'bg-gray-300'}">
+                                <i class="bi bi-clock text-white text-sm" th:if="${order.orderStatus.name() == 'PROCESSING' || order.orderStatus.name() == 'COMPLETED'}"></i>
+                                <i class="bi bi-circle text-white text-sm" th:unless="${order.orderStatus.name() == 'PROCESSING' || order.orderStatus.name() == 'COMPLETED'}"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-900">Processing</p>
+                                <p class="text-xs text-gray-500">Supplier confirmation</p>
+                            </div>
+                        </div>
+
+                        <!-- Completed -->
+                        <div class="relative flex items-center">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                                 th:classappend="${order.orderStatus.name() == 'COMPLETED' ? 'bg-green-500' : 'bg-gray-300'}">
+                                <i class="bi bi-check text-white text-sm" th:if="${order.orderStatus.name() == 'COMPLETED'}"></i>
+                                <i class="bi bi-circle text-white text-sm" th:unless="${order.orderStatus.name() == 'COMPLETED'}"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-900">Received</p>
+                                <p class="text-xs text-gray-500">Inventory updated</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="glass-card rounded-2xl shadow-2xl p-5 animate-fade-in no-print" style="animation-delay: 1.0s;">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">
+                <i class="bi bi-lightning-charge-fill text-orange-500 mr-2"></i>Quick Actions
+            </h3>
+            <div class="space-y-2">
+                <button th:onclick="'printInvoice(' + ${order.orderId} + ')'"  class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-sm">
+                    <i class="bi bi-printer-fill mr-2"></i>Print Purchase Order
+                </button>
+
+                <form th:action="@{/invoices/download(orderIds=${order.orderId})}" method="get">
+                    <input type="hidden" name="orderIds" th:value="${order.orderId}">
+                    <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-amber-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center text-sm">
+                        <i class="bi bi-file-earmark-text-fill mr-2"></i>Generate Purchase Order
+                    </button>
+                </form>
+
+                <a th:href="@{/orders/{id}/edit(id=${order.orderId})}"
+                   th:if="${order.orderStatus.name() == 'CREATED'}"
+                   class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block text-sm">
+                    <i class="bi bi-pencil-fill mr-2"></i>Edit Purchase Order
+                </a>
+
+                <button th:if="${order.orderStatus.name() == 'CREATED'}"
+                        onclick="updateOrderStatus('PROCESSING')"
+                        class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-sm">
+                    <i class="bi bi-arrow-right-circle-fill mr-2"></i>Send to Supplier
+                </button>
+
+                <button th:if="${order.orderStatus.name() == 'PROCESSING'}"
+                        onclick="updateOrderStatus('COMPLETED')"
+                        class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-sm">
+                    <i class="bi bi-check-circle-fill mr-2"></i>Mark as Received
+                </button>
+
+                <button th:if="${order.orderStatus.name() != 'CANCELLED' && order.orderStatus.name() != 'COMPLETED'}"
+                        onclick="cancelOrder()"
+                        class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-sm">
+                    <i class="bi bi-x-circle-fill mr-2"></i>Cancel Purchase Order
+                </button>
+
+                <a th:if="${order.supplier != null}"
+                   th:href="@{/suppliers/{id}(id=${order.supplier.id})}"
+                   class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block text-sm">
+                    <i class="bi bi-building mr-2"></i>View Supplier Details
+                </a>
+
+                <!-- Additional Actions -->
+                <div class="border-t border-gray-200 pt-3 mt-3">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Additional Actions</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportToPDF()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-2 rounded-lg text-xs font-medium transition-colors">
+                            <i class="bi bi-file-pdf mr-1"></i>Export PDF
+                        </button>
+                        <button onclick="sendEmail()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-2 rounded-lg text-xs font-medium transition-colors">
+                            <i class="bi bi-envelope mr-1"></i>Email PO
+                        </button>
+                        <a th:href="@{/orders}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-2 rounded-lg text-xs font-medium transition-colors text-center">
+                            <i class="bi bi-list mr-1"></i>All Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Auto-hide flash messages
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.success-alert, .error-alert');
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+
+        // Enhanced view toggle and search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('itemSearch');
+            const searchFeedback = document.getElementById('searchFeedback');
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            const tableViewBtn = document.getElementById('tableViewBtn');
+            const cardView = document.getElementById('cardView');
+            const tableView = document.getElementById('tableView');
+
+            let currentView = 'card'; // Default view
+
+            // View toggle functionality
+            function switchToCardView() {
+                currentView = 'card';
+                if (cardView && tableView) {
+                    cardView.classList.remove('hidden');
+                    tableView.classList.add('hidden');
+                }
+                if (cardViewBtn && tableViewBtn) {
+                    cardViewBtn.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+                    cardViewBtn.classList.remove('text-gray-600');
+                    tableViewBtn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+                    tableViewBtn.classList.add('text-gray-600');
+                }
+            }
+
+            function switchToTableView() {
+                currentView = 'table';
+                if (cardView && tableView) {
+                    tableView.classList.remove('hidden');
+                    cardView.classList.add('hidden');
+                }
+                if (cardViewBtn && tableViewBtn) {
+                    tableViewBtn.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+                    tableViewBtn.classList.remove('text-gray-600');
+                    cardViewBtn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+                    cardViewBtn.classList.add('text-gray-600');
+                }
+            }
+
+            // Event listeners for view toggle buttons
+            if (cardViewBtn) {
+                cardViewBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchToCardView();
+                });
+            }
+
+            if (tableViewBtn) {
+                tableViewBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchToTableView();
+                });
+            }
+
+            // Search functionality for both views
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    let items, visibleCount = 0;
+
+                    if (currentView === 'card') {
+                        items = document.querySelectorAll('.item-card');
+                    } else {
+                        items = document.querySelectorAll('.item-row');
+                    }
+
+                    items.forEach(function(item) {
+                        const text = item.textContent.toLowerCase();
+                        const isVisible = text.includes(searchTerm);
+                        item.style.display = isVisible ? '' : 'none';
+                        if (isVisible) visibleCount++;
+                    });
+
+                    // Update search feedback
+                    if (searchTerm) {
+                        searchFeedback.textContent = `${visibleCount} items found`;
+                        searchFeedback.className = 'text-sm text-orange-600 font-medium';
+                    } else {
+                        searchFeedback.textContent = '';
+                    }
+                });
+            }
+        });
+
+        // Purchase order status update functions
+        function updateOrderStatus(newStatus) {
+            const orderId = '[[${order.orderId}]]';
+            let confirmMessage = '';
+
+            switch(newStatus) {
+                case 'PROCESSING':
+                    confirmMessage = 'Are you sure you want to send this purchase order to the supplier?';
+                    break;
+                case 'COMPLETED':
+                    confirmMessage = 'Are you sure you want to mark this purchase order as received? This will update inventory levels.';
+                    break;
+                default:
+                    confirmMessage = `Are you sure you want to update this purchase order status to ${newStatus}?`;
+            }
+
+            if (confirm(confirmMessage)) {
+                fetch(`/orders/${orderId}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `status=${newStatus}`
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to update purchase order status');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating purchase order status');
+                });
+            }
+        }
+
+        function cancelOrder() {
+            const orderId = '[[${order.orderId}]]';
+            const reason = prompt('Please enter cancellation reason (optional):');
+
+            if (reason !== null) { // User didn't click cancel
+                fetch(`/orders/${orderId}/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `reason=${encodeURIComponent(reason || '')}`
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to cancel purchase order');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error cancelling purchase order');
+                });
+            }
+        }
+
+        // Additional action functions
+        function exportToPDF() {
+            // Hide no-print elements and show print-only elements
+            const noPrintElements = document.querySelectorAll('.no-print');
+            const printOnlyElements = document.querySelectorAll('.print-only');
+
+            noPrintElements.forEach(el => el.style.display = 'none');
+            printOnlyElements.forEach(el => el.style.display = 'block');
+
+            // Trigger print
+            window.print();
+
+            // Restore original display after a short delay
+            setTimeout(() => {
+                noPrintElements.forEach(el => el.style.display = '');
+                printOnlyElements.forEach(el => el.style.display = 'none');
+            }, 1000);
+        }
+
+        function sendEmail() {
+            const orderId = '[[${order.orderId}]]';
+            const supplierEmail = '[[${order.supplier?.email}]]';
+
+            if (supplierEmail && supplierEmail !== '') {
+                const subject = `Purchase Order #${orderId}`;
+                const body = `Dear Supplier,\n\nPlease find attached Purchase Order #${orderId}.\n\nBest regards,\nYour Company`;
+                window.location.href = `mailto:${supplierEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            } else {
+                alert('Supplier email not available');
+            }
+        }
+
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all metric cards
+        document.querySelectorAll('.metric-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Stock level warnings with enhanced animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const lowStockItems = document.querySelectorAll('.inventory-warning');
+            lowStockItems.forEach(item => {
+                // Add enhanced pulse animation to critically low stock items
+                item.classList.add('pulse');
+
+                // Add tooltip functionality
+                item.addEventListener('mouseenter', function() {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'absolute bg-red-600 text-white text-xs rounded px-2 py-1 z-50';
+                    tooltip.textContent = 'Critical: Low stock level!';
+                    tooltip.style.top = '-30px';
+                    tooltip.style.left = '50%';
+                    tooltip.style.transform = 'translateX(-50%)';
+                    this.style.position = 'relative';
+                    this.appendChild(tooltip);
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    const tooltip = this.querySelector('.absolute');
+                    if (tooltip) tooltip.remove();
+                });
+            });
+        });
+
+        // Auto-save functionality for notes (if implementing editable notes)
+        function saveNotes(notes) {
+            const orderId = '[[${order.orderId}]]';
+            // Implementation for saving notes via AJAX
+            console.log('Saving notes for order:', orderId, notes);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'p':
+                        e.preventDefault();
+                        window.print();
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        const editLink = document.querySelector('a[href*="/edit"]');
+                        if (editLink) window.location.href = editLink.href;
+                        break;
+                }
+            }
+        });
+
+        // Add tooltips to action buttons
+        document.querySelectorAll('button[title], a[title]').forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                // Enhanced tooltip functionality can be added here
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

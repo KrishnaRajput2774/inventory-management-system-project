@@ -121,147 +121,147 @@
     </div>
 
     <!-- Header Section -->
-    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 mb-8">
+    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-3 mb-8">
         <div class="animate-fade-in">
-            <h1 class="text-4xl font-bold text-gray-900 mb-3" th:text="'Edit Order #' + ${order.orderId}">Edit Order</h1>
-            <p class="text-lg text-gray-600">Manage order status, items, and customer information</p>
+            <h1 class="text-xl font-bold text-gray-900" th:text="'Edit Order #' + ${order.orderId}">Edit Order</h1>
+            <p class="text-sm text-gray-600">Manage order status, items, and customer information</p>
         </div>
-        <div class="flex flex-wrap gap-3 animate-fade-in">
+        <div class="flex flex-wrap gap-1 animate-fade-in">
             <a th:href="@{/orders/{id}(id=${order.orderId})}"
-               class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
-                <i class="bi bi-eye-fill mr-2"></i>View Order
+               class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-2 py-1 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                <i class="bi bi-eye-fill mr-2"></i><span class="text-xs">View Order</span>
             </a>
             <a th:href="@{/orders}"
-               class="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
-                <i class="bi bi-arrow-left mr-2"></i>Back to Orders
+               class="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-2 py-1 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                <i class="bi bi-arrow-left mr-2"></i><span class="text-xs">Back to Orders</span>
             </a>
         </div>
     </div>
 
     <!-- Order Analytics Dashboard -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <!-- Order Status -->
-        <div class="metric-card status-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in">
+        <div class="metric-card status-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Order Status</p>
-                    <p class="text-2xl font-bold mt-2" th:text="${order.orderStatus}">STATUS</p>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Order Status</p>
+                    <p class="text-lg font-bold mt-2" th:text="${order.orderStatus}">STATUS</p>
                     <div class="flex items-center mt-3">
                         <i class="bi bi-clock text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Current State</span>
+                        <span class="text-white/80 text-xs">Current State</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-gear text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-gear text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Items Count -->
-        <div class="metric-card items-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.1s;">
+        <div class="metric-card items-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.1s;">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Total Items</p>
-                    <p class="text-4xl font-bold mt-2" th:text="${#lists.size(order.orderItems)}">0</p>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Total Items</p>
+                    <p class="text-lg font-bold mt-2" th:text="${#lists.size(order.orderItems)}">0</p>
                     <div class="flex items-center mt-3">
                         <i class="bi bi-box text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Products</span>
+                        <span class="text-white/80 text-xs">Products</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-boxes text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-boxes text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Order Total -->
-        <div class="metric-card total-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.2s;">
+        <div class="metric-card total-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.2s;">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Order Total</p>
-                    <p class="text-4xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</p>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Order Total</p>
+                    <p class="text-lg font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</p>
                     <div class="flex items-center mt-3">
                         <i class="bi bi-currency-rupee text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Revenue</span>
+                        <span class="text-white/80 text-xs">Revenue</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-calculator text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-calculator text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Quick Actions -->
-        <div class="metric-card actions-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.3s;">
+        <div class="metric-card actions-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.3s;">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Quick Actions</p>
-                    <p class="text-2xl font-bold mt-2">Available</p>
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Quick Actions</p>
+                    <p class="text-lg font-bold mt-2">Available</p>
                     <div class="flex items-center mt-3">
                         <i class="bi bi-lightning text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Operations</span>
+                        <span class="text-white/80 text-xs">Operations</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-lightning-charge text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-lightning-charge text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
         <!-- Order Status Management -->
-        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.4s;">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-bold text-gray-900">
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.4s;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">
                     <i class="bi bi-gear-fill text-purple-600 mr-2"></i>Status Management
                 </h3>
-                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-sliders text-white text-lg"></i>
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-sliders text-white text-sm"></i>
                 </div>
             </div>
 
             <!-- Current Status Display -->
-            <div class="mb-6 p-4 bg-gray-50 rounded-xl">
+            <div class="mb-4 p-3 bg-gray-50 rounded-xl">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h4 class="text-sm font-medium text-gray-700">Current Status</h4>
+                        <h4 class="text-xs font-medium text-gray-700">Current Status</h4>
                         <div class="mt-2">
-                            <span class="inline-flex px-3 py-1 text-sm font-bold rounded-full text-white"
+                            <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full text-white"
                                   th:classappend="'status-' + ${#strings.toLowerCase(order.orderStatus)}"
                                   th:text="${order.orderStatus}">STATUS</span>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-xs text-gray-500">Order Date</p>
-                        <p class="text-sm font-medium text-gray-900" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Date</p>
+                        <p class="text-[10px] text-gray-500">Order Date</p>
+                        <p class="text-xs font-medium text-gray-900" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Date</p>
                     </div>
                 </div>
             </div>
 
             <!-- Status Actions -->
-            <div class="space-y-3">
+            <div class="space-y-2">
                 <!-- Quick Actions based on current status -->
                 <div th:if="${order.orderStatus.name() == 'CREATED'}">
-                    <h4 class="text-sm font-medium text-gray-900 mb-3">Available Actions</h4>
-                    <div class="space-y-2">
+                    <h4 class="text-xs font-medium text-gray-900 mb-2">Available Actions</h4>
+                    <div class="space-y-1">
                         <form th:action="@{/orders/{id}/update-status(id=${order.orderId})}" method="post" class="w-full">
                             <input type="hidden" name="status" value="PROCESSING" />
-                            <button type="submit" class="w-full action-btn-warning text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                            <button type="submit" class="w-full action-btn-warning text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
                                 <i class="bi bi-arrow-right-circle mr-2"></i>Start Processing
                             </button>
                         </form>
 
                         <form th:action="@{/orders/{id}/complete-and-edit(id=${order.orderId})}" method="post" class="w-full">
-                            <button type="submit" class="w-full action-btn-success text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                            <button type="submit" class="w-full action-btn-success text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
                                 <i class="bi bi-check-circle mr-2"></i>Complete Order
                             </button>
                         </form>
 
                         <form th:action="@{/orders/{id}/cancel-and-edit(id=${order.orderId})}" method="post" class="w-full">
-                            <button type="submit" class="w-full action-btn-danger text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold"
+                            <button type="submit" class="w-full action-btn-danger text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs"
                                     onclick="return confirm('Are you sure you want to cancel this order?')">
                                 <i class="bi bi-x-circle mr-2"></i>Cancel Order
                             </button>
@@ -270,16 +270,16 @@
                 </div>
 
                 <div th:if="${order.orderStatus.name() == 'PROCESSING'}">
-                    <h4 class="text-sm font-medium text-gray-900 mb-3">Available Actions</h4>
-                    <div class="space-y-2">
+                    <h4 class="text-xs font-medium text-gray-900 mb-2">Available Actions</h4>
+                    <div class="space-y-1">
                         <form th:action="@{/orders/{id}/complete(id=${order.orderId})}" method="post" class="w-full">
-                            <button type="submit" class="w-full action-btn-success text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                            <button type="submit" class="w-full action-btn-success text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
                                 <i class="bi bi-check-circle mr-2"></i>Complete Order
                             </button>
                         </form>
 
                         <form th:action="@{/orders/{id}/cancel(id=${order.orderId})}" method="post" class="w-full">
-                            <button type="submit" class="w-full action-btn-danger text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold"
+                            <button type="submit" class="w-full action-btn-danger text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs"
                                     onclick="return confirm('Are you sure you want to cancel this order?')">
                                 <i class="bi bi-x-circle mr-2"></i>Cancel Order
                             </button>
@@ -288,37 +288,37 @@
                 </div>
 
                 <!-- Completed/Cancelled Status Info -->
-                <div th:if="${order.orderStatus.name() == 'COMPLETED'}" class="p-4 bg-green-50 border border-green-200 rounded-xl">
+                <div th:if="${order.orderStatus.name() == 'COMPLETED'}" class="p-3 bg-green-50 border border-green-200 rounded-xl">
                     <div class="flex items-center">
                         <i class="bi bi-check-circle text-green-600 mr-3"></i>
                         <div>
-                            <h4 class="text-sm font-medium text-green-800">Order Completed</h4>
-                            <p class="text-sm text-green-700 mt-1">This order has been completed successfully.</p>
+                            <h4 class="text-xs font-medium text-green-800">Order Completed</h4>
+                            <p class="text-xs text-green-700 mt-1">This order has been completed successfully.</p>
                         </div>
                     </div>
                 </div>
 
-                <div th:if="${order.orderStatus.name() == 'CANCELLED'}" class="p-4 bg-red-50 border border-red-200 rounded-xl">
+                <div th:if="${order.orderStatus.name() == 'CANCELLED'}" class="p-3 bg-red-50 border border-red-200 rounded-xl">
                     <div class="flex items-center">
                         <i class="bi bi-x-circle text-red-600 mr-3"></i>
                         <div>
-                            <h4 class="text-sm font-medium text-red-800">Order Cancelled</h4>
-                            <p class="text-sm text-red-700 mt-1">This order has been cancelled.</p>
+                            <h4 class="text-xs font-medium text-red-800">Order Cancelled</h4>
+                            <p class="text-xs text-red-700 mt-1">This order has been cancelled.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Custom Status Update -->
-                <div class="border-t border-gray-200 pt-4 mt-4">
-                    <h4 class="text-sm font-medium text-gray-900 mb-3">Custom Status Update</h4>
-                    <form th:action="@{/orders/{id}/update-status(id=${order.orderId})}" method="post" class="space-y-3">
-                        <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <div class="border-t border-gray-200 pt-3 mt-3">
+                    <h4 class="text-xs font-medium text-gray-900 mb-2">Custom Status Update</h4>
+                    <form th:action="@{/orders/{id}/update-status(id=${order.orderId})}" method="post" class="space-y-2">
+                        <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs">
                             <option value="CREATED" th:selected="${order.orderStatus.name() == 'CREATED'}">Created</option>
                             <option value="PROCESSING" th:selected="${order.orderStatus.name() == 'PROCESSING'}">Processing</option>
                             <option value="COMPLETED" th:selected="${order.orderStatus.name() == 'COMPLETED'}">Completed</option>
                             <option value="CANCELLED" th:selected="${order.orderStatus.name() == 'CANCELLED'}">Cancelled</option>
                         </select>
-                        <button type="submit" class="w-full action-btn-primary text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                        <button type="submit" class="w-full action-btn-primary text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
                             <i class="bi bi-arrow-repeat mr-2"></i>Update Status
                         </button>
                     </form>
@@ -327,75 +327,76 @@
         </div>
 
         <!-- Order Information -->
-        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.5s;">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-bold text-gray-900">
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.5s;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">
                     <i class="bi bi-info-circle-fill text-blue-600 mr-2"></i>Order Details
                 </h3>
-                <div class="w-12 h-12 order-icon rounded-xl flex items-center justify-center">
-                    <i class="bi bi-file-earmark-text text-white text-lg"></i>
+                <div class="w-8 h-8 order-icon rounded-xl flex items-center justify-center">
+                    <i class="bi bi-file-earmark-text text-white text-sm"></i>
                 </div>
             </div>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Order ID</span>
-                    <span class="text-lg font-bold text-blue-600" th:text="'#' + ${order.orderId}">#0</span>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Order ID</span>
+                    <span class="text-sm font-bold text-blue-600" th:text="'#' + ${order.orderId}">#0</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Customer</span>
-                    <span class="text-sm font-bold text-gray-900" th:text="${order.customer.name}">Customer</span>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Customer</span>
+                    <span class="text-xs font-bold text-gray-900"
+                          th:text="${order.customer != null ? order.customer.name : (order.supplier != null ? order.supplier.name : 'N/A')}">Customer/Supplier</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Order Type</span>
-                    <span class="inline-flex px-3 py-1 text-xs font-bold rounded-full text-white"
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Order Type</span>
+                    <span class="inline-flex px-2 py-1 text-[10px] font-bold rounded-full text-white"
                           th:classappend="'type-' + ${#strings.toLowerCase(order.orderType)}"
                           th:text="${order.orderType}">TYPE</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Payment Type</span>
-                    <span class="text-sm font-bold text-gray-900" th:text="${order.paymentType ?: 'Not specified'}">CASH</span>
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Payment Type</span>
+                    <span class="text-xs font-bold text-gray-900" th:text="${order.paymentType ?: 'Not specified'}">CASH</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Total Amount</span>
-                    <span class="text-lg font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</span>
+                <div class="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Total Amount</span>
+                    <span class="text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</span>
                 </div>
             </div>
         </div>
 
         <!-- Order Timeline -->
-        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.6s;">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-bold text-gray-900">
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.6s;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">
                     <i class="bi bi-clock-history text-green-600 mr-2"></i>Order Timeline
                 </h3>
-                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-stopwatch text-white text-lg"></i>
+                <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-stopwatch text-white text-sm"></i>
                 </div>
             </div>
-            <div class="space-y-4">
-                <div class="flex items-center p-3 bg-blue-50 rounded-lg">
-                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                        <i class="bi bi-plus text-white text-sm"></i>
+            <div class="space-y-3">
+                <div class="flex items-center p-2 bg-blue-50 rounded-lg">
+                    <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                        <i class="bi bi-plus text-white text-xs"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">Order Created</p>
-                        <p class="text-xs text-gray-500" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</p>
+                        <p class="text-xs font-medium text-gray-900">Order Created</p>
+                        <p class="text-[10px] text-gray-500" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</p>
                     </div>
                 </div>
 
-                <div th:if="${order.orderStatus.name() != 'CREATED'}" class="flex items-center p-3 rounded-lg"
+                <div th:if="${order.orderStatus.name() != 'CREATED'}" class="flex items-center p-2 rounded-lg"
                      th:classappend="${order.orderStatus.name() == 'PROCESSING' ? 'bg-yellow-50' :
                                    (order.orderStatus.name() == 'COMPLETED' ? 'bg-green-50' : 'bg-red-50')}">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3"
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center mr-3"
                          th:classappend="${order.orderStatus.name() == 'PROCESSING' ? 'bg-yellow-500' :
                                         (order.orderStatus.name() == 'COMPLETED' ? 'bg-green-500' : 'bg-red-500')}">
-                        <i class="text-white text-sm"
+                        <i class="text-white text-xs"
                            th:classappend="${order.orderStatus.name() == 'PROCESSING' ? 'bi bi-arrow-repeat' :
                                           (order.orderStatus.name() == 'COMPLETED' ? 'bi bi-check' : 'bi bi-x')}"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900" th:text="'Status: ' + ${order.orderStatus}">Status Changed</p>
-                        <p class="text-xs text-gray-500">Just now</p>
+                        <p class="text-xs font-medium text-gray-900" th:text="'Status: ' + ${order.orderStatus}">Status Changed</p>
+                        <p class="text-[10px] text-gray-500">Just now</p>
                     </div>
                 </div>
             </div>
@@ -404,22 +405,22 @@
 
     <!-- Add New Item Section -->
     <div th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}"
-         class="glass-card rounded-2xl shadow-2xl p-6 mb-8 animate-fade-in" style="animation-delay: 0.7s;">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-bold text-gray-900">
+         class="glass-card rounded-2xl shadow-2xl p-4 mb-6 animate-fade-in" style="animation-delay: 0.7s;">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-gray-900">
                 <i class="bi bi-plus-circle-fill text-green-600 mr-2"></i>Add Item to Order
             </h3>
-            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                <i class="bi bi-bag-plus text-white text-lg"></i>
+            <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                <i class="bi bi-bag-plus text-white text-sm"></i>
             </div>
         </div>
 
-        <form th:action="@{/orders/{orderId}/items/add(orderId=${order.orderId})}" method="post" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form th:action="@{/orders/{orderId}/items/add(orderId=${order.orderId})}" method="post" class="space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div>
-                    <label for="productId" class="block text-sm font-medium text-gray-700 mb-1">Product</label>
+                    <label for="productId" class="block text-xs font-medium text-gray-700 mb-1">Product</label>
                     <select id="productId" name="productId" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-xs">
                         <option value="">Select a product...</option>
                         <option th:each="product : ${products}"
                                 th:value="${product.productId}"
@@ -429,29 +430,29 @@
                 </div>
 
                 <div>
-                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                    <label for="quantity" class="block text-xs font-medium text-gray-700 mb-1">Quantity</label>
                     <input type="number" id="quantity" name="quantity" min="1" value="1" required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-xs">
                 </div>
 
                 <div>
-                    <label for="priceAtOrderTime" class="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                    <label for="priceAtOrderTime" class="block text-xs font-medium text-gray-700 mb-1">Selling Price</label>
                     <input type="number" id="priceAtOrderTime" name="priceAtOrderTime" step="0.01" min="0" required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-xs"
                            placeholder="0.00">
                 </div>
 
                 <div class="flex items-end">
-                    <button type="submit" class="w-full action-btn-success text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold pulse">
+                    <button type="submit" class="w-full action-btn-success text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold pulse text-xs">
                         <i class="bi bi-plus mr-2"></i>Add Item
                     </button>
                 </div>
             </div>
 
-            <div id="productDetails" class="mt-4 hidden">
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <h4 class="text-sm font-medium text-blue-800 mb-2">Product Details</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div id="productDetails" class="mt-3 hidden">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+                    <h4 class="text-xs font-medium text-blue-800 mb-2">Product Details</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                         <div>
                             <span class="text-blue-600 font-medium">Cost Price:</span>
                             <span id="costPrice" class="text-blue-800">₹0.00</span>
@@ -478,15 +479,15 @@
     <div class="glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in" style="animation-delay: 0.8s;">
 
         <!-- Table Header -->
-        <div class="px-6 py-6 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-gray-100">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="px-4 py-4 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-gray-100">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900">Order Items Management</h3>
-                    <p class="text-sm text-gray-600 mt-1">Edit quantities, prices, and remove items from this order</p>
+                    <h3 class="text-xl font-bold text-gray-900">Order Items Management</h3>
+                    <p class="text-xs text-gray-600 mt-1">Edit quantities, prices, and remove items from this order</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <input type="text" id="itemSearch" placeholder="Search items..."
-                           class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm shadow-sm">
+                           class="px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs shadow-sm">
                     <div id="searchFeedback" class="text-xs text-gray-500"></div>
                 </div>
             </div>
@@ -497,39 +498,39 @@
             <table class="min-w-full">
                 <thead class="bg-gray-50/80">
                 <tr>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Product</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Brand</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Quantity</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Cost Price</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Selling Price</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Total</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Profit/Loss</th>
-                    <th class="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider" th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}">Actions</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Product</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Brand</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Quantity</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Cost Price</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Selling Price</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Total</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Profit/Loss</th>
+                    <th class="px-4 py-3 text-right text-xs font-bold text-gray-700 uppercase tracking-wider" th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}">Actions</th>
                 </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200/50">
                 <tr th:each="item : ${order.orderItems}" class="table-row">
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-3">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 product-icon rounded-xl flex items-center justify-center mr-4">
-                                <i class="bi bi-box text-white text-lg"></i>
+                            <div class="w-8 h-8 product-icon rounded-xl flex items-center justify-center mr-3">
+                                <i class="bi bi-box text-white text-sm"></i>
                             </div>
                             <div>
-                                <div class="text-sm font-bold text-gray-900" th:text="${item.productDto.name}">Product Name</div>
-                                <div class="text-xs text-gray-500" th:text="'ID: ' + ${item.productDto.productId}">ID: 0</div>
+                                <div class="text-xs font-bold text-gray-900" th:text="${item.productDto.name}">Product Name</div>
+                                <div class="text-[10px] text-gray-500" th:text="'ID: ' + ${item.productDto.productId}">ID: 0</div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-medium text-gray-900" th:text="${item.productDto.brandName}">Brand</div>
+                    <td class="px-4 py-3">
+                        <div class="text-xs font-medium text-gray-900" th:text="${item.productDto.brandName}">Brand</div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-3">
                         <!-- Editable quantity for non-completed orders -->
                         <div th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}" class="flex items-center space-x-2">
                             <form th:action="@{/orders/{orderId}/items/{orderItemId}/update-quantity(orderId=${order.orderId}, orderItemId=${item.orderItemId})}" method="post" class="flex items-center space-x-2">
                                 <input type="hidden" name="currentQuantity" th:value="${item.quantity}">
                                 <input type="number" name="newQuantity" th:value="${item.quantity}" min="0"
-                                       class="w-20 px-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                       class="w-16 px-2 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <button type="submit" class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-lg text-green-600 bg-green-100 hover:bg-green-200 transition-colors duration-200">
                                     <i class="bi bi-check"></i>
                                 </button>
@@ -537,24 +538,24 @@
                         </div>
                         <!-- Read-only quantity for completed orders -->
                         <div th:if="${order.orderStatus.name() == 'COMPLETED' || order.orderStatus.name() == 'CANCELLED'}" class="flex items-center">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-800"
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800"
                                   th:text="${item.quantity}">0</span>
-                            <span class="ml-2 text-xs text-gray-500">units</span>
+                            <span class="ml-1 text-[10px] text-gray-500">units</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-medium text-gray-900" th:text="'₹' + ${#numbers.formatDecimal(item.productDto.actualPrice, 0, 2)}">₹0.00</div>
+                    <td class="px-4 py-3">
+                        <div class="text-xs font-medium text-gray-900" th:text="'₹' + ${#numbers.formatDecimal(item.productDto.actualPrice, 0, 2)}">₹0.00</div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-medium text-gray-900"
+                    <td class="px-4 py-3">
+                        <div class="text-xs font-medium text-gray-900"
                              th:text="'₹' + ${#numbers.formatDecimal(item.priceAtOrderTime != null ? item.priceAtOrderTime : item.productDto.sellingPrice, 0, 2)}">₹0.00</div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-bold text-gray-900"
+                    <td class="px-4 py-3">
+                        <div class="text-xs font-bold text-gray-900"
                              th:text="'₹' + ${#numbers.formatDecimal(item.priceAtOrderTime * item.quantity, 0, 2)}">₹0.00</div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-bold"
+                    <td class="px-4 py-3">
+                        <div class="text-xs font-bold"
                              th:with="unitPrice=${item.priceAtOrderTime != null ? item.priceAtOrderTime : item.productDto.sellingPrice},
                                    totalSell=${unitPrice * item.quantity},
                                    totalCost=${item.productDto.actualPrice * item.quantity},
@@ -562,8 +563,8 @@
                              th:classappend="${profit >= 0 ? 'text-green-600' : 'text-red-600'}"
                              th:text="${(profit >= 0 ? '+' : '') + '₹' + #numbers.formatDecimal(profit, 0, 2)}">₹0.00</div>
                     </td>
-                    <td th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}" class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end space-x-2">
+                    <td th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}" class="px-4 py-3 text-right">
+                        <div class="flex items-center justify-end space-x-1">
                             <!-- Remove 1 quantity -->
                             <form th:action="@{/orders/{orderId}/items/remove(orderId=${order.orderId})}" method="post" class="inline">
                                 <input type="hidden" name="orderItemId" th:value="${item.orderItemId}">
@@ -589,10 +590,10 @@
                 </tbody>
                 <tfoot class="bg-gray-50/80">
                 <tr>
-                    <th colspan="5" class="px-6 py-4 text-right text-sm font-bold text-gray-900">Order Total:</th>
-                    <th class="px-6 py-4 text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</th>
-                    <th class="px-6 py-4"></th>
-                    <th th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}" class="px-6 py-4"></th>
+                    <th colspan="5" class="px-4 py-3 text-right text-xs font-bold text-gray-900">Order Total:</th>
+                    <th class="px-4 py-3 text-xs font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</th>
+                    <th class="px-4 py-3"></th>
+                    <th th:if="${order.orderStatus.name() != 'COMPLETED' && order.orderStatus.name() != 'CANCELLED'}" class="px-4 py-3"></th>
                 </tr>
                 </tfoot>
             </table>
@@ -600,58 +601,59 @@
     </div>
 
     <!-- Quick Actions Panel -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
         <!-- Order Operations -->
-        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.9s;">
-            <h3 class="text-xl font-bold text-gray-900 mb-6">
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.9s;">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">
                 <i class="bi bi-lightning-charge-fill text-yellow-500 mr-2"></i>Quick Operations
             </h3>
-            <div class="space-y-3">
+            <div class="space-y-2">
                 <a th:href="@{/orders/{id}(id=${order.orderId})}"
-                   class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block">
+                   class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block text-xs">
                     <i class="bi bi-eye-fill mr-2"></i>View Order Details
                 </a>
 
-                <form th:action="@{/invoices/generate}" method="post">
+                <form th:action="@{/invoices/download(orderIds=${order.orderId})}" method="get">
                     <input type="hidden" name="orderIds" th:value="${order.orderId}">
-                    <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
                         <i class="bi bi-file-earmark-pdf-fill mr-2"></i>Generate Invoice
                     </button>
                 </form>
 
                 <a th:href="@{/orders}"
-                   class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block">
+                   class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block text-xs">
                     <i class="bi bi-list mr-2"></i>Back to Orders List
                 </a>
 
-                <button onclick="printOrder()" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                <button th:onclick="'printInvoice(' + ${order.orderId} + ')'" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
                     <i class="bi bi-printer mr-2"></i>Print Order Summary
                 </button>
             </div>
         </div>
 
         <!-- Order Analytics -->
-        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 1.0s;">
-            <h3 class="text-xl font-bold text-gray-900 mb-6">
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 1.0s;">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">
                 <i class="bi bi-graph-up text-blue-600 mr-2"></i>Order Analytics
             </h3>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Items Count</span>
-                    <span class="text-lg font-bold text-blue-600" th:text="${#lists.size(order.orderItems)}">0</span>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Items Count</span>
+                    <span class="text-sm font-bold text-blue-600" th:text="${#lists.size(order.orderItems)}">0</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Order Value</span>
-                    <span class="text-lg font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</span>
+                <div class="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Order Value</span>
+                    <span class="text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">₹0.00</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Customer</span>
-                    <span class="text-sm font-bold text-purple-600" th:text="${order.customer.name}">Customer</span>
+                <div class="flex justify-between items-center p-2 bg-purple-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Customer</span>
+                    <span class="text-xs font-bold text-purple-600"
+                          th:text="${order.customer != null ? order.customer.name : (order.supplier != null ? order.supplier.name : 'N/A')}">Customer/Supplier</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Payment Method</span>
-                    <span class="text-sm font-bold text-orange-600" th:text="${order.paymentType ?: 'Not specified'}">CASH</span>
+                <div class="flex justify-between items-center p-2 bg-orange-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Payment Method</span>
+                    <span class="text-xs font-bold text-orange-600" th:text="${order.paymentType ?: 'Not specified'}">CASH</span>
                 </div>
             </div>
         </div>

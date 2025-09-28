@@ -1,7 +1,9 @@
+
 package com.rk.inventory_management_system.ui.nventory_management_system_ui.controllers;
 
 import com.rk.inventory_management_system.ui.nventory_management_system_ui.Clients.*;
 import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.*;
+import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.enums.OrderStatus;
 import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.enums.OrderType;
 import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.productDtos.ProductResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -230,59 +232,6 @@ public class OrdersController {
         return "orders/list-by-customer";
     }
 
-//    @GetMapping("/create")
-//    public String createForm(@RequestParam(required = false) Long customerId, Model model) {
-//        model.addAttribute("order", new OrderDto());
-//        model.addAttribute("products", productsClient.findAll());
-//        model.addAttribute("customers", customersClient.findAll());
-//        model.addAttribute("suppliers", suppliersClient.findAll());
-//        model.addAttribute("categories",categoriesClient.findAll());
-//
-//        if (customerId != null) {
-//            model.addAttribute("selectedCustomerId", customerId);
-//        }
-//
-//        return "orders/create";
-//    }
-//
-
-//
-//
-//    @PostMapping("/create")
-//    public String create(@ModelAttribute OrderDto order,
-//                         Model model,
-//                         BindingResult result,
-//                         RedirectAttributes redirectAttributes) {
-//
-//        if (result.hasErrors()) {
-//            model.addAttribute("order", order);
-//            model.addAttribute("customers", customersClient.findAll());
-//            model.addAttribute("suppliers", suppliersClient.findAll());
-//            model.addAttribute("products", productsClient.findAll());
-//            model.addAttribute("categories",categoriesClient.findAll());
-//            return "orders/create";
-//        }
-//
-//        try {
-//            OrderDto created = ordersClient.create(order);
-//            redirectAttributes.addFlashAttribute("successMessage",
-//                    "Order #" + created.getOrderId() + " created successfully");
-//            return "redirect:/orders/" + created.getOrderId();
-//
-//        } catch (Exception exception) {
-//            log.error("Error creating order", exception);
-//            result.rejectValue("orderType", "error.order", "Failed to create order");
-//            model.addAttribute("order", order);
-//            model.addAttribute("customers", customersClient.findAll());
-//            model.addAttribute("products", productsClient.findAll());
-//            model.addAttribute("suppliers", suppliersClient.findAll());
-//            model.addAttribute("categories",categoriesClient.findAll());
-//            return "orders/create";
-//        }
-//    }
-
-    // Add these new methods to your existing OrdersController class
-
     // Sales Order Routes
     @GetMapping("/sales/create")
     public String createSalesOrderForm(@RequestParam(required = false) Long customerId, Model model) {
@@ -342,6 +291,9 @@ public class OrdersController {
         }
     }
 
+
+
+
     // Purchase Order Routes
     @GetMapping("/purchase/create")
     public String createPurchaseOrderForm(@RequestParam(required = false) Long supplierId, Model model) {
@@ -381,7 +333,8 @@ public class OrdersController {
             OrderDto created = ordersClient.create(order);
             redirectAttributes.addFlashAttribute("successMessage",
                     "Purchase Order #" + created.getOrderId() + " created successfully");
-            return "redirect:/orders/" + created.getOrderId();
+            // CHANGED: Redirect to purchase order detail page instead of generic detail page
+            return "redirect:/orders/purchase/" + created.getOrderId();
 
         } catch (Exception exception) {
             log.error("Error creating purchase order", exception);
@@ -392,6 +345,112 @@ public class OrdersController {
             model.addAttribute("categories", categoriesClient.findAll());
             return "orders/purchase/create";
         }
+    }
+
+    @GetMapping("/purchase/{id}")
+    public String purchaseOrderDetail(@PathVariable Long id, Model model) {
+        try {
+            OrderDto orderDto = ordersClient.findOrderById(id);
+            log.info("OrderID: {}",orderDto.getOrderId());
+            // Verify this is actually a purchase order
+            if (orderDto.getOrderType() != OrderType.PURCHASE) {
+                return "redirect:/orders/" + id; // Redirect to regular detail page if not a purchase order
+            }
+
+            // Calculate purchase-specific analytics
+            PurchaseAnalyticsResult analytics = calculatePurchaseAnalytics(orderDto);
+
+            // Add data to model
+            model.addAttribute("order", orderDto);
+            model.addAttribute("totalOrderValue", analytics.getTotalOrderValue());
+            model.addAttribute("totalItems", analytics.getTotalItems());
+            model.addAttribute("totalQuantity", analytics.getTotalQuantity());
+            model.addAttribute("averageItemCost", analytics.getAverageItemCost());
+            model.addAttribute("lowStockItems", analytics.getLowStockItems());
+            model.addAttribute("categoryBreakdown", analytics.getCategoryBreakdown());
+
+            log.info("Purchase Order {} Details - Total Value: ₹{}, Items: {}, Supplier: {}",
+                    id, analytics.getTotalOrderValue(), analytics.getTotalItems(),
+                    orderDto.getSupplier() != null ? orderDto.getSupplier().getName() : "N/A");
+
+        } catch (Exception e) {
+            log.error("Error loading purchase order details for ID: {}", id, e);
+            model.addAttribute("errorMessage", "Failed to load purchase order details");
+            setDefaultPurchaseAnalytics(model);
+        }
+
+        return "orders/purchase/detail"; // Return the purchase order detail template
+    }
+
+    private PurchaseAnalyticsResult calculatePurchaseAnalytics(OrderDto orderDto) {
+        PurchaseAnalyticsResult result = new PurchaseAnalyticsResult();
+
+        double totalOrderValue = orderDto.getTotalPrice();
+        int totalItems = orderDto.getOrderItems().size();
+        int totalQuantity = orderDto.getOrderItems().stream()
+                .mapToInt(OrderItemDto::getQuantity)
+                .sum();
+        double averageItemCost = totalItems > 0 ? totalOrderValue / totalItems : 0.0;
+
+        // Find low stock items
+        List<String> lowStockItems = orderDto.getOrderItems().stream()
+                .filter(item -> item.getProductDto().getStockQuantity() <= item.getProductDto().getLowStockThreshold())
+                .map(item -> item.getProductDto().getName())
+                .collect(Collectors.toList());
+
+        // Category breakdown
+        Map<String, Integer> categoryBreakdown = orderDto.getOrderItems().stream()
+                .collect(Collectors.groupingBy(
+                        item -> item.getProductDto().getCategory() != null ?
+                                item.getProductDto().getCategory().getName() : "Uncategorized",
+                        Collectors.summingInt(OrderItemDto::getQuantity)
+                ));
+
+        result.setTotalOrderValue(totalOrderValue);
+        result.setTotalItems(totalItems);
+        result.setTotalQuantity(totalQuantity);
+        result.setAverageItemCost(averageItemCost);
+        result.setLowStockItems(lowStockItems);
+        result.setCategoryBreakdown(categoryBreakdown);
+
+        return result;
+    }
+
+    private void setDefaultPurchaseAnalytics(Model model) {
+        model.addAttribute("totalOrderValue", 0.0);
+        model.addAttribute("totalItems", 0);
+        model.addAttribute("totalQuantity", 0);
+        model.addAttribute("averageItemCost", 0.0);
+        model.addAttribute("lowStockItems", Collections.emptyList());
+        model.addAttribute("categoryBreakdown", Collections.emptyMap());
+    }
+
+    public static class PurchaseAnalyticsResult {
+        private double totalOrderValue;
+        private int totalItems;
+        private int totalQuantity;
+        private double averageItemCost;
+        private List<String> lowStockItems;
+        private Map<String, Integer> categoryBreakdown;
+
+        // Getters and setters
+        public double getTotalOrderValue() { return totalOrderValue; }
+        public void setTotalOrderValue(double totalOrderValue) { this.totalOrderValue = totalOrderValue; }
+
+        public int getTotalItems() { return totalItems; }
+        public void setTotalItems(int totalItems) { this.totalItems = totalItems; }
+
+        public int getTotalQuantity() { return totalQuantity; }
+        public void setTotalQuantity(int totalQuantity) { this.totalQuantity = totalQuantity; }
+
+        public double getAverageItemCost() { return averageItemCost; }
+        public void setAverageItemCost(double averageItemCost) { this.averageItemCost = averageItemCost; }
+
+        public List<String> getLowStockItems() { return lowStockItems; }
+        public void setLowStockItems(List<String> lowStockItems) { this.lowStockItems = lowStockItems; }
+
+        public Map<String, Integer> getCategoryBreakdown() { return categoryBreakdown; }
+        public void setCategoryBreakdown(Map<String, Integer> categoryBreakdown) { this.categoryBreakdown = categoryBreakdown; }
     }
 
     // Keep the existing generic create method for backward compatibility
@@ -480,6 +539,9 @@ public class OrdersController {
         try {
             OrderDto orderDto = ordersClient.findOrderById(id);
 
+            if(orderDto.getOrderType().equals(OrderType.PURCHASE)) {
+                return "redirect:/orders/purchase/"+id;
+            }
             // Enhanced profit/loss calculations
             AnalyticsResult analytics = calculateAdvancedAnalytics(orderDto);
 

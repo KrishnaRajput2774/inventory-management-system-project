@@ -87,48 +87,48 @@
 <body>
 <div layout:fragment="content">
     <!-- Flash Messages -->
-    <div th:if="${success}" class="alert-success rounded-2xl p-4 mb-6 shadow-lg">
+    <div th:if="${success}" class="alert-success rounded-2xl p-3 mb-4 shadow-lg">
         <div class="flex items-center">
-            <i class="bi bi-check-circle-fill mr-3 text-xl"></i>
+            <i class="bi bi-check-circle-fill mr-3 text-lg"></i>
             <span th:text="${success}"></span>
         </div>
     </div>
-    <div th:if="${error}" class="alert-error rounded-2xl p-4 mb-6 shadow-lg">
+    <div th:if="${error}" class="alert-error rounded-2xl p-3 mb-4 shadow-lg">
         <div class="flex items-center">
-            <i class="bi bi-exclamation-triangle-fill mr-3 text-xl"></i>
+            <i class="bi bi-exclamation-triangle-fill mr-3 text-lg"></i>
             <span th:text="${error}"></span>
         </div>
     </div>
 
     <!-- Enhanced Header -->
-    <div class="mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+    <div class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
         <div class="flex items-center">
-            <div class="w-16 h-16 supplier-avatar rounded-2xl flex items-center justify-center mr-4">
-                <i class="bi bi-building text-white text-2xl"></i>
+            <div class="w-12 h-12 supplier-avatar rounded-2xl flex items-center justify-center mr-3">
+                <i class="bi bi-building text-white text-lg"></i>
             </div>
             <div>
-                <h1 class="text-3xl font-bold text-gray-900" th:text="${supplier.name}">Supplier Name</h1>
-                <p class="mt-1 text-lg text-gray-600">Supplier analytics and partnership details</p>
+                <h1 class="text-2xl font-bold text-gray-900" th:text="${supplier.name}">Supplier Name</h1>
+                <p class="mt-1 text-sm text-gray-600">Supplier analytics and partnership details</p>
                 <div class="flex items-center mt-2">
-                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                         <i class="bi bi-check-circle mr-1"></i>Active Partner
                     </span>
-                    <span class="ml-3 text-sm text-gray-500" th:text="'ID: #' + ${supplier.id}">ID: #123</span>
+                    <span class="ml-3 text-xs text-gray-500" th:text="'ID: #' + ${supplier.id}">ID: #123</span>
                 </div>
             </div>
         </div>
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-2">
             <a href="/suppliers"
-               class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+               class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm">
                 <i class="bi bi-arrow-left mr-2"></i>Back to Suppliers
             </a>
             <a th:href="@{/suppliers/{id}/products(id=${supplier.id})}"
-               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation text-sm">
                 <i class="bi bi-box mr-2"></i>View Products
             </a>
             <form th:action="@{/suppliers/{id}/delete(id=${supplier.id})}" method="post" style="display: inline;">
                 <button type="submit"
-                        class="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
+                        class="bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm"
                         onclick="return confirm('Are you sure you want to delete this supplier? This action cannot be undone.')">
                     <i class="bi bi-trash mr-2"></i>Delete
                 </button>
@@ -137,211 +137,210 @@
     </div>
 
     <!-- Key Metrics Row -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         <!-- Total Products Card -->
-        <div class="metric-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="metric-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Total Products</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Total Products</p>
+                    <p class="text-xl font-bold mt-1" th:text="${totalProducts ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-box text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Supplied</span>
+                        <span class="text-white/80 text-xs font-medium">Supplied</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-boxes text-2xl"></i>
+                <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-boxes text-lg"></i>
                 </div>
             </div>
         </div>
 
         <!-- Total Supplier Cost Card -->
-        <div class="cost-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="cost-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Total Cost</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalSupplierCost ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Total Cost</p>
+                    <p class="text-xl font-bold mt-1" th:text="'₹' + ${#numbers.formatDecimal(totalSupplierCost ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-credit-card text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Investment</span>
+                        <span class="text-white/80 text-xs font-medium">Investment</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-receipt text-2xl"></i>
+                <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-receipt text-lg"></i>
                 </div>
             </div>
         </div>
 
         <!-- Potential Revenue Card -->
-        <div class="revenue-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="revenue-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Potential Revenue</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialRevenue ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Potential Revenue</p>
+                    <p class="text-xl font-bold mt-1" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialRevenue ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-trending-up text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Opportunity</span>
+                        <span class="text-white/80 text-xs font-medium">Opportunity</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-currency-rupee text-2xl"></i>
+                <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-currency-rupee text-lg"></i>
                 </div>
             </div>
         </div>
 
         <!-- Potential Profit Card -->
-        <div class="profit-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="profit-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Potential Profit</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(potentialProfit ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Potential Profit</p>
+                    <p class="text-xl font-bold mt-1" th:text="'₹' + ${#numbers.formatDecimal(potentialProfit ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-graph-up text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium" th:text="${#numbers.formatDecimal(profitMarginPercentage ?: 0, 1, 1)} + '% margin'">0.0% margin</span>
+                        <span class="text-white/80 text-xs font-medium" th:text="${#numbers.formatDecimal(profitMarginPercentage ?: 0, 1, 1)} + '% margin'">0.0% margin</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-trophy text-2xl"></i>
+                <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-trophy text-lg"></i>
                 </div>
             </div>
         </div>
 
         <!-- Performance Score Card -->
-        <div class="performance-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="performance-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Performance Score</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${#numbers.formatDecimal(performanceScore ?: 0, 1, 0)}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Performance Score</p>
+                    <p class="text-xl font-bold mt-1" th:text="${#numbers.formatDecimal(performanceScore ?: 0, 1, 0)}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-speedometer text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Rating</span>
+                        <span class="text-white/80 text-xs font-medium">Rating</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-award text-2xl"></i>
+                <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-award text-lg"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Supplier Information Card -->
-        <div class="lg:col-span-2">
-            <div class="info-card rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-semibold text-gray-900">Supplier Information</h3>
+    <!-- Main Content Grid - Reorganized for better scaling -->
+    <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <!-- Supplier Information Card - Takes 2 columns -->
+        <div class="xl:col-span-2">
+            <div class="info-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Supplier Information</h3>
                     <div class="flex items-center space-x-2">
                         <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                         <span class="text-sm text-gray-600">Verified Partner</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <dt class="text-sm font-medium text-gray-600 mb-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                        <dt class="text-xs font-medium text-gray-600 mb-2">
                             <i class="bi bi-building mr-2 text-blue-600"></i>Company Name
                         </dt>
-                        <dd class="text-lg font-bold text-gray-900" th:text="${supplier.name}">Company Name</dd>
+                        <dd class="text-sm font-bold text-gray-900" th:text="${supplier.name}">Company Name</dd>
                     </div>
 
-                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <dt class="text-sm font-medium text-gray-600 mb-2">
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                        <dt class="text-xs font-medium text-gray-600 mb-2">
                             <i class="bi bi-hash mr-2 text-blue-600"></i>Supplier ID
                         </dt>
-                        <dd class="text-lg font-bold text-gray-900" th:text="'#' + ${supplier.id}">#123</dd>
+                        <dd class="text-sm font-bold text-gray-900" th:text="'#' + ${supplier.id}">#123</dd>
                     </div>
 
-                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <dt class="text-sm font-medium text-gray-600 mb-2">
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                        <dt class="text-xs font-medium text-gray-600 mb-2">
                             <i class="bi bi-envelope mr-2 text-blue-600"></i>Email Address
                         </dt>
-                        <dd class="text-lg font-bold text-gray-900">
+                        <dd class="text-sm font-bold text-gray-900">
                             <a th:href="'mailto:' + ${supplier.email}"
                                th:text="${supplier.email}"
                                class="text-blue-600 hover:text-blue-800 transition-colors duration-150">email@company.com</a>
                         </dd>
                     </div>
 
-                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <dt class="text-sm font-medium text-gray-600 mb-2">
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                        <dt class="text-xs font-medium text-gray-600 mb-2">
                             <i class="bi bi-telephone mr-2 text-blue-600"></i>Contact Number
                         </dt>
-                        <dd class="text-lg font-bold text-gray-900" th:text="${supplier.contactNumber}">+1234567890</dd>
+                        <dd class="text-sm font-bold text-gray-900" th:text="${supplier.contactNumber}">+1234567890</dd>
                     </div>
 
-                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/20 md:col-span-2">
-                        <dt class="text-sm font-medium text-gray-600 mb-2">
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-white/20 md:col-span-2">
+                        <dt class="text-xs font-medium text-gray-600 mb-2">
                             <i class="bi bi-geo-alt mr-2 text-blue-600"></i>Business Address
                         </dt>
-                        <dd class="text-lg font-bold text-gray-900" th:text="${supplier.address}">Business Address</dd>
+                        <dd class="text-sm font-bold text-gray-900" th:text="${supplier.address}">Business Address</dd>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Analytics and Actions Sidebar -->
-        <div class="lg:col-span-1 space-y-6">
-            <!-- Cost Analysis Card -->
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+        <!-- Cost Analysis Card -->
+        <div class="xl:col-span-1">
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">
                     <i class="bi bi-calculator mr-2"></i>Cost Analysis
                 </h3>
-                <div class="space-y-4">
+                <div class="space-y-3">
                     <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                        <span class="text-sm text-gray-600">Avg Cost per Product</span>
+                        <span class="text-xs text-gray-600">Avg Cost per Product</span>
                         <span class="text-sm font-bold text-orange-600" th:text="'₹' + ${#numbers.formatDecimal(avgSupplierCost ?: 0, 0, 0)}">₹0</span>
                     </div>
                     <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                        <span class="text-sm text-gray-600">Avg Selling Price</span>
+                        <span class="text-xs text-gray-600">Avg Selling Price</span>
                         <span class="text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(avgSellingPrice ?: 0, 0, 0)}">₹0</span>
                     </div>
                     <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                        <span class="text-sm text-gray-600">Profit Margin</span>
+                        <span class="text-xs text-gray-600">Profit Margin</span>
                         <span class="text-sm font-bold text-purple-600" th:text="${#numbers.formatDecimal(profitMarginPercentage ?: 0, 1, 1)} + '%'">0.0%</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- Partnership Timeline Card -->
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                    <i class="bi bi-calendar-heart mr-2"></i>Partnership Timeline
-                </h3>
-                <div class="space-y-4">
-                    <div th:if="${supplier.createdAt != null}" class="text-center p-4 bg-blue-50 rounded-lg">
-                        <div class="text-sm text-gray-600 mb-1">Partner Since</div>
-                        <div class="text-lg font-bold text-blue-600" th:text="${#temporals.format(supplier.createdAt, 'MMM dd, yyyy')}">Jan 01, 2024</div>
+                <!-- Partnership Timeline in same column -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                        <i class="bi bi-calendar-heart mr-2"></i>Partnership Timeline
+                    </h3>
+                    <div th:if="${supplier.createdAt != null}" class="text-center p-3 bg-blue-50 rounded-lg">
+                        <div class="text-xs text-gray-600 mb-1">Partner Since</div>
+                        <div class="text-sm font-bold text-blue-600" th:text="${#temporals.format(supplier.createdAt, 'MMM dd, yyyy')}">Jan 01, 2024</div>
                         <div class="text-xs text-gray-500 mt-1" th:text="'(' + ${#numbers.formatInteger(T(java.time.temporal.ChronoUnit).MONTHS.between(supplier.createdAt, T(java.time.LocalDateTime).now()), 0)} + ' months ago)'">
                             (0 months ago)
                         </div>
                     </div>
-                    <div th:unless="${supplier.createdAt != null}" class="text-center p-4 bg-gray-50 rounded-lg">
-                        <div class="text-sm text-gray-500">Partnership date not available</div>
+                    <div th:unless="${supplier.createdAt != null}" class="text-center p-3 bg-gray-50 rounded-lg">
+                        <div class="text-xs text-gray-500">Partnership date not available</div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Quick Actions Card -->
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+        <!-- Quick Actions Card -->
+        <div class="xl:col-span-1">
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">
                     <i class="bi bi-lightning mr-2"></i>Quick Actions
                 </h3>
-                <div class="space-y-3">
+                <div class="space-y-2">
                     <a th:href="@{/suppliers/{id}/products(id=${supplier.id})}"
-                       class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                       class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block text-sm">
                         <i class="bi bi-box mr-2"></i>View All Products
                     </a>
                     <a href="/products/create"
-                       class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                       class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block text-sm">
                         <i class="bi bi-plus-circle mr-2"></i>Add New Product
                     </a>
                     <a href="/orders/create"
-                       class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block">
+                       class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center block text-sm">
                         <i class="bi bi-cart-plus mr-2"></i>Create Purchase Order
                     </a>
                     <button onclick="exportSupplierData()"
-                            class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center">
+                            class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-center text-sm">
                         <i class="bi bi-download mr-2"></i>Export Data
                     </button>
                 </div>
@@ -350,18 +349,18 @@
     </div>
 
     <!-- Performance Insights Section -->
-    <div class="mt-8">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-6">
+    <div class="mt-6">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-5">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
                 <i class="bi bi-graph-up mr-2"></i>Performance Insights
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-star text-blue-600 text-xl"></i>
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-star text-blue-600 text-lg"></i>
                     </div>
-                    <div class="text-2xl font-bold text-blue-600" th:text="${#numbers.formatDecimal(performanceScore ?: 0, 1, 0)} + '/100'">0/100</div>
-                    <div class="text-sm text-gray-600 mt-1">Overall Performance</div>
+                    <div class="text-xl font-bold text-blue-600" th:text="${#numbers.formatDecimal(performanceScore ?: 0, 1, 0)} + '/100'">0/100</div>
+                    <div class="text-xs text-gray-600 mt-1">Overall Performance</div>
                     <div class="mt-2">
                         <div class="w-full bg-gray-200 rounded-full h-2">
                             <div class="bg-blue-500 h-2 rounded-full" th:style="'width: ' + ${performanceScore ?: 0} + '%'"></div>
@@ -370,21 +369,21 @@
                 </div>
 
                 <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-graph-up text-green-600 text-xl"></i>
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-graph-up text-green-600 text-lg"></i>
                     </div>
-                    <div class="text-2xl font-bold text-green-600" th:text="${#numbers.formatDecimal(profitMarginPercentage ?: 0, 1, 1)} + '%'">0.0%</div>
-                    <div class="text-sm text-gray-600 mt-1">Profit Margin</div>
+                    <div class="text-xl font-bold text-green-600" th:text="${#numbers.formatDecimal(profitMarginPercentage ?: 0, 1, 1)} + '%'">0.0%</div>
+                    <div class="text-xs text-gray-600 mt-1">Profit Margin</div>
                     <div class="text-xs" th:classappend="${profitMarginPercentage > 20 ? 'text-green-600' : (profitMarginPercentage > 10 ? 'text-yellow-600' : 'text-red-600')}"
                          th:text="${profitMarginPercentage > 20 ? 'Excellent' : (profitMarginPercentage > 10 ? 'Good' : 'Needs Improvement')}">Status</div>
                 </div>
 
                 <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-boxes text-purple-600 text-xl"></i>
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-boxes text-purple-600 text-lg"></i>
                     </div>
-                    <div class="text-2xl font-bold text-purple-600" th:text="${totalProducts ?: 0}">0</div>
-                    <div class="text-sm text-gray-600 mt-1">Product Portfolio</div>
+                    <div class="text-xl font-bold text-purple-600" th:text="${totalProducts ?: 0}">0</div>
+                    <div class="text-xs text-gray-600 mt-1">Product Portfolio</div>
                     <div class="text-xs" th:classappend="${totalProducts > 10 ? 'text-green-600' : (totalProducts > 5 ? 'text-yellow-600' : 'text-red-600')}"
                          th:text="${totalProducts > 10 ? 'Diverse' : (totalProducts > 5 ? 'Moderate' : 'Limited')}">Diversity</div>
                 </div>

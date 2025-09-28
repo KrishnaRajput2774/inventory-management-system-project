@@ -20,7 +20,7 @@
             margin-top: 1px;
         }
         .search-dropdown-item {
-            padding: 8px 12px;
+            padding: 4px 6px;
             cursor: pointer;
             border-bottom: 1px solid #f3f4f6;
             transition: background-color 0.15s ease;
@@ -46,8 +46,8 @@
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 11px;
+            padding: 2px 4px;
+            font-size: 9px;
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.15s ease;
@@ -75,7 +75,7 @@
         .modal-dialog {
             position: relative;
             width: auto;
-            margin: 1.5rem auto;
+            margin: 1rem auto;
             max-width: 500px;
         }
         .modal-content {
@@ -85,17 +85,17 @@
             border: 1px solid #e5e7eb;
         }
         .modal-header {
-            padding: 20px 24px;
+            padding: 8px 8px;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .modal-body {
-            padding: 24px;
+            padding: 10px;
         }
         .modal-footer {
-            padding: 16px 24px;
+            padding: 8px 12px;
             border-top: 1px solid #e5e7eb;
             display: flex;
             justify-content: flex-end;
@@ -157,8 +157,8 @@
         .btn-primary {
             background: #374151;
             color: white;
-            padding: 8px 16px;
-            font-size: 14px;
+            padding: 8px 8px;
+            font-size: 10px;
         }
         .btn-primary:hover {
             background: #111827;
@@ -167,8 +167,8 @@
             background: white;
             border: 1px solid #d1d5db;
             color: #6b7280;
-            padding: 8px 16px;
-            font-size: 14px;
+            padding: 8px 8px;
+            font-size: 10px;
         }
         .btn-secondary:hover {
             background: #f9fafb;
@@ -177,10 +177,10 @@
         .input-field {
             border: 1px solid #d1d5db;
             border-radius: 6px;
-            padding: 8px 12px;
+            padding: 8px 8px;
             transition: border-color 0.15s ease;
             background: white;
-            font-size: 14px;
+            font-size: 10px;
             width: 100%;
         }
         .input-field:focus {
@@ -190,10 +190,14 @@
         }
         .form-label {
             display: block;
-            font-size: 13px;
+            font-size: 10px;
             font-weight: 500;
             color: #374151;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+        }
+
+        form input::placeholder {
+            font-size: 12px;
         }
     </style>
 </head>
@@ -204,12 +208,12 @@
     <div class="mb-6 px-2">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">Create Product</h1>
+                <h1 class="text-2xl sm:text-xl font-semibold text-gray-900">Create Product</h1>
                 <p class="mt-1 text-sm text-gray-600">Add a new product to your inventory</p>
             </div>
             <div class="flex flex-wrap gap-2">
                 <a href="/products"
-                   class="inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">
+                   class="inline-flex items-center px-2 sm:px-2 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">
                     <i class="bi bi-arrow-left mr-2"></i>
                     <span class="hidden sm:inline">Back to Products</span>
                     <span class="sm:hidden">Back</span>
@@ -221,75 +225,75 @@
     <div class="max-w-5xl mx-2">
         <!-- Product Form Card -->
         <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
-            <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
-                <h3 class="text-base sm:text-lg font-medium text-gray-900">Product Information</h3>
-                <p class="mt-1 text-sm text-gray-500">Enter the product details below</p>
+            <div class="px-3 sm:px-3 py-2 border-b border-gray-200">
+                <h3 class="text-base sm:text-base font-medium text-gray-900">Product Information</h3>
+                <p class="mt-1 text-xs text-gray-500">Enter the product details below</p>
             </div>
-            <div class="px-4 sm:px-6 py-6">
+            <div class="px-2 sm:px-3 py-3">
                 <form th:action="@{/products/create}" th:object="${product}" method="post" class="space-y-6">
                     <!-- Basic Information -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <!-- Product Name -->
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="name" class="block text-xs font-medium text-gray-700 mb-1.5">
                                 Product Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text"
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                   class="block w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                    id="name"
                                    th:field="*{name}"
                                    placeholder="Enter product name"
                                    required>
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                         </div>
 
                         <div>
-                            <label for="attribute" class="block text-sm font-medium text-gray-700 mb-2">
-                                Attribute <span class="text-gray-400 text-xs">(e.g., Color: Black, Unit: 1L, Flavor: Mango)</span>
+                            <label for="attribute" class="block text-xs font-medium text-gray-700 mb-1.5">
+                                Attribute <span class="text-gray-400 text-[8.5px]">(e.g., Color: Black, Unit: 1L, Flavor: Mango)</span>
                             </label>
                             <input type="text"
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                   class="block w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                    id="attribute"
                                    th:field="*{attribute}"
                                    placeholder="Enter product attribute (e.g., Red, 1kg, Vanilla)">
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('attribute')}" th:errors="*{attribute}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('attribute')}" th:errors="*{attribute}"></div>
                         </div>
 
                         <!-- Brand Name -->
                         <div>
-                            <label for="brandName" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="brandName" class="block text-xs font-medium text-gray-700 mb-1.5">
                                 Brand Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text"
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                   class="block w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                    id="brandName"
                                    th:field="*{brandName}"
                                    placeholder="Enter brand name"
                                    required>
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('brandName')}" th:errors="*{brandName}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('brandName')}" th:errors="*{brandName}"></div>
                         </div>
                         <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="description" class="block text-xs font-medium text-gray-700 mb-1.5">
                                 Description <span class="text-red-500">*</span>
                             </label>
                             <input type="text"
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                   class="block w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                    id="description"
                                    th:field="*{description}"
                                    placeholder="Enter product description"
                             >
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                         </div>
                     </div>
 
                     <!-- Category and Supplier -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <!-- Category -->
                         <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="category" class="block text-xs font-medium text-gray-700 mb-2">
                                 Category <span class="text-red-500">*</span>
                             </label>
-                            <select class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                            <select class="block text-sm w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                     id="category"
                                     th:field="*{category.id}"
                                     required>
@@ -298,17 +302,17 @@
                                         th:value="${category.id}"
                                         th:text="${category.name}"></option>
                             </select>
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
                         </div>
 
                         <!-- Supplier with Search -->
                         <div>
-                            <label for="supplierSearch" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="supplierSearch" class="block text-xs font-medium text-gray-700 mb-2">
                                 Supplier <span class="text-red-500">*</span>
                             </label>
                             <div class="search-container">
                                 <input type="text" id="supplierSearch"
-                                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                       class="block w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                        style="padding-right: 60px;"
                                        placeholder="Search suppliers..." autocomplete="off" required>
                                 <button type="button" class="create-new-btn" id="createSupplierBtn">+ New</button>
@@ -321,7 +325,7 @@
                                     <span id="selectedSupplierName"></span>
                                 </div>
                             </div>
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('supplier')}" th:errors="*{supplier}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('supplier')}" th:errors="*{supplier}"></div>
                         </div>
                     </div>
 
@@ -330,15 +334,15 @@
 
                         <!-- Actual Price -->
                         <div>
-                            <label for="actualPrice" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="actualPrice" class="block text-xs font-medium text-gray-700 mb-1">
                                 Actual Price <span class="text-red-500">*</span>
                             </label>
                             <div class="relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                    <span class="text-gray-500 sm:text-xs">₹</span>
                                 </div>
                                 <input type="number"
-                                       class="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                       class="block w-full pl-7 pr-3 py-1 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                        id="actualPrice"
                                        th:field="*{actualPrice}"
                                        step="0.01"
@@ -346,21 +350,21 @@
                                        placeholder="0.00"
                                        required>
                             </div>
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('actualPrice')}" th:errors="*{actualPrice}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('actualPrice')}" th:errors="*{actualPrice}"></div>
 
                         </div>
 
                         <!-- Selling Price -->
                         <div>
-                            <label for="sellingPrice" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="sellingPrice" class="block text-xs font-medium text-gray-700 mb-2">
                                 Selling Price <span class="text-red-500">*</span>
                             </label>
                             <div class="relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                    <span class="text-gray-500 sm:text-xs">₹</span>
                                 </div>
                                 <input type="number"
-                                       class="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                       class="block w-full pl-7 pr-3 py-1 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                        id="sellingPrice"
                                        th:field="*{sellingPrice}"
                                        step="0.01"
@@ -368,18 +372,18 @@
                                        placeholder="0.00"
                                        required>
                             </div>
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('sellingPrice')}" th:errors="*{sellingPrice}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('sellingPrice')}" th:errors="*{sellingPrice}"></div>
 
                         </div>
 
                         <!-- Discount -->
                         <div>
-                            <label for="discount" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="discount" class="block text-xs font-medium text-gray-700 mb-2">
                                 Discount (%)
                             </label>
                             <div class="relative rounded-md shadow-sm">
                                 <input type="number"
-                                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                       class="block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                        id="discount"
                                        th:field="*{discount}"
                                        step="0.01"
@@ -387,38 +391,38 @@
                                        max="100"
                                        placeholder="0">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 sm:text-sm">%</span>
+                                    <span class="text-gray-500 sm:text-xs">%</span>
                                 </div>
                             </div>
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('discount')}" th:errors="*{discount}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('discount')}" th:errors="*{discount}"></div>
                         </div>
 
                         <!-- Initial Stock -->
                         <div>
-                            <label for="stockQuantity" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="stockQuantity" class="block text-xs font-medium text-gray-700 mb-2">
                                 Initial Stock
                             </label>
                             <input type="number"
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                   class="block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                    id="stockQuantity"
                                    th:field="*{stockQuantity}"
                                    min="0"
                                    value="0"
                                    placeholder="0">
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('stockQuantity')}" th:errors="*{stockQuantity}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('stockQuantity')}" th:errors="*{stockQuantity}"></div>
                         </div>
                         <div>
-                            <label for="lowStockThreshold" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="lowStockThreshold" class="block text-xs font-medium text-gray-700 mb-2">
                                 Low Stock Threshold
                             </label>
                             <input type="number"
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
+                                   class="block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150"
                                    id="lowStockThreshold"
                                    th:field="*{lowStockThreshold}"
                                    min="1"
                                    value="0"
                                    placeholder="0">
-                            <div class="mt-1 text-sm text-red-600" th:if="${#fields.hasErrors('lowStockThreshold')}" th:errors="*{lowStockThreshold}"></div>
+                            <div class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('lowStockThreshold')}" th:errors="*{lowStockThreshold}"></div>
                         </div>
                     </div>
 
@@ -426,11 +430,11 @@
                     <div class="pt-6 border-t border-gray-200">
                         <div class="flex flex-col sm:flex-row sm:justify-end gap-3">
                             <a href="/products"
-                               class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">
+                               class="inline-flex items-center justify-center px-2 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">
                                 Cancel
                             </a>
                             <button type="submit"
-                                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">
+                                    class="inline-flex items-center justify-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">
                                 <i class="bi bi-save mr-2"></i>
                                 Save Product
                             </button>
@@ -443,16 +447,16 @@
         <!-- Helper Cards -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <!-- Pricing Information -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-2">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <i class="bi bi-info-circle text-blue-600"></i>
                     </div>
                     <div class="ml-3">
-                        <h3 class="text-sm font-medium text-blue-800">
+                        <h3 class="text-xs font-medium text-blue-800">
                             Pricing Information
                         </h3>
-                        <div class="mt-2 text-sm text-blue-700">
+                        <div class="mt-2 text-xs text-blue-700">
                             <p>Set competitive prices and optional discounts. The discount percentage will be applied to the base price for customer purchases.</p>
                         </div>
                     </div>
@@ -460,16 +464,16 @@
             </div>
 
             <!-- Inventory Tips -->
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-2">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <i class="bi bi-lightbulb text-green-600"></i>
                     </div>
                     <div class="ml-3">
-                        <h3 class="text-sm font-medium text-green-800">
+                        <h3 class="text-xs font-medium text-green-800">
                             Inventory Tips
                         </h3>
-                        <div class="mt-2 text-sm text-green-700">
+                        <div class="mt-2 text-xs text-green-700">
                             <p>You can start with zero initial stock and add inventory later through the stock management feature.</p>
                         </div>
                     </div>
@@ -483,7 +487,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="font-medium text-gray-900">Create Supplier</h5>
+                    <h5 class="font-medium text-base text-gray-900">Create Supplier</h5>
                     <button type="button" class="close-modal">×</button>
                 </div>
                 <div class="modal-body">
@@ -624,8 +628,8 @@
                 filteredSuppliers.forEach(supplier => {
                     const supplierHtml = `
                         <div class="search-dropdown-item" data-id="${supplier.id}" data-type="supplier">
-                            <div class="font-medium text-gray-900">${supplier.name || 'No Name'}</div>
-                            <div class="text-xs text-gray-500">${supplier.email || 'No Email'} • ${supplier.contactNumber || 'No Contact'}</div>
+                            <div class="font-medium text-xs text-gray-900">${supplier.name || 'No Name'}</div>
+                            <div class="text-[8px] text-gray-500">${supplier.email || 'No Email'} • ${supplier.contactNumber || 'No Contact'}</div>
                         </div>
                     `;
                     dropdown.append(supplierHtml);

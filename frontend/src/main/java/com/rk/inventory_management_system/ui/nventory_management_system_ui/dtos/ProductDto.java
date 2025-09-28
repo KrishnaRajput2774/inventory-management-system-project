@@ -26,7 +26,4 @@ public class ProductDto {
     private SupplierDto supplier;
     private String brandName;
     private Integer quantitySold;
-
-
-
 }

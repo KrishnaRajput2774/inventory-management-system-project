@@ -569,115 +569,6 @@ function renderOrdersByChannelChart(data) {
     });
 }
 
-function renderInventoryTurnoverChart(data) {
-    const ctx = document.getElementById('inventoryTurnoverChart');
-    if (!ctx || !data || !data.labels || data.labels.length === 0) {
-        showEmptyState(ctx, 'No inventory turnover data available');
-        return;
-    }
-
-    chartInstances.inventoryTurnover = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Turnover Ratio',
-                data: data.data,
-                backgroundColor: '#8b5cf6',
-                borderColor: '#7c3aed',
-                borderWidth: 1,
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            return `Turnover: ${context.parsed.y.toFixed(2)}x`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f3f4f6' },
-                    ticks: {
-                        color: '#6b7280',
-                        callback: function(value) {
-                            return value.toFixed(1) + 'x';
-                        }
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        color: '#6b7280',
-                        maxRotation: 45
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderOrdersByChannelChart(data) {
-    const ctx = document.getElementById('ordersByChannelChart');
-    if (!ctx || !data || !data.labels || data.labels.length === 0) {
-        showEmptyState(ctx, 'No channel data available');
-        return;
-    }
-
-    chartInstances.ordersByChannel = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                data: data.data,
-                backgroundColor: data.colors || ['#3b82f6', '#10b981', '#f59e0b', '#6b7280'],
-                borderWidth: 2,
-                borderColor: '#fff',
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        usePointStyle: true,
-                        color: '#6b7280'
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = ((context.parsed / total) * 100).toFixed(1);
-                            return `${context.label}: ${context.parsed} orders (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
 function updateCategoryLegend(data) {
     const legendContainer = document.getElementById('categoryLegend');
     if (!legendContainer || !data.labels) return;
@@ -690,14 +581,14 @@ function updateCategoryLegend(data) {
         const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
 
         legendHtml += `
-            <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+            <div class="flex items-center justify-between p-1.5 rounded-lg bg-gray-50">
                 <div class="flex items-center space-x-3">
-                    <div class="w-4 h-4 rounded-full" style="background-color: ${color}"></div>
-                    <span class="text-sm font-medium text-gray-700">${label}</span>
+                    <div class="w-2 h-2 rounded-full" style="background-color: ${color}"></div>
+                    <span class="text-xs font-medium text-gray-700">${label}</span>
                 </div>
                 <div class="text-right">
-                    <div class="text-sm font-semibold text-gray-900">₹${value.toLocaleString()}</div>
-                    <div class="text-xs text-gray-500">${percentage}%</div>
+                    <div class="text-xs font-semibold text-gray-900">₹${value.toLocaleString()}</div>
+                    <div class="text-[10px] text-gray-500">${percentage}%</div>
                 </div>
             </div>
         `;
@@ -740,12 +631,12 @@ function closeRevenueModal() {
 function loadProfitData(period) {
     // Update button states
     document.querySelectorAll('#profitWeekBtn, #profitMonthBtn, #profitYearBtn').forEach(btn => {
-        btn.className = 'px-4 py-2 text-gray-600 rounded-lg font-medium hover:bg-gray-100';
+        btn.className = 'px-2 py-1 text-xs text-gray-600 rounded-lg font-medium hover:bg-gray-100';
     });
 
     const buttonId = period === 'week' ? 'profitWeekBtn' :
                      period === 'year' ? 'profitYearBtn' : 'profitMonthBtn';
-    document.getElementById(buttonId).className = 'px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium';
+    document.getElementById(buttonId).className = 'px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-lg font-medium';
 
     fetch(`/dashboard/profit-data?period=${period}`)
         .then(response => response.json())
@@ -771,23 +662,23 @@ function updateProfitModal(data, period) {
     // Update top products
     const topProductsContainer = document.getElementById('topProfitProducts');
     if (!data.topProducts || data.topProducts.length === 0) {
-        topProductsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No profit data available for this period</div>';
+        topProductsContainer.innerHTML = '<div class="text-gray-500 text-center py-1">No profit data available for this period</div>';
         return;
     }
 
     let productsHtml = '';
     data.topProducts.forEach((product, index) => {
         productsHtml += `
-            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-semibold">
+            <div class="flex items-center justify-between p-1.5 bg-gray-50 rounded-lg">
+                <div class="flex items-center space-x-2">
+                    <div class="w-4 h-4 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-[10px] font-semibold">
                         ${index + 1}
                     </div>
-                    <span class="font-medium text-gray-900">${product.name}</span>
+                    <span class="font-medium text-xs text-gray-900">${product.name}</span>
                 </div>
                 <div class="text-right">
-                    <div class="font-semibold text-green-600">₹${product.profit.toLocaleString()}</div>
-                    <div class="text-xs text-gray-500">${product.percentage.toFixed(1)}% of total</div>
+                    <div class="font-semibold text-xs text-green-600">₹${product.profit.toLocaleString()}</div>
+                    <div class="text-[10px] text-gray-500">${product.percentage.toFixed(1)}% of total</div>
                 </div>
             </div>
         `;
@@ -811,34 +702,34 @@ function updateRevenueModal(data) {
     // Update revenue metrics
     const revenueMetrics = document.getElementById('revenueMetrics');
     revenueMetrics.innerHTML = `
-        <div class="text-center p-4 bg-blue-50 rounded-lg">
-            <div class="text-2xl font-bold text-blue-600">₹${data.weekly?.toLocaleString() || 0}</div>
-            <div class="text-sm text-gray-600">Weekly Revenue</div>
+        <div class="text-center p-2 bg-blue-50 rounded-lg">
+            <div class="text-lg font-bold text-blue-600">₹${data.weekly?.toLocaleString() || 0}</div>
+            <div class="text-xs text-gray-600">Weekly Revenue</div>
         </div>
-        <div class="text-center p-4 bg-green-50 rounded-lg">
-            <div class="text-2xl font-bold text-green-600">₹${data.monthly?.toLocaleString() || 0}</div>
-            <div class="text-sm text-gray-600">Monthly Revenue</div>
+        <div class="text-center p-2 bg-green-50 rounded-lg">
+            <div class="text-lg font-bold text-green-600">₹${data.monthly?.toLocaleString() || 0}</div>
+            <div class="text-xs text-gray-600">Monthly Revenue</div>
         </div>
-        <div class="text-center p-4 bg-purple-50 rounded-lg">
-            <div class="text-2xl font-bold text-purple-600">₹${data.yearly?.toLocaleString() || 0}</div>
-            <div class="text-sm text-gray-600">Yearly Revenue</div>
+        <div class="text-center p-2 bg-purple-50 rounded-lg">
+            <div class="text-lg font-bold text-purple-600">₹${data.yearly?.toLocaleString() || 0}</div>
+            <div class="text-xs text-gray-600">Yearly Revenue</div>
         </div>
     `;
 
     // Update order metrics
     const orderMetrics = document.getElementById('orderMetrics');
     orderMetrics.innerHTML = `
-        <div class="text-center p-4 bg-orange-50 rounded-lg">
-            <div class="text-2xl font-bold text-orange-600">₹${data.averageOrderValue?.toLocaleString() || 0}</div>
-            <div class="text-sm text-gray-600">Avg Order Value</div>
+        <div class="text-center p-2 bg-orange-50 rounded-lg">
+            <div class="text-lg font-bold text-orange-600">₹${data.averageOrderValue?.toLocaleString() || 0}</div>
+            <div class="text-xs text-gray-600">Avg Order Value</div>
         </div>
-        <div class="text-center p-4 bg-pink-50 rounded-lg">
-            <div class="text-2xl font-bold text-pink-600">${data.totalOrders || 0}</div>
-            <div class="text-sm text-gray-600">Total Orders</div>
+        <div class="text-center p-2 bg-pink-50 rounded-lg">
+            <div class="text-lg font-bold text-pink-600">${data.totalOrders || 0}</div>
+            <div class="text-xs text-gray-600">Total Orders</div>
         </div>
-        <div class="text-center p-4 bg-indigo-50 rounded-lg">
-            <div class="text-2xl font-bold text-indigo-600">${data.contributingCustomers || 0}</div>
-            <div class="text-sm text-gray-600">Active Customers</div>
+        <div class="text-center p-2 bg-indigo-50 rounded-lg">
+            <div class="text-lg font-bold text-indigo-600">${data.contributingCustomers || 0}</div>
+            <div class="text-xs text-gray-600">Active Customers</div>
         </div>
     `;
 }

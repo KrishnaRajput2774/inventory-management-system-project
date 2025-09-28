@@ -1,26 +1,34 @@
 package com.rk.inventory_management_system.ui.nventory_management_system_ui.controllers;
+import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.ChatBotDtos.ChatRequest;
+import com.rk.inventory_management_system.ui.nventory_management_system_ui.dtos.ChatBotDtos.ChatResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import reactor.core.publisher.Flux;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Controller
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ApiProxyController {
 
     @Value("${backend.base-url}")
     private String backendUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();
-
     // ---------------- AUTH ----------------
     @PostMapping("/auth/login")
     @ResponseBody
@@ -274,5 +282,4 @@ public class ApiProxyController {
                     .body(("{\"error\":\"Invoice download failed: " + e.getMessage() + "\"}").getBytes());
         }
     }
-
 }

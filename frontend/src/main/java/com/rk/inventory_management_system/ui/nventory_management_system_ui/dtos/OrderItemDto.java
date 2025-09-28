@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-    public class OrderItemDto {
+public class OrderItemDto {
 
-        private Long orderItemId;
-        private ProductDto productDto;
-        private OrderDto orderDto;
-        private Double priceAtOrderTime;
-        private Integer quantity;
+    private Long orderItemId;
+    private ProductDto productDto;
+    private OrderDto orderDto;
+    private Double priceAtOrderTime;
+    private Integer quantity;
 
-    }
+}

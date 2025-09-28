@@ -1,3 +1,624 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
+<!--      layout:decorate="~{_layout}">-->
+
+<!--<head>-->
+<!--    <title th:text="'Products - ' + ${supplier.name}">Supplier Products</title>-->
+<!--    <style>-->
+<!--        .metric-card {-->
+<!--            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+<!--        .metric-card:hover {-->
+<!--            transform: scale(1.05);-->
+<!--            box-shadow: 0 20px 40px rgba(0,0,0,0.15);-->
+<!--        }-->
+<!--        .investment-card {-->
+<!--            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+<!--        .investment-card:hover {-->
+<!--            transform: scale(1.05);-->
+<!--            box-shadow: 0 20px 40px rgba(0,0,0,0.15);-->
+<!--        }-->
+<!--        .revenue-card {-->
+<!--            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+<!--        .revenue-card:hover {-->
+<!--            transform: scale(1.05);-->
+<!--            box-shadow: 0 20px 40px rgba(0,0,0,0.15);-->
+<!--        }-->
+<!--        .profit-card {-->
+<!--            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+<!--        .profit-card:hover {-->
+<!--            transform: scale(1.05);-->
+<!--            box-shadow: 0 20px 40px rgba(0,0,0,0.15);-->
+<!--        }-->
+<!--        .stock-card {-->
+<!--            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+<!--        .stock-card:hover {-->
+<!--            transform: scale(1.05);-->
+<!--            box-shadow: 0 20px 40px rgba(0,0,0,0.15);-->
+<!--        }-->
+<!--        .pulse-animation {-->
+<!--            animation: pulse 2s infinite;-->
+<!--        }-->
+<!--        @keyframes pulse {-->
+<!--            0%, 100% { transform: scale(1); }-->
+<!--            50% { transform: scale(1.05); }-->
+<!--        }-->
+<!--        .glass-effect {-->
+<!--            backdrop-filter: blur(10px);-->
+<!--            background: rgba(255, 255, 255, 0.1);-->
+<!--            border: 1px solid rgba(255, 255, 255, 0.2);-->
+<!--        }-->
+<!--        .table-hover:hover {-->
+<!--            background: rgba(255, 255, 255, 0.7);-->
+<!--            backdrop-filter: blur(10px);-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+<!--        .product-avatar {-->
+<!--            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);-->
+<!--        }-->
+<!--        .supplier-avatar {-->
+<!--            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);-->
+<!--        }-->
+<!--        .alert-success {-->
+<!--            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);-->
+<!--            border: none;-->
+<!--            color: white;-->
+<!--        }-->
+<!--        .alert-error {-->
+<!--            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);-->
+<!--            border: none;-->
+<!--            color: white;-->
+<!--        }-->
+<!--        .supplier-info-card {-->
+<!--            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);-->
+<!--            backdrop-filter: blur(10px);-->
+<!--            border: 1px solid rgba(59, 130, 246, 0.2);-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<div layout:fragment="content">-->
+<!--    &lt;!&ndash; Flash Messages &ndash;&gt;-->
+<!--    <div th:if="${success}" class="alert-success rounded-2xl p-4 mb-6 shadow-lg">-->
+<!--        <div class="flex items-center">-->
+<!--            <i class="bi bi-check-circle-fill mr-3 text-xl"></i>-->
+<!--            <span th:text="${success}"></span>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div th:if="${error}" class="alert-error rounded-2xl p-4 mb-6 shadow-lg">-->
+<!--        <div class="flex items-center">-->
+<!--            <i class="bi bi-exclamation-triangle-fill mr-3 text-xl"></i>-->
+<!--            <span th:text="${error}"></span>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Enhanced Header &ndash;&gt;-->
+<!--    <div class="mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">-->
+<!--        <div class="flex items-center">-->
+<!--            <div class="w-16 h-16 supplier-avatar rounded-2xl flex items-center justify-center mr-4">-->
+<!--                <i class="bi bi-building text-white text-2xl"></i>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <h1 class="text-3xl font-bold text-gray-900" th:text="'Products by ' + ${supplier.name}">Products by Supplier</h1>-->
+<!--                <p class="mt-1 text-lg text-gray-600">Product catalog and inventory analytics</p>-->
+<!--                <div class="flex items-center mt-2">-->
+<!--                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">-->
+<!--                        <i class="bi bi-boxes mr-1"></i><span th:text="${totalProducts}">0</span> Products-->
+<!--                    </span>-->
+<!--                    <span class="ml-3 text-sm text-gray-500" th:text="'Supplier ID: #' + ${supplier.id}">Supplier ID: #123</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="flex flex-wrap gap-3">-->
+<!--            <a th:href="@{/suppliers/{id}(id=${supplier.id})}"-->
+<!--               class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">-->
+<!--                <i class="bi bi-arrow-left mr-2"></i>Back to Supplier-->
+<!--            </a>-->
+<!--            <a href="/products/create"-->
+<!--               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">-->
+<!--                <i class="bi bi-plus-circle mr-2"></i>Add New Product-->
+<!--            </a>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Product Analytics Cards &ndash;&gt;-->
+<!--    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">-->
+<!--        &lt;!&ndash; Total Products Card &ndash;&gt;-->
+<!--        <div class="metric-card rounded-2xl text-white p-6 shadow-xl">-->
+<!--            <div class="flex items-center justify-between">-->
+<!--                <div>-->
+<!--                    <p class="text-white/80 text-sm font-medium">Total Products</p>-->
+<!--                    <p class="text-3xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>-->
+<!--                    <div class="flex items-center mt-2">-->
+<!--                        <i class="bi bi-box text-white/60 mr-1"></i>-->
+<!--                        <span class="text-white/80 text-sm font-medium">In Catalog</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">-->
+<!--                    <i class="bi bi-boxes text-2xl"></i>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Total Investment Card &ndash;&gt;-->
+<!--        <div class="investment-card rounded-2xl text-white p-6 shadow-xl">-->
+<!--            <div class="flex items-center justify-between">-->
+<!--                <div>-->
+<!--                    <p class="text-white/80 text-sm font-medium">Total Investment</p>-->
+<!--                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalInvestment ?: 0, 0, 0)}">₹0</p>-->
+<!--                    <div class="flex items-center mt-2">-->
+<!--                        <i class="bi bi-credit-card text-white/60 mr-1"></i>-->
+<!--                        <span class="text-white/80 text-sm font-medium">Cost Basis</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">-->
+<!--                    <i class="bi bi-wallet text-2xl"></i>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Potential Revenue Card &ndash;&gt;-->
+<!--        <div class="revenue-card rounded-2xl text-white p-6 shadow-xl">-->
+<!--            <div class="flex items-center justify-between">-->
+<!--                <div>-->
+<!--                    <p class="text-white/80 text-sm font-medium">Potential Revenue</p>-->
+<!--                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialRevenue ?: 0, 0, 0)}">₹0</p>-->
+<!--                    <div class="flex items-center mt-2">-->
+<!--                        <i class="bi bi-trending-up text-white/60 mr-1"></i>-->
+<!--                        <span class="text-white/80 text-sm font-medium">At Full Sale</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">-->
+<!--                    <i class="bi bi-currency-rupee text-2xl"></i>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Potential Profit Card &ndash;&gt;-->
+<!--        <div class="profit-card rounded-2xl text-white p-6 shadow-xl">-->
+<!--            <div class="flex items-center justify-between">-->
+<!--                <div>-->
+<!--                    <p class="text-white/80 text-sm font-medium">Potential Profit</p>-->
+<!--                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialProfit ?: 0, 0, 0)}">₹0</p>-->
+<!--                    <div class="flex items-center mt-2">-->
+<!--                        <i class="bi bi-graph-up text-white/60 mr-1"></i>-->
+<!--                        <span class="text-white/80 text-sm font-medium" th:text="${#numbers.formatDecimal(avgProfitMargin ?: 0, 1, 1)} + '% margin'">0.0% margin</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">-->
+<!--                    <i class="bi bi-trophy text-2xl"></i>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Stock Alert Card &ndash;&gt;-->
+<!--        <div class="stock-card rounded-2xl text-white p-6 shadow-xl">-->
+<!--            <div class="flex items-center justify-between">-->
+<!--                <div>-->
+<!--                    <p class="text-white/80 text-sm font-medium">Low Stock Alert</p>-->
+<!--                    <p class="text-3xl font-bold mt-2" th:text="${lowStockCount ?: 0}">0</p>-->
+<!--                    <div class="flex items-center mt-2">-->
+<!--                        <i class="bi bi-exclamation-triangle text-white/60 mr-1"></i>-->
+<!--                        <span class="text-white/80 text-sm font-medium">Items Need Restock</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">-->
+<!--                    <i class="bi bi-flag text-2xl"></i>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Analytics Dashboard &ndash;&gt;-->
+<!--    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">-->
+<!--        &lt;!&ndash; Category Distribution &ndash;&gt;-->
+<!--        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">-->
+<!--            <h3 class="text-lg font-semibold text-gray-900 mb-4">-->
+<!--                <i class="bi bi-pie-chart mr-2"></i>Category Distribution-->
+<!--            </h3>-->
+<!--            <div class="space-y-3" th:if="${productsByCategory != null}">-->
+<!--                <div th:each="entry : ${productsByCategory}" class="flex justify-between items-center">-->
+<!--                    <span class="text-sm text-gray-600" th:text="${entry.key}">Category</span>-->
+<!--                    <div class="flex items-center">-->
+<!--                        <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">-->
+<!--                            <div class="h-2 bg-blue-500 rounded-full"-->
+<!--                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>-->
+<!--                        </div>-->
+<!--                        <span class="text-sm font-semibold text-blue-600" th:text="${entry.value}">0</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Brand Distribution &ndash;&gt;-->
+<!--        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">-->
+<!--            <h3 class="text-lg font-semibold text-gray-900 mb-4">-->
+<!--                <i class="bi bi-tags mr-2"></i>Brand Distribution-->
+<!--            </h3>-->
+<!--            <div class="space-y-3" th:if="${productsByBrand != null}">-->
+<!--                <div th:each="entry : ${productsByBrand}" class="flex justify-between items-center">-->
+<!--                    <span class="text-sm text-gray-600" th:text="${entry.key}">Brand</span>-->
+<!--                    <div class="flex items-center">-->
+<!--                        <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">-->
+<!--                            <div class="h-2 bg-purple-500 rounded-full"-->
+<!--                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>-->
+<!--                        </div>-->
+<!--                        <span class="text-sm font-semibold text-purple-600" th:text="${entry.value}">0</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Price Range Analysis &ndash;&gt;-->
+<!--        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">-->
+<!--            <h3 class="text-lg font-semibold text-gray-900 mb-4">-->
+<!--                <i class="bi bi-bar-chart mr-2"></i>Price Range Analysis-->
+<!--            </h3>-->
+<!--            <div class="space-y-3" th:if="${priceRangeDistribution != null}">-->
+<!--                <div th:each="entry : ${priceRangeDistribution}" class="flex justify-between items-center">-->
+<!--                    <span class="text-sm text-gray-600" th:text="${entry.key}">Price Range</span>-->
+<!--                    <div class="flex items-center">-->
+<!--                        <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">-->
+<!--                            <div class="h-2 bg-green-500 rounded-full"-->
+<!--                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>-->
+<!--                        </div>-->
+<!--                        <span class="text-sm font-semibold text-green-600" th:text="${entry.value}">0</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Top Performers Section &ndash;&gt;-->
+<!--    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">-->
+<!--        &lt;!&ndash; Most Profitable Products &ndash;&gt;-->
+<!--        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">-->
+<!--            <h3 class="text-lg font-semibold text-gray-900 mb-4">-->
+<!--                <i class="bi bi-trophy mr-2"></i>Most Profitable Products-->
+<!--            </h3>-->
+<!--            <div class="space-y-3" th:if="${!#lists.isEmpty(mostProfitableProducts)}">-->
+<!--                <div th:each="product : ${mostProfitableProducts}" class="flex items-center justify-between p-3 bg-green-50 rounded-lg">-->
+<!--                    <div class="flex items-center">-->
+<!--                        <div class="w-8 h-8 product-avatar rounded-lg flex items-center justify-center mr-3">-->
+<!--                            <i class="bi bi-box text-white text-sm"></i>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <div class="text-sm font-semibold text-gray-900" th:text="${product.name}">Product Name</div>-->
+<!--                            <div class="text-xs text-gray-500" th:text="${product.brandName}">Brand</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="text-right">-->
+<!--                        <div class="text-sm font-bold text-green-600"-->
+<!--                             th:text="'₹' + ${#numbers.formatDecimal((product.sellingPrice - product.actualPrice), 0, 0)}">₹0</div>-->
+<!--                        <div class="text-xs text-gray-500">profit</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div th:if="${#lists.isEmpty(mostProfitableProducts)}" class="text-center text-gray-500 py-4">-->
+<!--                No profitable products data available-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Low Stock Alert &ndash;&gt;-->
+<!--        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">-->
+<!--            <h3 class="text-lg font-semibold text-gray-900 mb-4">-->
+<!--                <i class="bi bi-exclamation-triangle mr-2"></i>Low Stock Alert-->
+<!--            </h3>-->
+<!--            <div class="space-y-3" th:if="${!#lists.isEmpty(lowStockProducts)}">-->
+<!--                <div th:each="product : ${lowStockProducts}" class="flex items-center justify-between p-3 bg-red-50 rounded-lg">-->
+<!--                    <div class="flex items-center">-->
+<!--                        <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center mr-3">-->
+<!--                            <i class="bi bi-box text-white text-sm"></i>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <div class="text-sm font-semibold text-gray-900" th:text="${product.name}">Product Name</div>-->
+<!--                            <div class="text-xs text-gray-500" th:text="${product.brandName}">Brand</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="text-right">-->
+<!--                        <div class="text-sm font-bold text-red-600" th:text="${product.stockQuantity} + ' left'">0 left</div>-->
+<!--                        <div class="text-xs text-gray-500">stock</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div th:if="${#lists.isEmpty(lowStockProducts)}" class="text-center text-green-500 py-4">-->
+<!--                <i class="bi bi-check-circle mr-2"></i>All products have sufficient stock-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Products Table &ndash;&gt;-->
+<!--    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">-->
+<!--        <div class="px-6 py-6 border-b border-gray-200/50">-->
+<!--            <div class="flex items-center justify-between">-->
+<!--                <div>-->
+<!--                    <h3 class="text-xl font-semibold text-gray-900">Product Catalog</h3>-->
+<!--                    <p class="mt-1 text-sm text-gray-600">Complete inventory with pricing and stock information</p>-->
+<!--                </div>-->
+<!--                <div class="flex items-center space-x-2">-->
+<!--                    <input type="text" id="productSearch" placeholder="Search products..."-->
+<!--                           class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="overflow-x-auto">-->
+<!--            <table class="min-w-full divide-y divide-gray-200/50">-->
+<!--                <thead class="bg-gray-50/50 backdrop-blur-sm">-->
+<!--                <tr>-->
+<!--                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product</th>-->
+<!--                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Brand & Category</th>-->
+<!--                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pricing</th>-->
+<!--                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Stock</th>-->
+<!--                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Profit Margin</th>-->
+<!--                    <th scope="col" class="relative px-6 py-4"><span class="sr-only">Actions</span></th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody class="divide-y divide-gray-200/30">-->
+<!--                &lt;!&ndash; Empty State &ndash;&gt;-->
+<!--                <tr th:if="${#lists.isEmpty(products)}">-->
+<!--                    <td colspan="6" class="px-6 py-16 text-center">-->
+<!--                        <div class="flex flex-col items-center">-->
+<!--                            <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-4">-->
+<!--                                <i class="bi bi-box text-gray-400 text-3xl"></i>-->
+<!--                            </div>-->
+<!--                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No products found</h3>-->
+<!--                            <p class="text-sm text-gray-500 mb-6">This supplier doesn't have any products yet.</p>-->
+<!--                            <a href="/products/create"-->
+<!--                               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">-->
+<!--                                <i class="bi bi-plus-circle mr-2"></i>Add First Product-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                </tr>-->
+
+<!--                &lt;!&ndash; Product Rows &ndash;&gt;-->
+<!--                <tr th:each="product : ${products}" class="table-hover">-->
+<!--                    <td class="px-6 py-4 whitespace-nowrap">-->
+<!--                        <div class="flex items-center">-->
+<!--                            <div class="flex-shrink-0 h-12 w-12">-->
+<!--                                <div class="h-12 w-12 product-avatar rounded-xl flex items-center justify-center">-->
+<!--                                    <i class="bi bi-box text-white text-xl"></i>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="ml-4">-->
+<!--                                <div class="text-sm font-bold text-gray-900">-->
+<!--                                    <a th:href="@{/products/{id}(id=${product.productId})}"-->
+<!--                                       th:text="${product.name}"-->
+<!--                                       class="hover:text-blue-600 transition-colors duration-150"></a>-->
+<!--                                </div>-->
+<!--                                <div class="text-xs text-gray-500" th:text="'ID: #' + ${product.productId}"></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                    <td class="px-6 py-4">-->
+<!--                        <div class="text-sm text-gray-900 font-medium" th:text="${product.brandName ?: 'No Brand'}">Brand</div>-->
+<!--                        <div class="text-sm text-gray-500" th:text="${product.category?.name ?: 'Uncategorized'}">Category</div>-->
+<!--                        <div class="text-xs text-gray-400" th:text="${product.productCode ?: 'No Code'}">Product Code</div>-->
+<!--                    </td>-->
+<!--                    <td class="px-6 py-4">-->
+<!--                        <div class="space-y-1">-->
+<!--                            <div class="flex items-center">-->
+<!--                                <span class="text-xs text-gray-500 mr-2">Cost:</span>-->
+<!--                                <span class="text-sm font-bold text-orange-600" th:text="'₹' + ${#numbers.formatDecimal(product.actualPrice ?: 0, 0, 0)}">₹0</span>-->
+<!--                            </div>-->
+<!--                            <div class="flex items-center">-->
+<!--                                <span class="text-xs text-gray-500 mr-2">Sell:</span>-->
+<!--                                <span class="text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(product.sellingPrice ?: 0, 0, 0)}">₹0</span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                    <td class="px-6 py-4 whitespace-nowrap">-->
+<!--                        <div class="flex items-center">-->
+<!--                            <span class="inline-flex px-3 py-1.5 text-sm font-bold rounded-xl"-->
+<!--                                  th:classappend="${product.stockQuantity < 10 ? 'bg-red-100 text-red-800' : (product.stockQuantity < 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800')}"-->
+<!--                                  th:text="${product.stockQuantity ?: 0}">0</span>-->
+<!--                            <span class="ml-2 text-xs text-gray-500">units</span>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                    <td class="px-6 py-4 whitespace-nowrap">-->
+<!--                        <div th:if="${product.actualPrice != null && product.sellingPrice != null && product.sellingPrice > 0}">-->
+<!--                            <div class="text-sm font-bold"-->
+<!--                                 th:with="margin=${((product.sellingPrice - product.actualPrice) / product.sellingPrice) * 100}"-->
+<!--                                 th:classappend="${margin > 30 ? 'text-green-600' : (margin > 15 ? 'text-yellow-600' : 'text-red-600')}"-->
+<!--                                 th:text="${#numbers.formatDecimal(margin, 1, 1)} + '%'">0.0%</div>-->
+<!--                            <div class="text-xs text-gray-500">profit margin</div>-->
+<!--                        </div>-->
+<!--                        <div th:unless="${product.actualPrice != null && product.sellingPrice != null && product.sellingPrice > 0}" class="text-xs text-gray-400">-->
+<!--                            No data-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">-->
+<!--                        <div class="flex items-center justify-end space-x-2">-->
+<!--                            <a th:href="@{/products/{id}(id=${product.productId})}"-->
+<!--                               class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">-->
+<!--                                <i class="bi bi-eye mr-1"></i>View-->
+<!--                            </a>-->
+<!--                            <a th:href="@{/products/{id}/edit(id=${product.productId})}"-->
+<!--                               class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">-->
+<!--                                <i class="bi bi-pencil mr-1"></i>Edit-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Performance Summary Section &ndash;&gt;-->
+<!--    <div class="mt-8">-->
+<!--        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">-->
+<!--            <h3 class="text-lg font-semibold text-gray-900 mb-6">-->
+<!--                <i class="bi bi-graph-up mr-2"></i>Portfolio Performance Summary-->
+<!--            </h3>-->
+<!--            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">-->
+<!--                <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">-->
+<!--                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">-->
+<!--                        <i class="bi bi-calculator text-blue-600 text-xl"></i>-->
+<!--                    </div>-->
+<!--                    <div class="text-2xl font-bold text-blue-600" th:text="'₹' + ${#numbers.formatDecimal(avgActualPrice ?: 0, 0, 0)}">₹0</div>-->
+<!--                    <div class="text-sm text-gray-600 mt-1">Avg Cost Price</div>-->
+<!--                    <div class="text-xs text-blue-600 mt-1">Per Product</div>-->
+<!--                </div>-->
+
+<!--                <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">-->
+<!--                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">-->
+<!--                        <i class="bi bi-currency-rupee text-green-600 text-xl"></i>-->
+<!--                    </div>-->
+<!--                    <div class="text-2xl font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(avgSellingPrice ?: 0, 0, 0)}">₹0</div>-->
+<!--                    <div class="text-sm text-gray-600 mt-1">Avg Selling Price</div>-->
+<!--                    <div class="text-xs text-green-600 mt-1">Per Product</div>-->
+<!--                </div>-->
+
+<!--                <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">-->
+<!--                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">-->
+<!--                        <i class="bi bi-percent text-purple-600 text-xl"></i>-->
+<!--                    </div>-->
+<!--                    <div class="text-2xl font-bold text-purple-600" th:text="${#numbers.formatDecimal(avgProfitMargin ?: 0, 1, 1)} + '%'">0.0%</div>-->
+<!--                    <div class="text-sm text-gray-600 mt-1">Avg Profit Margin</div>-->
+<!--                    <div class="text-xs text-purple-600 mt-1">Portfolio Average</div>-->
+<!--                </div>-->
+
+<!--                <div class="text-center p-4 bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-100">-->
+<!--                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">-->
+<!--                        <i class="bi bi-heart-pulse text-orange-600 text-xl"></i>-->
+<!--                    </div>-->
+<!--                    <div class="text-2xl font-bold text-orange-600" th:text="${#numbers.formatDecimal(stockHealthPercentage ?: 0, 1, 0)} + '%'">100%</div>-->
+<!--                    <div class="text-sm text-gray-600 mt-1">Stock Health</div>-->
+<!--                    <div class="text-xs"-->
+<!--                         th:classappend="${stockHealthPercentage > 80 ? 'text-green-600' : (stockHealthPercentage > 60 ? 'text-yellow-600' : 'text-red-600')}"-->
+<!--                         th:text="${stockHealthPercentage > 80 ? 'Excellent' : (stockHealthPercentage > 60 ? 'Good' : 'Needs Attention')}">Status</div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<th:block layout:fragment="scripts">-->
+<!--    <script>-->
+<!--        // Auto-hide flash messages-->
+<!--        setTimeout(function() {-->
+<!--            const alerts = document.querySelectorAll('.alert-success, .alert-error');-->
+<!--            alerts.forEach(function(alert) {-->
+<!--                alert.style.transition = 'opacity 0.5s ease-out';-->
+<!--                alert.style.opacity = '0';-->
+<!--                setTimeout(function() {-->
+<!--                    alert.remove();-->
+<!--                }, 500);-->
+<!--            });-->
+<!--        }, 5000);-->
+
+<!--        // Search functionality-->
+<!--        document.addEventListener('DOMContentLoaded', function() {-->
+<!--            const searchInput = document.getElementById('productSearch');-->
+<!--            if (searchInput) {-->
+<!--                searchInput.addEventListener('input', function() {-->
+<!--                    const searchTerm = this.value.toLowerCase();-->
+<!--                    const rows = document.querySelectorAll('tbody tr:not(:first-child)');-->
+<!--                    let visibleCount = 0;-->
+
+<!--                    rows.forEach(function(row) {-->
+<!--                        const text = row.textContent.toLowerCase();-->
+<!--                        const isVisible = text.includes(searchTerm);-->
+<!--                        row.style.display = isVisible ? '' : 'none';-->
+<!--                        if (isVisible) visibleCount++;-->
+<!--                    });-->
+
+<!--                    // Update search feedback-->
+<!--                    const feedback = document.getElementById('searchFeedback');-->
+<!--                    if (!feedback) {-->
+<!--                        const feedbackEl = document.createElement('div');-->
+<!--                        feedbackEl.id = 'searchFeedback';-->
+<!--                        feedbackEl.className = 'text-xs text-gray-500 mt-1';-->
+<!--                        searchInput.parentNode.appendChild(feedbackEl);-->
+<!--                    }-->
+<!--                    document.getElementById('searchFeedback').textContent =-->
+<!--                        searchTerm ? `${visibleCount} products found` : '';-->
+<!--                });-->
+<!--            }-->
+<!--        });-->
+
+<!--        // Export products function-->
+<!--        function exportProductData() {-->
+<!--            const supplierName = /*[[${supplier.name}]]*/ 'Supplier';-->
+<!--            let csvContent = "Product ID,Name,Brand,Category,Cost Price,Selling Price,Stock,Profit Margin\n";-->
+
+<!--            const rows = document.querySelectorAll('tbody tr:not(:first-child)');-->
+<!--            rows.forEach(function(row) {-->
+<!--                const cells = row.querySelectorAll('td');-->
+<!--                if (cells.length > 1) {-->
+<!--                    const productId = cells[0].querySelector('.text-xs') ? cells[0].querySelector('.text-xs').textContent.replace('ID: #', '') : '';-->
+<!--                    const name = cells[0].querySelector('a') ? cells[0].querySelector('a').textContent : '';-->
+<!--                    const brand = cells[1].querySelector('.font-medium') ? cells[1].querySelector('.font-medium').textContent : '';-->
+<!--                    const category = cells[1].querySelectorAll('div')[1] ? cells[1].querySelectorAll('div')[1].textContent : '';-->
+<!--                    const costPrice = cells[2].querySelector('.text-orange-600') ? cells[2].querySelector('.text-orange-600').textContent : '';-->
+<!--                    const sellingPrice = cells[2].querySelector('.text-green-600') ? cells[2].querySelector('.text-green-600').textContent : '';-->
+<!--                    const stock = cells[3].querySelector('span') ? cells[3].querySelector('span').textContent : '';-->
+<!--                    const margin = cells[4].querySelector('div') ? cells[4].querySelector('div').textContent : '';-->
+
+<!--                    csvContent += `"${productId}","${name}","${brand}","${category}","${costPrice}","${sellingPrice}","${stock}","${margin}"\n`;-->
+<!--                }-->
+<!--            });-->
+
+<!--            const blob = new Blob([csvContent], { type: 'text/csv' });-->
+<!--            const url = window.URL.createObjectURL(blob);-->
+<!--            const a = document.createElement('a');-->
+<!--            a.href = url;-->
+<!--            a.download = `${supplierName.replace(/\s+/g, '_')}_products_${new Date().toISOString().split('T')[0]}.csv`;-->
+<!--            document.body.appendChild(a);-->
+<!--            a.click();-->
+<!--            document.body.removeChild(a);-->
+<!--            window.URL.revokeObjectURL(url);-->
+<!--        }-->
+
+<!--        // Animate cards on load-->
+<!--        document.addEventListener('DOMContentLoaded', function() {-->
+<!--            const cards = document.querySelectorAll('.metric-card, .investment-card, .revenue-card, .profit-card, .stock-card');-->
+<!--            cards.forEach(function(card, index) {-->
+<!--                card.style.opacity = '0';-->
+<!--                card.style.transform = 'translateY(20px)';-->
+<!--                card.style.transition = 'all 0.5s ease';-->
+
+<!--                setTimeout(function() {-->
+<!--                    card.style.opacity = '1';-->
+<!--                    card.style.transform = 'translateY(0)';-->
+<!--                }, index * 100);-->
+<!--            });-->
+<!--        });-->
+
+<!--        // Add tooltips for better UX-->
+<!--        document.addEventListener('DOMContentLoaded', function() {-->
+<!--            const stockElements = document.querySelectorAll('[class*="bg-red-100"], [class*="bg-yellow-100"], [class*="bg-green-100"]');-->
+<!--            stockElements.forEach(function(element) {-->
+<!--                element.addEventListener('mouseenter', function() {-->
+<!--                    this.style.transform = 'scale(1.1)';-->
+<!--                });-->
+<!--                element.addEventListener('mouseleave', function() {-->
+<!--                    this.style.transform = 'scale(1)';-->
+<!--                });-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
+<!--</th:block>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -12,8 +633,8 @@
             transition: all 0.3s ease;
         }
         .metric-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
         }
         .investment-card {
             background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
@@ -21,8 +642,8 @@
             transition: all 0.3s ease;
         }
         .investment-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
         }
         .revenue-card {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -30,8 +651,8 @@
             transition: all 0.3s ease;
         }
         .revenue-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
         }
         .profit-card {
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
@@ -39,8 +660,8 @@
             transition: all 0.3s ease;
         }
         .profit-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
         }
         .stock-card {
             background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
@@ -48,8 +669,8 @@
             transition: all 0.3s ease;
         }
         .stock-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
         }
         .pulse-animation {
             animation: pulse 2s infinite;
@@ -89,6 +710,400 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
+
+        /* Enhanced search and filter styles */
+        .filter-controls {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 6px 8px 6px 22px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 10px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .clear-search:hover {
+            color: #374151;
+            background: rgba(243, 244, 246, 0.8);
+        }
+
+        .filter-button {
+            padding: 5px 10px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 10px;
+        }
+
+        .filter-button:hover {
+            border-color: #4f46e5;
+            background: #f9fafb;
+        }
+
+        .filter-button.active {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .sort-select {
+            padding: 6px 8px 6px 22px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Loading state */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 16px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #9ca3af;
+        }
+
+        /* Enhanced Table Styles */
+        .products-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .products-table th,
+        .products-table td {
+            text-align: left;
+            vertical-align: middle;
+            padding: 8px 6px;
+        }
+
+        /* Column widths for better alignment */
+        .products-table .col-select { width: 40px; }
+        .products-table .col-product { width: 200px; }
+        .products-table .col-brand { width: 150px; }
+        .products-table .col-pricing { width: 120px; }
+        .products-table .col-stock { width: 100px; }
+        .products-table .col-margin { width: 100px; }
+        .products-table .col-actions { width: 150px; }
+
+        /* Action buttons improvements */
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .action-btn i {
+            font-size: 10px;
+            margin-right: 3px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #6b7280;
+            color: white;
+        }
+
+        /* Product info styling */
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-icon-wrapper {
+            flex-shrink: 0;
+        }
+
+        .product-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 700;
+            font-size: 11px;
+            color: #1f2937;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .product-name:hover {
+            color: #3b82f6;
+        }
+
+        .product-id {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 1px;
+        }
+
+        /* Brand & Category styling */
+        .brand-info {
+            min-width: 0;
+        }
+
+        .brand-name {
+            font-weight: 600;
+            font-size: 11px;
+            color: #1f2937;
+        }
+
+        .category-name {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 1px;
+        }
+
+        .product-code {
+            font-size: 9px;
+            color: #9ca3af;
+            margin-top: 1px;
+        }
+
+        /* Pricing styling */
+        .pricing-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .price-label {
+            font-size: 9px;
+            color: #6b7280;
+            margin-right: 4px;
+            min-width: 25px;
+        }
+
+        .price-value {
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .cost-price {
+            color: #ea580c;
+        }
+
+        .selling-price {
+            color: #059669;
+        }
+
+        /* Stock styling */
+        .stock-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .stock-low {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .stock-medium {
+            background: #fefce8;
+            color: #ca8a04;
+        }
+
+        .stock-good {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .stock-label {
+            margin-left: 4px;
+            font-size: 9px;
+            color: #6b7280;
+        }
+
+        /* Margin styling */
+        .margin-info {
+            text-align: center;
+        }
+
+        .margin-value {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .margin-high {
+            color: #059669;
+        }
+
+        .margin-medium {
+            color: #ca8a04;
+        }
+
+        .margin-low {
+            color: #dc2626;
+        }
+
+        .margin-label {
+            font-size: 9px;
+            color: #6b7280;
+            margin-top: 1px;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 1024px) {
+            .products-table .col-product { width: 180px; }
+            .products-table .col-brand { width: 120px; }
+            .products-table .col-actions { width: 120px; }
+
+            .action-btn {
+                padding: 3px 6px;
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products-table {
+                font-size: 12px;
+            }
+
+            .products-table th,
+            .products-table td {
+                padding: 6px 4px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 4px 6px;
+            }
+        }
     </style>
 </head>
 
@@ -109,279 +1124,228 @@
     </div>
 
     <!-- Enhanced Header -->
-    <div class="mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+    <div class="mb-4 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
         <div class="flex items-center">
-            <div class="w-16 h-16 supplier-avatar rounded-2xl flex items-center justify-center mr-4">
-                <i class="bi bi-building text-white text-2xl"></i>
+            <div class="w-10 h-10 supplier-avatar rounded-2xl flex items-center justify-center mr-3">
+                <i class="bi bi-building text-white text-sm"></i>
             </div>
             <div>
-                <h1 class="text-3xl font-bold text-gray-900" th:text="'Products by ' + ${supplier.name}">Products by Supplier</h1>
-                <p class="mt-1 text-lg text-gray-600">Product catalog and inventory analytics</p>
-                <div class="flex items-center mt-2">
-                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                <h1 class="text-xl font-bold text-gray-900" th:text="'Products by ' + ${supplier.name}">Products by Supplier</h1>
+                <p class="mt-1 text-sm text-gray-600">Product catalog and inventory analytics</p>
+                <div class="flex items-center mt-1">
+                    <span class="inline-flex px-2 py-1 text-[10px] font-semibold rounded-full bg-blue-100 text-blue-800">
                         <i class="bi bi-boxes mr-1"></i><span th:text="${totalProducts}">0</span> Products
                     </span>
-                    <span class="ml-3 text-sm text-gray-500" th:text="'Supplier ID: #' + ${supplier.id}">Supplier ID: #123</span>
+                    <span class="ml-2 text-xs text-gray-500" th:text="'Supplier ID: #' + ${supplier.id}">Supplier ID: #123</span>
                 </div>
             </div>
         </div>
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-1">
             <a th:href="@{/suppliers/{id}(id=${supplier.id})}"
-               class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
-                <i class="bi bi-arrow-left mr-2"></i>Back to Supplier
+               class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-2 py-1 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                <i class="bi bi-arrow-left mr-2"></i><span class="text-xs">Back to Supplier</span>
             </a>
             <a href="/products/create"
-               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
-                <i class="bi bi-plus-circle mr-2"></i>Add New Product
+               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-1 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
+                <i class="bi bi-plus-circle mr-2"></i><span class="text-xs">Add New Product</span>
             </a>
         </div>
     </div>
 
     <!-- Product Analytics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
         <!-- Total Products Card -->
-        <div class="metric-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="metric-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Total Products</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Total Products</p>
+                    <p class="text-lg font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-box text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">In Catalog</span>
+                        <span class="text-white/80 text-xs font-medium">In Catalog</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-boxes text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-boxes text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Total Investment Card -->
-        <div class="investment-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="investment-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Total Investment</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalInvestment ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Total Investment</p>
+                    <p class="text-lg font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalInvestment ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-credit-card text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Cost Basis</span>
+                        <span class="text-white/80 text-xs font-medium">Cost Basis</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-wallet text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-wallet text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Potential Revenue Card -->
-        <div class="revenue-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="revenue-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Potential Revenue</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialRevenue ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Potential Revenue</p>
+                    <p class="text-lg font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialRevenue ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-trending-up text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">At Full Sale</span>
+                        <span class="text-white/80 text-xs font-medium">At Full Sale</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-currency-rupee text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-currency-rupee text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Potential Profit Card -->
-        <div class="profit-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="profit-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Potential Profit</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialProfit ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Potential Profit</p>
+                    <p class="text-lg font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(totalPotentialProfit ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-graph-up text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium" th:text="${#numbers.formatDecimal(avgProfitMargin ?: 0, 1, 1)} + '% margin'">0.0% margin</span>
+                        <span class="text-white/80 text-xs font-medium" th:text="${#numbers.formatDecimal(avgProfitMargin ?: 0, 1, 1)} + '% margin'">0.0% margin</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-trophy text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-trophy text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Stock Alert Card -->
-        <div class="stock-card rounded-2xl text-white p-6 shadow-xl">
+        <div class="stock-card rounded-2xl text-white p-4 shadow-xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Low Stock Alert</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${lowStockCount ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Low Stock Alert</p>
+                    <p class="text-lg font-bold mt-2" th:text="${lowStockCount ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-exclamation-triangle text-white/60 mr-1"></i>
-                        <span class="text-white/80 text-sm font-medium">Items Need Restock</span>
+                        <span class="text-white/80 text-xs font-medium">Items Need Restock</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-flag text-2xl"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Analytics Dashboard -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <!-- Category Distribution -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="bi bi-pie-chart mr-2"></i>Category Distribution
-            </h3>
-            <div class="space-y-3" th:if="${productsByCategory != null}">
-                <div th:each="entry : ${productsByCategory}" class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600" th:text="${entry.key}">Category</span>
-                    <div class="flex items-center">
-                        <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
-                            <div class="h-2 bg-blue-500 rounded-full"
-                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>
-                        </div>
-                        <span class="text-sm font-semibold text-blue-600" th:text="${entry.value}">0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Brand Distribution -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="bi bi-tags mr-2"></i>Brand Distribution
-            </h3>
-            <div class="space-y-3" th:if="${productsByBrand != null}">
-                <div th:each="entry : ${productsByBrand}" class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600" th:text="${entry.key}">Brand</span>
-                    <div class="flex items-center">
-                        <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
-                            <div class="h-2 bg-purple-500 rounded-full"
-                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>
-                        </div>
-                        <span class="text-sm font-semibold text-purple-600" th:text="${entry.value}">0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Price Range Analysis -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="bi bi-bar-chart mr-2"></i>Price Range Analysis
-            </h3>
-            <div class="space-y-3" th:if="${priceRangeDistribution != null}">
-                <div th:each="entry : ${priceRangeDistribution}" class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600" th:text="${entry.key}">Price Range</span>
-                    <div class="flex items-center">
-                        <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
-                            <div class="h-2 bg-green-500 rounded-full"
-                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>
-                        </div>
-                        <span class="text-sm font-semibold text-green-600" th:text="${entry.value}">0</span>
-                    </div>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-flag text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Performers Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <!-- Most Profitable Products -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="bi bi-trophy mr-2"></i>Most Profitable Products
-            </h3>
-            <div class="space-y-3" th:if="${!#lists.isEmpty(mostProfitableProducts)}">
-                <div th:each="product : ${mostProfitableProducts}" class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 product-avatar rounded-lg flex items-center justify-center mr-3">
-                            <i class="bi bi-box text-white text-sm"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-semibold text-gray-900" th:text="${product.name}">Product Name</div>
-                            <div class="text-xs text-gray-500" th:text="${product.brandName}">Brand</div>
-                        </div>
+    <!-- Dynamic Search and Filter Controls -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 mb-4" style="animation-delay: 0.5s;">
+        <div class="filter-controls">
+            <!-- Search Bar -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
+                <div class="flex-1 max-w-sm">
+                    <div class="search-wrapper">
+                        <i class="bi bi-search text-xs search-icon"></i>
+                        <input type="text"
+                               id="productSearch"
+                               class="search-input"
+                               placeholder="  Search products by name, brand, category..."
+                               autocomplete="on">
+                        <button class="clear-search" id="clearSearch" style="display: none;">
+                            <i class="bi bi-x text-lg"></i>
+                        </button>
                     </div>
-                    <div class="text-right">
-                        <div class="text-sm font-bold text-green-600"
-                             th:text="'₹' + ${#numbers.formatDecimal((product.sellingPrice - product.actualPrice), 0, 0)}">₹0</div>
-                        <div class="text-xs text-gray-500">profit</div>
-                    </div>
+                    <div id="searchFeedback" class="text-xs text-gray-500 mt-2"></div>
                 </div>
-            </div>
-            <div th:if="${#lists.isEmpty(mostProfitableProducts)}" class="text-center text-gray-500 py-4">
-                No profitable products data available
-            </div>
-        </div>
 
-        <!-- Low Stock Alert -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="bi bi-exclamation-triangle mr-2"></i>Low Stock Alert
-            </h3>
-            <div class="space-y-3" th:if="${!#lists.isEmpty(lowStockProducts)}">
-                <div th:each="product : ${lowStockProducts}" class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center mr-3">
-                            <i class="bi bi-box text-white text-sm"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-semibold text-gray-900" th:text="${product.name}">Product Name</div>
-                            <div class="text-xs text-gray-500" th:text="${product.brandName}">Brand</div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-sm font-bold text-red-600" th:text="${product.stockQuantity} + ' left'">0 left</div>
-                        <div class="text-xs text-gray-500">stock</div>
-                    </div>
+                <div class="flex items-center gap-3">
+                    <select id="sortSelect" class="sort-select">
+                        <option value="name-asc">Name: A-Z</option>
+                        <option value="name-desc">Name: Z-A</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="stock-high">Stock: High to Low</option>
+                        <option value="stock-low">Stock: Low to High</option>
+                        <option value="margin-high">Margin: High to Low</option>
+                        <option value="margin-low">Margin: Low to High</option>
+                    </select>
                 </div>
             </div>
-            <div th:if="${#lists.isEmpty(lowStockProducts)}" class="text-center text-green-500 py-4">
-                <i class="bi bi-check-circle mr-2"></i>All products have sufficient stock
+
+            <!-- Quick Filters -->
+            <div class="flex flex-wrap gap-3">
+                <button class="filter-button active" data-filter="all">All Products</button>
+                <button class="filter-button" data-filter="low-stock">Low Stock</button>
+                <button class="filter-button" data-filter="medium-stock">Medium Stock</button>
+                <button class="filter-button" data-filter="high-stock">High Stock</button>
+                <button class="filter-button" data-filter="high-margin">High Margin</button>
+                <button class="filter-button" data-filter="low-margin">Low Margin</button>
+                <button class="filter-button" data-filter="profitable">Most Profitable</button>
             </div>
         </div>
     </div>
 
     <!-- Products Table -->
     <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-        <div class="px-6 py-6 border-b border-gray-200/50">
+        <div class="px-4 py-4 border-b border-gray-200/50">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-xl font-semibold text-gray-900">Product Catalog</h3>
-                    <p class="mt-1 text-sm text-gray-600">Complete inventory with pricing and stock information</p>
+                    <h3 class="text-lg font-semibold text-gray-900">Product Catalog</h3>
+                    <p class="mt-1 text-xs text-gray-600">
+                        Showing <span id="resultCount" th:text="${#lists.size(products)}">0</span> products
+                    </p>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <input type="text" id="productSearch" placeholder="Search products..."
-                           class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                <div class="flex items-center space-x-3">
+                    <button type="button" onclick="productManager.selectAllProducts()"
+                            class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-xl text-blue-600 bg-blue-100 hover:bg-blue-200 transition-colors duration-200">
+                        <i class="bi bi-check-square-fill mr-2"></i>Select All
+                    </button>
+                    <button type="button" onclick="productManager.bulkUpdateStock()" disabled id="bulkUpdateBtn"
+                            class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-xl text-green-600 bg-green-100 hover:bg-green-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                            disabled
+                        <i class="bi bi-box-arrow-up mr-2"></i>Bulk Update
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200/50">
+        <div class="overflow-x-auto relative">
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                <div class="text-center">
+                    <div class="spinner"></div>
+                    <p class="mt-4 text-gray-600 font-medium">Searching products...</p>
+                </div>
+            </div>
+
+            <table class="products-table">
                 <thead class="bg-gray-50/50 backdrop-blur-sm">
                 <tr>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Brand & Category</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pricing</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Stock</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Profit Margin</th>
-                    <th scope="col" class="relative px-6 py-4"><span class="sr-only">Actions</span></th>
+                    <th class="col-select">
+                        <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="selectAllCheckbox" onchange="productManager.toggleSelectAll()">
+                    </th>
+                    <th class="col-product text-xs font-semibold text-gray-700 uppercase tracking-wider">Product</th>
+                    <th class="col-brand text-xs font-semibold text-gray-700 uppercase tracking-wider">Brand & Category</th>
+                    <th class="col-pricing text-xs font-semibold text-gray-700 uppercase tracking-wider">Pricing</th>
+                    <th class="col-stock text-xs font-semibold text-gray-700 uppercase tracking-wider">Stock</th>
+                    <th class="col-margin text-xs font-semibold text-gray-700 uppercase tracking-wider">Profit Margin</th>
+                    <th class="col-actions text-xs font-semibold text-gray-700 uppercase tracking-wider text-right">Actions</th>
                 </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200/30">
+                <tbody class="divide-y divide-gray-200/30" id="productsTableBody">
                 <!-- Empty State -->
                 <tr th:if="${#lists.isEmpty(products)}">
-                    <td colspan="6" class="px-6 py-16 text-center">
+                    <td colspan="7" class="px-4 py-16 text-center">
                         <div class="flex flex-col items-center">
-                            <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-4">
-                                <i class="bi bi-box text-gray-400 text-3xl"></i>
+                            <div class="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-4">
+                                <i class="bi bi-box text-gray-400 text-2xl"></i>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-                            <p class="text-sm text-gray-500 mb-6">This supplier doesn't have any products yet.</p>
+                            <h3 class="text-sm font-semibold text-gray-900 mb-2">No products found</h3>
+                            <p class="text-xs text-gray-500 mb-6">This supplier doesn't have any products yet.</p>
                             <a href="/products/create"
-                               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-xs">
                                 <i class="bi bi-plus-circle mr-2"></i>Add First Product
                             </a>
                         </div>
@@ -389,122 +1353,317 @@
                 </tr>
 
                 <!-- Product Rows -->
-                <tr th:each="product : ${products}" class="table-hover">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 h-12 w-12">
-                                <div class="h-12 w-12 product-avatar rounded-xl flex items-center justify-center">
-                                    <i class="bi bi-box text-white text-xl"></i>
+                <tr th:each="product : ${products}" class="table-hover product-row"
+                    th:data-product-id="${product.productId}"
+                    th:data-name="${product.name ?: ''}"
+                    th:data-brand="${product.brandName ?: ''}"
+                    th:data-category="${product.category?.name ?: ''}"
+                    th:data-stock="${product.stockQuantity ?: 0}"
+                    th:data-cost="${product.actualPrice ?: 0}"
+                    th:data-selling="${product.sellingPrice ?: 0}"
+                    th:data-margin="${product.actualPrice != null && product.sellingPrice != null && product.sellingPrice > 0 ? ((product.sellingPrice - product.actualPrice) / product.sellingPrice) * 100 : 0}">
+
+                    <!-- Checkbox Column -->
+                    <td class="col-select">
+                        <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 product-checkbox"
+                               th:value="${product.productId}" onchange="productManager.updateBulkActions()">
+                    </td>
+
+                    <!-- Product Column -->
+                    <td class="col-product">
+                        <div class="product-info">
+                            <div class="product-icon-wrapper">
+                                <div class="w-6 h-6 product-avatar rounded-xl flex items-center justify-center">
+                                    <i class="bi bi-box text-white text-sm"></i>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-bold text-gray-900">
-                                    <a th:href="@{/products/{id}(id=${product.productId})}"
-                                       th:text="${product.name}"
-                                       class="hover:text-blue-600 transition-colors duration-150"></a>
-                                </div>
-                                <div class="text-xs text-gray-500" th:text="'ID: #' + ${product.productId}"></div>
+                            <div class="product-details">
+                                <a th:href="@{/products/{id}(id=${product.productId})}"
+                                   th:text="${product.name}"
+                                   class="product-name"></a>
+                                <div class="product-id" th:text="'ID: #' + ${product.productId}">ID: #0</div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900 font-medium" th:text="${product.brandName ?: 'No Brand'}">Brand</div>
-                        <div class="text-sm text-gray-500" th:text="${product.category?.name ?: 'Uncategorized'}">Category</div>
-                        <div class="text-xs text-gray-400" th:text="${product.productCode ?: 'No Code'}">Product Code</div>
+
+                    <!-- Brand & Category Column -->
+                    <td class="col-brand">
+                        <div class="brand-info">
+                            <div class="brand-name" th:text="${product.brandName ?: 'No Brand'}">Brand</div>
+                            <div class="category-name" th:text="${product.category?.name ?: 'Uncategorized'}">Category</div>
+                            <div class="product-code" th:text="${product.productCode ?: 'No Code'}">Product Code</div>
+                        </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="space-y-1">
-                            <div class="flex items-center">
-                                <span class="text-xs text-gray-500 mr-2">Cost:</span>
-                                <span class="text-sm font-bold text-orange-600" th:text="'₹' + ${#numbers.formatDecimal(product.actualPrice ?: 0, 0, 0)}">₹0</span>
+
+                    <!-- Pricing Column -->
+                    <td class="col-pricing">
+                        <div class="pricing-info">
+                            <div class="price-row">
+                                <span class="price-label">Cost:</span>
+                                <span class="price-value cost-price" th:text="'₹' + ${#numbers.formatDecimal(product.actualPrice ?: 0, 0, 0)}">₹0</span>
                             </div>
-                            <div class="flex items-center">
-                                <span class="text-xs text-gray-500 mr-2">Sell:</span>
-                                <span class="text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(product.sellingPrice ?: 0, 0, 0)}">₹0</span>
+                            <div class="price-row">
+                                <span class="price-label">Sell:</span>
+                                <span class="price-value selling-price" th:text="'₹' + ${#numbers.formatDecimal(product.sellingPrice ?: 0, 0, 0)}">₹0</span>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <span class="inline-flex px-3 py-1.5 text-sm font-bold rounded-xl"
-                                  th:classappend="${product.stockQuantity < 10 ? 'bg-red-100 text-red-800' : (product.stockQuantity < 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800')}"
+
+                    <!-- Stock Column -->
+                    <td class="col-stock">
+                        <div class="stock-info">
+                            <span class="stock-badge"
+                                  th:classappend="${product.stockQuantity < 10 ? 'stock-low' : (product.stockQuantity < 50 ? 'stock-medium' : 'stock-good')}"
                                   th:text="${product.stockQuantity ?: 0}">0</span>
-                            <span class="ml-2 text-xs text-gray-500">units</span>
+                            <span class="stock-label">units</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div th:if="${product.actualPrice != null && product.sellingPrice != null && product.sellingPrice > 0}">
-                            <div class="text-sm font-bold"
+
+                    <!-- Profit Margin Column -->
+                    <td class="col-margin">
+                        <div class="margin-info" th:if="${product.actualPrice != null && product.sellingPrice != null && product.sellingPrice > 0}">
+                            <div class="margin-value"
                                  th:with="margin=${((product.sellingPrice - product.actualPrice) / product.sellingPrice) * 100}"
-                                 th:classappend="${margin > 30 ? 'text-green-600' : (margin > 15 ? 'text-yellow-600' : 'text-red-600')}"
+                                 th:classappend="${margin > 30 ? 'margin-high' : (margin > 15 ? 'margin-medium' : 'margin-low')}"
                                  th:text="${#numbers.formatDecimal(margin, 1, 1)} + '%'">0.0%</div>
-                            <div class="text-xs text-gray-500">profit margin</div>
+                            <div class="margin-label">profit margin</div>
                         </div>
                         <div th:unless="${product.actualPrice != null && product.sellingPrice != null && product.sellingPrice > 0}" class="text-xs text-gray-400">
                             No data
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div class="flex items-center justify-end space-x-2">
+
+                    <!-- Actions Column -->
+                    <td class="col-actions">
+                        <div class="action-buttons">
                             <a th:href="@{/products/{id}(id=${product.productId})}"
-                               class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
-                                <i class="bi bi-eye mr-1"></i>View
+                               class="action-btn btn-view"
+                               title="View Product">
+                                <i class="bi bi-eye"></i>View
                             </a>
                             <a th:href="@{/products/{id}/edit(id=${product.productId})}"
-                               class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150">
-                                <i class="bi bi-pencil mr-1"></i>Edit
+                               class="action-btn btn-edit"
+                               title="Edit Product">
+                                <i class="bi bi-pencil"></i>Edit
                             </a>
                         </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No products found</h3>
+                <p class="text-gray-600 mb-6">Try adjusting your search criteria or filters</p>
+                <button class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold" onclick="productManager.clearAllFilters()">
+                    <i class="bi bi-arrow-clockwise mr-2"></i>Clear Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 mt-4">
+        <!-- Category Distribution -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                <i class="bi bi-pie-chart mr-2"></i>Category Distribution
+            </h3>
+            <div class="space-y-2" th:if="${productsByCategory != null}">
+                <div th:each="entry : ${productsByCategory}" class="flex justify-between items-center">
+                    <span class="text-xs text-gray-600" th:text="${entry.key}">Category</span>
+                    <div class="flex items-center">
+                        <div class="w-12 h-1.5 bg-gray-200 rounded-full mr-2">
+                            <div class="h-1.5 bg-blue-500 rounded-full"
+                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>
+                        </div>
+                        <span class="text-xs font-semibold text-blue-600" th:text="${entry.value}">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brand Distribution -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                <i class="bi bi-tags mr-2"></i>Brand Distribution
+            </h3>
+            <div class="space-y-2" th:if="${productsByBrand != null}">
+                <div th:each="entry : ${productsByBrand}" class="flex justify-between items-center">
+                    <span class="text-xs text-gray-600" th:text="${entry.key}">Brand</span>
+                    <div class="flex items-center">
+                        <div class="w-12 h-1.5 bg-gray-200 rounded-full mr-2">
+                            <div class="h-1.5 bg-purple-500 rounded-full"
+                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>
+                        </div>
+                        <span class="text-xs font-semibold text-purple-600" th:text="${entry.value}">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Range Analysis -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                <i class="bi bi-bar-chart mr-2"></i>Price Range Analysis
+            </h3>
+            <div class="space-y-2" th:if="${priceRangeDistribution != null}">
+                <div th:each="entry : ${priceRangeDistribution}" class="flex justify-between items-center">
+                    <span class="text-xs text-gray-600" th:text="${entry.key}">Price Range</span>
+                    <div class="flex items-center">
+                        <div class="w-12 h-1.5 bg-gray-200 rounded-full mr-2">
+                            <div class="h-1.5 bg-green-500 rounded-full"
+                                 th:style="'width: ' + ${totalProducts > 0 ? (entry.value * 100 / totalProducts) : 0} + '%'"></div>
+                        </div>
+                        <span class="text-xs font-semibold text-green-600" th:text="${entry.value}">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Performers Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <!-- Most Profitable Products -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                <i class="bi bi-trophy mr-2"></i>Most Profitable Products
+            </h3>
+            <div class="space-y-2" th:if="${!#lists.isEmpty(mostProfitableProducts)}">
+                <div th:each="product : ${mostProfitableProducts}" class="flex items-center justify-between p-2 bg-green-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 product-avatar rounded-lg flex items-center justify-center mr-2">
+                            <i class="bi bi-box text-white text-xs"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold text-gray-900" th:text="${product.name}">Product Name</div>
+                            <div class="text-[10px] text-gray-500" th:text="${product.brandName}">Brand</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-bold text-green-600"
+                             th:text="'₹' + ${#numbers.formatDecimal((product.sellingPrice - product.actualPrice), 0, 0)}">₹0</div>
+                        <div class="text-[10px] text-gray-500">profit</div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(mostProfitableProducts)}" class="text-center text-gray-500 py-3 text-xs">
+                No profitable products data available
+            </div>
+        </div>
+
+        <!-- Low Stock Alert -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                <i class="bi bi-exclamation-triangle mr-2"></i>Low Stock Alert
+            </h3>
+            <div class="space-y-2" th:if="${!#lists.isEmpty(lowStockProducts)}">
+                <div th:each="product : ${lowStockProducts}" class="flex items-center justify-between p-2 bg-red-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 bg-red-500 rounded-lg flex items-center justify-center mr-2">
+                            <i class="bi bi-box text-white text-xs"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold text-gray-900" th:text="${product.name}">Product Name</div>
+                            <div class="text-[10px] text-gray-500" th:text="${product.brandName}">Brand</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-bold text-red-600" th:text="${product.stockQuantity} + ' left'">0 left</div>
+                        <div class="text-[10px] text-gray-500">stock</div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(lowStockProducts)}" class="text-center text-green-500 py-3 text-xs">
+                <i class="bi bi-check-circle mr-2"></i>All products have sufficient stock
+            </div>
         </div>
     </div>
 
     <!-- Performance Summary Section -->
-    <div class="mt-8">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-6">
+    <div class="mt-4">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4">
                 <i class="bi bi-graph-up mr-2"></i>Portfolio Performance Summary
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-calculator text-blue-600 text-xl"></i>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="bi bi-calculator text-blue-600 text-sm"></i>
                     </div>
-                    <div class="text-2xl font-bold text-blue-600" th:text="'₹' + ${#numbers.formatDecimal(avgActualPrice ?: 0, 0, 0)}">₹0</div>
-                    <div class="text-sm text-gray-600 mt-1">Avg Cost Price</div>
-                    <div class="text-xs text-blue-600 mt-1">Per Product</div>
+                    <div class="text-sm font-bold text-blue-600" th:text="'₹' + ${#numbers.formatDecimal(avgActualPrice ?: 0, 0, 0)}">₹0</div>
+                    <div class="text-xs text-gray-600 mt-1">Avg Cost Price</div>
+                    <div class="text-[10px] text-blue-600 mt-1">Per Product</div>
                 </div>
 
-                <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-currency-rupee text-green-600 text-xl"></i>
+                <div class="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="bi bi-currency-rupee text-green-600 text-sm"></i>
                     </div>
-                    <div class="text-2xl font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(avgSellingPrice ?: 0, 0, 0)}">₹0</div>
-                    <div class="text-sm text-gray-600 mt-1">Avg Selling Price</div>
-                    <div class="text-xs text-green-600 mt-1">Per Product</div>
+                    <div class="text-sm font-bold text-green-600" th:text="'₹' + ${#numbers.formatDecimal(avgSellingPrice ?: 0, 0, 0)}">₹0</div>
+                    <div class="text-xs text-gray-600 mt-1">Avg Selling Price</div>
+                    <div class="text-[10px] text-green-600 mt-1">Per Product</div>
                 </div>
 
-                <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-percent text-purple-600 text-xl"></i>
+                <div class="text-center p-3 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="bi bi-percent text-purple-600 text-sm"></i>
                     </div>
-                    <div class="text-2xl font-bold text-purple-600" th:text="${#numbers.formatDecimal(avgProfitMargin ?: 0, 1, 1)} + '%'">0.0%</div>
-                    <div class="text-sm text-gray-600 mt-1">Avg Profit Margin</div>
-                    <div class="text-xs text-purple-600 mt-1">Portfolio Average</div>
+                    <div class="text-sm font-bold text-purple-600" th:text="${#numbers.formatDecimal(avgProfitMargin ?: 0, 1, 1)} + '%'">0.0%</div>
+                    <div class="text-xs text-gray-600 mt-1">Avg Profit Margin</div>
+                    <div class="text-[10px] text-purple-600 mt-1">Portfolio Average</div>
                 </div>
 
-                <div class="text-center p-4 bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-100">
-                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-heart-pulse text-orange-600 text-xl"></i>
+                <div class="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-100">
+                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="bi bi-heart-pulse text-orange-600 text-sm"></i>
                     </div>
-                    <div class="text-2xl font-bold text-orange-600" th:text="${#numbers.formatDecimal(stockHealthPercentage ?: 0, 1, 0)} + '%'">100%</div>
-                    <div class="text-sm text-gray-600 mt-1">Stock Health</div>
-                    <div class="text-xs"
+                    <div class="text-sm font-bold text-orange-600" th:text="${#numbers.formatDecimal(stockHealthPercentage ?: 0, 1, 0)} + '%'">100%</div>
+                    <div class="text-xs text-gray-600 mt-1">Stock Health</div>
+                    <div class="text-[10px]"
                          th:classappend="${stockHealthPercentage > 80 ? 'text-green-600' : (stockHealthPercentage > 60 ? 'text-yellow-600' : 'text-red-600')}"
                          th:text="${stockHealthPercentage > 80 ? 'Excellent' : (stockHealthPercentage > 60 ? 'Good' : 'Needs Attention')}">Status</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Update Modal -->
+    <div id="bulkUpdateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-2xl bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Bulk Update Stock</h3>
+                    <button onclick="productManager.hideModal('bulkUpdateModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="bi bi-x text-xl"></i>
+                    </button>
+                </div>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500 mb-4">Update stock levels for selected products:</p>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Action</label>
+                        <select id="stockAction" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3">
+                            <option value="add">Add to current stock</option>
+                            <option value="subtract">Subtract from current stock</option>
+                            <option value="set">Set absolute stock level</option>
+                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                        <input type="number" id="stockQuantity" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter quantity">
+                    </div>
+                </div>
+                <div class="flex items-center justify-end px-4 py-3 space-x-3">
+                    <button onclick="productManager.hideModal('bulkUpdateModal')"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button id="confirmBulkUpdate"
+                            class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:shadow-lg">
+                        Update Stock
+                    </button>
                 </div>
             </div>
         </div>
@@ -513,65 +1672,442 @@
 
 <th:block layout:fragment="scripts">
     <script>
-        // Auto-hide flash messages
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert-success, .alert-error');
-            alerts.forEach(function(alert) {
-                alert.style.transition = 'opacity 0.5s ease-out';
-                alert.style.opacity = '0';
-                setTimeout(function() {
-                    alert.remove();
-                }, 500);
-            });
-        }, 5000);
+        // Product Management System - Enhanced Implementation
+        class ProductManager {
+            constructor() {
+                this.allProducts = [];
+                this.filteredProducts = [];
+                this.currentFilter = 'all';
+                this.currentSort = 'name-asc';
+                this.searchTerm = '';
 
-        // Search functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('productSearch');
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr:not(:first-child)');
-                    let visibleCount = 0;
+                // Initialize when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => this.init());
+                } else {
+                    this.init();
+                }
+            }
 
-                    rows.forEach(function(row) {
-                        const text = row.textContent.toLowerCase();
-                        const isVisible = text.includes(searchTerm);
-                        row.style.display = isVisible ? '' : 'none';
-                        if (isVisible) visibleCount++;
+            init() {
+                console.log('Initializing Product Manager...');
+                this.initializeProducts();
+                this.setupEventListeners();
+                this.autoHideFlashMessages();
+                console.log('Product Manager initialized with', this.allProducts.length, 'products');
+            }
+
+            initializeProducts() {
+                const productRows = document.querySelectorAll('.product-row');
+                this.allProducts = Array.from(productRows).map(row => ({
+                    element: row,
+                    id: row.dataset.productId,
+                    name: (row.dataset.name || '').toLowerCase(),
+                    brand: (row.dataset.brand || '').toLowerCase(),
+                    category: (row.dataset.category || '').toLowerCase(),
+                    stock: parseInt(row.dataset.stock || 0),
+                    cost: parseFloat(row.dataset.cost || 0),
+                    selling: parseFloat(row.dataset.selling || 0),
+                    margin: parseFloat(row.dataset.margin || 0)
+                }));
+
+                this.filteredProducts = [...this.allProducts];
+                this.updateResultCount();
+            }
+
+            setupEventListeners() {
+                // Search functionality
+                const searchInput = document.getElementById('productSearch');
+                const clearSearchBtn = document.getElementById('clearSearch');
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => this.handleSearch(e));
+                }
+
+                if (clearSearchBtn) {
+                    clearSearchBtn.addEventListener('click', () => this.clearSearch());
+                }
+
+                // Filter buttons
+                const filterButtons = document.querySelectorAll('.filter-button');
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', (e) => this.handleFilter(e));
+                });
+
+                // Sort dropdown
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) {
+                    sortSelect.value = 'name-asc';
+                    sortSelect.addEventListener('change', (e) => this.handleSort(e));
+                }
+
+                // Modal events
+                const confirmBulkUpdate = document.getElementById('confirmBulkUpdate');
+                if (confirmBulkUpdate) {
+                    confirmBulkUpdate.addEventListener('click', () => this.confirmBulkUpdate());
+                }
+
+                // Reset filter buttons
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.filter === 'all') {
+                        btn.classList.add('active');
+                    }
+                });
+
+                this.applyFilters();
+                this.updateSearchFeedback();
+            }
+
+            showLoading(show) {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = show ? 'flex' : 'none';
+                }
+            }
+
+            // Modal functions
+            showModal(modalId) {
+                document.getElementById(modalId).classList.remove('hidden');
+            }
+
+            hideModal(modalId) {
+                document.getElementById(modalId).classList.add('hidden');
+            }
+
+            // Bulk operations
+            toggleSelectAll() {
+                const selectAll = document.getElementById('selectAllCheckbox');
+                const checkboxes = document.querySelectorAll('.product-checkbox');
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+
+                this.updateBulkActions();
+            }
+
+            selectAllProducts() {
+                const selectAll = document.getElementById('selectAllCheckbox');
+                selectAll.checked = true;
+                this.toggleSelectAll();
+            }
+
+            updateBulkActions() {
+                const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+                const bulkUpdateBtn = document.getElementById('bulkUpdateBtn');
+
+                if (checkedBoxes.length > 0) {
+                    bulkUpdateBtn.disabled = false;
+                } else {
+                    bulkUpdateBtn.disabled = true;
+                }
+            }
+
+            bulkUpdateStock() {
+                const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+                const productIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+                if (productIds.length === 0) {
+                    alert('Please select at least one product');
+                    return;
+                }
+
+                this.showModal('bulkUpdateModal');
+            }
+
+            confirmBulkUpdate() {
+                const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+                const productIds = Array.from(checkedBoxes).map(cb => cb.value);
+                const action = document.getElementById('stockAction').value;
+                const quantity = parseInt(document.getElementById('stockQuantity').value);
+
+                if (productIds.length === 0) {
+                    alert('Please select at least one product');
+                    return;
+                }
+
+                if (isNaN(quantity) || quantity < 0) {
+                    alert('Please enter a valid quantity');
+                    return;
+                }
+
+                fetch(`/products/bulk/update-stock`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productIds: productIds,
+                        action: action,
+                        quantity: quantity
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to update products');
+                    }
+                })
+                .catch(error => {
+                    alert('Error performing bulk update');
+                });
+
+                this.hideModal('bulkUpdateModal');
+            }
+
+            handleSearch(e) {
+                this.searchTerm = e.target.value.toLowerCase().trim();
+                const clearBtn = document.getElementById('clearSearch');
+
+                // Show/hide clear button
+                if (clearBtn) {
+                    clearBtn.style.display = this.searchTerm ? 'block' : 'none';
+                }
+
+                // Debounce search
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.applyFilters();
+                    this.updateSearchFeedback();
+                }, 300);
+            }
+
+            clearSearch() {
+                const searchInput = document.getElementById('productSearch');
+                const clearBtn = document.getElementById('clearSearch');
+
+                if (searchInput) {
+                    searchInput.value = '';
+                    this.searchTerm = '';
+                }
+
+                if (clearBtn) {
+                    clearBtn.style.display = 'none';
+                }
+
+                this.applyFilters();
+                this.updateSearchFeedback();
+
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+
+            handleFilter(e) {
+                const button = e.target;
+                this.currentFilter = button.dataset.filter;
+
+                // Update active state
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+
+                this.applyFilters();
+            }
+
+            handleSort(e) {
+                this.currentSort = e.target.value;
+                this.applyFilters();
+            }
+
+            applyFilters() {
+                this.showLoading(true);
+
+                setTimeout(() => {
+                    // Apply search and filter
+                    this.filteredProducts = this.allProducts.filter(product => {
+                        // Search filter
+                        if (this.searchTerm) {
+                            const searchableText = [
+                                product.name,
+                                product.brand,
+                                product.category
+                            ].join(' ');
+
+                            if (!searchableText.includes(this.searchTerm)) {
+                                return false;
+                            }
+                        }
+
+                        // Status/Type filter
+                        if (this.currentFilter !== 'all') {
+                            switch (this.currentFilter) {
+                                case 'low-stock':
+                                    return product.stock < 10;
+                                case 'medium-stock':
+                                    return product.stock >= 10 && product.stock < 50;
+                                case 'high-stock':
+                                    return product.stock >= 50;
+                                case 'high-margin':
+                                    return product.margin > 30;
+                                case 'low-margin':
+                                    return product.margin < 15;
+                                case 'profitable':
+                                    return product.selling > product.cost && product.margin > 0;
+                                default:
+                                    return true;
+                            }
+                        }
+
+                        return true;
                     });
 
-                    // Update search feedback
-                    const feedback = document.getElementById('searchFeedback');
-                    if (!feedback) {
-                        const feedbackEl = document.createElement('div');
-                        feedbackEl.id = 'searchFeedback';
-                        feedbackEl.className = 'text-xs text-gray-500 mt-1';
-                        searchInput.parentNode.appendChild(feedbackEl);
-                    }
-                    document.getElementById('searchFeedback').textContent =
-                        searchTerm ? `${visibleCount} products found` : '';
-                });
+                    // Apply sorting
+                    this.sortProducts();
+                    this.updateDisplay();
+                    this.showLoading(false);
+                }, 200);
             }
-        });
+
+            sortProducts() {
+                switch (this.currentSort) {
+                    case 'name-asc':
+                        this.filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                    case 'name-desc':
+                        this.filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+                        break;
+                    case 'price-low':
+                        this.filteredProducts.sort((a, b) => a.selling - b.selling);
+                        break;
+                    case 'price-high':
+                        this.filteredProducts.sort((a, b) => b.selling - a.selling);
+                        break;
+                    case 'stock-low':
+                        this.filteredProducts.sort((a, b) => a.stock - b.stock);
+                        break;
+                    case 'stock-high':
+                        this.filteredProducts.sort((a, b) => b.stock - a.stock);
+                        break;
+                    case 'margin-low':
+                        this.filteredProducts.sort((a, b) => a.margin - b.margin);
+                        break;
+                    case 'margin-high':
+                        this.filteredProducts.sort((a, b) => b.margin - a.margin);
+                        break;
+                }
+            }
+
+            updateDisplay() {
+                const emptyState = document.getElementById('emptyState');
+                const tableBody = document.getElementById('productsTableBody');
+
+                // Hide all products first
+                this.allProducts.forEach(product => {
+                    product.element.style.display = 'none';
+                });
+
+                if (this.filteredProducts.length === 0) {
+                    if (emptyState) {
+                        emptyState.style.display = 'block';
+                    }
+                } else {
+                    if (emptyState) {
+                        emptyState.style.display = 'none';
+                    }
+
+                    // Show filtered and sorted products
+                    this.filteredProducts.forEach((product, index) => {
+                        product.element.style.display = '';
+                        // Reorder in DOM to reflect sort
+                        if (tableBody) {
+                            tableBody.appendChild(product.element);
+                        }
+                    });
+                }
+
+                this.updateResultCount();
+            }
+
+            updateResultCount() {
+                const resultCount = document.getElementById('resultCount');
+                if (resultCount) {
+                    resultCount.textContent = this.filteredProducts.length;
+                }
+            }
+
+            updateSearchFeedback() {
+                const feedback = document.getElementById('searchFeedback');
+                if (feedback) {
+                    if (this.searchTerm) {
+                        feedback.textContent = `${this.filteredProducts.length} products found`;
+                        feedback.className = 'text-xs text-blue-600 font-medium mt-2';
+                    } else {
+                        feedback.textContent = '';
+                    }
+                }
+            }
+
+            clearAllFilters() {
+                // Reset all filters
+                this.searchTerm = '';
+                this.currentFilter = 'all';
+                this.currentSort = 'name-asc';
+
+                // Reset UI
+                const searchInput = document.getElementById('productSearch');
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+
+                const clearBtn = document.getElementById('clearSearch');
+                if (clearBtn) {
+                    clearBtn.style.display = 'none';
+                }
+
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) {
+                    sortSelect.value = 'name-asc';
+                }
+
+                // Reset filter buttons
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.filter === 'all') {
+                        btn.classList.add('active');
+                    }
+                });
+
+                this.applyFilters();
+                this.updateSearchFeedback();
+            }
+
+            // Auto-hide flash messages
+            autoHideFlashMessages() {
+                setTimeout(() => {
+                    const alerts = document.querySelectorAll('.alert-success, .alert-error');
+                    alerts.forEach(alert => {
+                        alert.style.transition = 'opacity 0.5s ease-out';
+                        alert.style.opacity = '0';
+                        setTimeout(() => alert.remove(), 500);
+                    });
+                }, 5000);
+            }
+        }
+
+        // Initialize Product Manager
+        const productManager = new ProductManager();
 
         // Export products function
         function exportProductData() {
             const supplierName = /*[[${supplier.name}]]*/ 'Supplier';
             let csvContent = "Product ID,Name,Brand,Category,Cost Price,Selling Price,Stock,Profit Margin\n";
 
-            const rows = document.querySelectorAll('tbody tr:not(:first-child)');
+            const rows = document.querySelectorAll('.product-row:not([style*="display: none"])');
             rows.forEach(function(row) {
                 const cells = row.querySelectorAll('td');
                 if (cells.length > 1) {
-                    const productId = cells[0].querySelector('.text-xs') ? cells[0].querySelector('.text-xs').textContent.replace('ID: #', '') : '';
-                    const name = cells[0].querySelector('a') ? cells[0].querySelector('a').textContent : '';
-                    const brand = cells[1].querySelector('.font-medium') ? cells[1].querySelector('.font-medium').textContent : '';
-                    const category = cells[1].querySelectorAll('div')[1] ? cells[1].querySelectorAll('div')[1].textContent : '';
-                    const costPrice = cells[2].querySelector('.text-orange-600') ? cells[2].querySelector('.text-orange-600').textContent : '';
-                    const sellingPrice = cells[2].querySelector('.text-green-600') ? cells[2].querySelector('.text-green-600').textContent : '';
-                    const stock = cells[3].querySelector('span') ? cells[3].querySelector('span').textContent : '';
-                    const margin = cells[4].querySelector('div') ? cells[4].querySelector('div').textContent : '';
+                    const productId = row.dataset.productId || '';
+                    const name = row.dataset.name || '';
+                    const brand = row.dataset.brand || '';
+                    const category = row.dataset.category || '';
+                    const costPrice = '₹' + row.dataset.cost || '₹0';
+                    const sellingPrice = '₹' + row.dataset.selling || '₹0';
+                    const stock = row.dataset.stock || '0';
+                    const margin = row.dataset.margin + '%' || '0%';
 
                     csvContent += `"${productId}","${name}","${brand}","${category}","${costPrice}","${sellingPrice}","${stock}","${margin}"\n`;
                 }
@@ -605,7 +2141,7 @@
 
         // Add tooltips for better UX
         document.addEventListener('DOMContentLoaded', function() {
-            const stockElements = document.querySelectorAll('[class*="bg-red-100"], [class*="bg-yellow-100"], [class*="bg-green-100"]');
+            const stockElements = document.querySelectorAll('.stock-badge');
             stockElements.forEach(function(element) {
                 element.addEventListener('mouseenter', function() {
                     this.style.transform = 'scale(1.1)';

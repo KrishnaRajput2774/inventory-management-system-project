@@ -7,13 +7,34 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatRequest {
 
     private String message;
-    private String model;
-    private List<Message> history;
 
+    @Builder.Default
+    private String model = "llama3.1";
+
+    private String conversationId;
+
+    @JsonProperty("streaming")
+    @Builder.Default
+    private boolean streaming = false;
+
+    private String context;
+
+    @Builder.Default
+    private double temperature = 0.7;
+
+    @Builder.Default
+    private int maxTokens = 2000;
 }

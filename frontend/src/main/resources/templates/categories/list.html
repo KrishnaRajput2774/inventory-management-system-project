@@ -12,8 +12,8 @@
             cursor: pointer;
         }
         .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
         }
         .active-card {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -39,7 +39,7 @@
         .status-inactive { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
         .table-row:hover {
             background: rgba(59, 130, 246, 0.05);
-            transform: scale(1.01);
+            transform: scale(1.005);
             transition: all 0.2s ease;
         }
         .success-alert {
@@ -66,6 +66,355 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
+
+        /* Enhanced search and filter styles */
+        .filter-controls {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 6px 8px 6px 22px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 10px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .clear-search:hover {
+            color: #374151;
+            background: rgba(243, 244, 246, 0.8);
+        }
+
+        .filter-button {
+            padding: 5px 10px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 10px;
+        }
+
+        .filter-button:hover {
+            border-color: #4f46e5;
+            background: #f9fafb;
+        }
+
+        .filter-button.active {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .sort-select {
+            padding: 6px 8px 6px 22px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Loading state */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 16px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #9ca3af;
+        }
+
+        /* Enhanced Table Styles */
+        .categories-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .categories-table th,
+        .categories-table td {
+            text-align: left;
+            vertical-align: middle;
+            padding: 12px 8px;
+        }
+
+        /* Column widths for better alignment */
+        .categories-table .col-category { width: 150px; }
+        .categories-table .col-description { width: 220px; }
+        .categories-table .col-status { width: 100px; }
+        .categories-table .col-products { width: 100px; }
+        .categories-table .col-created { width: 120px; }
+        .categories-table .col-actions { width: 200px; }
+
+        /* Action buttons improvements */
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .action-btn i {
+            font-size: 10px;
+            margin-right: 3px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-products {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Category info styling */
+        .category-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-icon-wrapper {
+            flex-shrink: 0;
+        }
+
+        .category-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .category-name {
+            font-weight: 700;
+            font-size: 11px;
+            color: #1f2937;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .category-name:hover {
+            color: #3b82f6;
+        }
+
+        .category-id {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 1px;
+        }
+
+        /* Description styling */
+        .description-text {
+            font-size: 11px;
+            color: #1f2937;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Date styling */
+        .date-info {
+            text-align: left;
+        }
+
+        .date-primary {
+            font-size: 11px;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .date-secondary {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 1px;
+        }
+
+        /* Badge improvements */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 12px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            min-width: 50px;
+        }
+
+        /* Products count styling */
+        .products-count {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .products-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .products-label {
+            margin-left: 4px;
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 1024px) {
+            .categories-table .col-description { width: 150px; }
+            .categories-table .col-actions { width: 160px; }
+
+            .action-btn {
+                padding: 3px 6px;
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .categories-table {
+                font-size: 12px;
+            }
+
+            .categories-table th,
+            .categories-table td {
+                padding: 8px 4px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 4px 6px;
+            }
+        }
     </style>
 </head>
 
@@ -87,131 +436,152 @@
     </div>
 
     <!-- Header Section -->
-    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 mb-8">
+    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-2 mb-4">
         <div class="animate-fade-in">
-            <h1 class="text-4xl font-bold text-gray-900 mb-3">Category Management</h1>
-            <p class="text-lg text-gray-600">Organize and track your product categories with comprehensive analytics</p>
+            <h1 class="text-2xl font-bold text-gray-900">Category Management</h1>
+            <p class="text-base text-gray-600">Organize and track your product categories with comprehensive analytics</p>
         </div>
         <div class="flex flex-wrap gap-3 animate-fade-in">
             <a href="/categories/create"
-               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold pulse">
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm px-3 py-1.5 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold pulse">
                 <i class="bi bi-plus-circle-fill mr-2"></i>New Category
             </a>
             <button onclick="exportCategories()"
-                    class="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                    class="bg-gradient-to-r from-gray-600 to-gray-800 text-white text-sm px-3 py-1.5 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
                 <i class="bi bi-download mr-2"></i>Export
             </button>
         </div>
     </div>
 
     <!-- Analytics Dashboard -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
 
         <!-- Total Categories -->
-        <div class="metric-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in">
+        <div class="metric-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Total Categories</p>
-                    <p class="text-4xl font-bold mt-2" th:text="${totalCategories ?: 0}">0</p>
-                    <div class="flex items-center mt-3">
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Total Categories</p>
+                    <p class="text-xl font-bold mt-2" th:text="${totalCategories ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
                         <i class="bi bi-tags-fill text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Classification System</span>
+                        <span class="text-white/80 text-xs">Classification System</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-grid-3x3-gap-fill text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-grid-3x3-gap-fill text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Active Categories -->
-        <div class="metric-card active-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.1s;">
+        <div class="metric-card active-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.1s;">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Active Categories</p>
-                    <p class="text-4xl font-bold mt-2" th:text="${activeCategories ?: 0}">0</p>
-                    <div class="flex items-center mt-3">
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Active Categories</p>
+                    <p class="text-xl font-bold mt-2" th:text="${activeCategories ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
                         <i class="bi bi-check-circle-fill text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Currently Available</span>
+                        <span class="text-white/80 text-xs">Currently Available</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-lightning-charge-fill text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-lightning-charge-fill text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Total Products -->
-        <div class="metric-card products-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.2s;">
+        <div class="metric-card products-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.2s;">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Total Products</p>
-                    <p class="text-4xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
-                    <div class="flex items-center mt-3">
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Total Products</p>
+                    <p class="text-xl font-bold mt-2" th:text="${totalProducts ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
                         <i class="bi bi-box-fill text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Inventory Items</span>
+                        <span class="text-white/80 text-xs">Inventory Items</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-archive-fill text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-archive-fill text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Average Products -->
-        <div class="metric-card avg-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.3s;">
+        <div class="metric-card avg-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.3s;">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Average Products</p>
-                    <p class="text-4xl font-bold mt-2" th:text="${#numbers.formatDecimal(avgProductsPerCategory ?: 0, 1, 1)}">0.0</p>
-                    <div class="flex items-center mt-3">
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Average Products</p>
+                    <p class="text-xl font-bold mt-2" th:text="${#numbers.formatDecimal(avgProductsPerCategory ?: 0, 1, 1)}">0.0</p>
+                    <div class="flex items-center mt-2">
                         <i class="bi bi-graph-up text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Per Category</span>
+                        <span class="text-white/80 text-xs">Per Category</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-calculator-fill text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-calculator-fill text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Need Attention -->
-        <div class="metric-card attention-card rounded-2xl text-white p-6 shadow-2xl animate-fade-in" style="animation-delay: 0.4s;">
+        <div class="metric-card attention-card rounded-2xl text-white p-4 shadow-2xl animate-fade-in" style="animation-delay: 0.4s;">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium uppercase tracking-wide">Need Attention</p>
-                    <p class="text-4xl font-bold mt-2" th:text="${categoriesNeedingAttention ?: 0}">0</p>
-                    <div class="flex items-center mt-3">
+                    <p class="text-white/80 text-xs font-medium uppercase tracking-wide">Need Attention</p>
+                    <p class="text-xl font-bold mt-2" th:text="${categoriesNeedingAttention ?: 0}">0</p>
+                    <div class="flex items-center mt-2">
                         <i class="bi bi-exclamation-triangle-fill text-white/60 mr-2"></i>
-                        <span class="text-white/80 text-sm">Empty Categories</span>
+                        <span class="text-white/80 text-xs">Empty Categories</span>
                     </div>
                 </div>
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i class="bi bi-flag-fill text-3xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="bi bi-flag-fill text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Categories Showcase -->
-    <div th:unless="${#lists.isEmpty(topCategories)}" class="mb-8 animate-fade-in" style="animation-delay: 0.5s;">
-        <div class="glass-card rounded-2xl shadow-2xl p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-bold text-gray-900">Top Performing Categories</h3>
-                <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
-                    <span class="text-sm text-gray-600 font-medium">Most Products</span>
+    <!-- Dynamic Search and Filter Controls -->
+    <div class="glass-card rounded-2xl shadow-2xl mb-4 animate-fade-in" style="animation-delay: 0.5s;">
+        <div class="filter-controls">
+            <!-- Search Bar -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
+                <div class="flex-1 max-w-sm">
+                    <div class="search-wrapper">
+                        <i class="bi bi-search text-xs search-icon"></i>
+                        <input type="text"
+                               id="categorySearch"
+                               class="search-input"
+                               placeholder="  Search categories by name, description..."
+                               autocomplete="on">
+                        <button class="clear-search" id="clearSearch" style="display: none;">
+                            <i class="bi bi-x text-lg"></i>
+                        </button>
+                    </div>
+                    <div id="searchFeedback" class="text-xs text-gray-500 mt-2"></div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <select id="sortSelect" class="sort-select">
+                        <option value="name-asc">Name: A-Z</option>
+                        <option value="name-desc">Name: Z-A</option>
+                        <option value="products-high">Products: High to Low</option>
+                        <option value="products-low">Products: Low to High</option>
+                        <option value="date-desc">Date: Newest First</option>
+                        <option value="date-asc">Date: Oldest First</option>
+                    </select>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div th:each="category : ${topCategories}"
-                     class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 text-center p-5 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105">
-                    <div class="w-14 h-14 category-icon rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="bi bi-tags-fill text-white text-xl"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900 text-sm mb-1" th:text="${category.name}">Category Name</h4>
-                    <p class="text-xs text-gray-600 font-medium" th:text="${category.productCount ?: 0} + ' products'">0 products</p>
-                </div>
+
+            <!-- Quick Filters -->
+            <div class="flex flex-wrap gap-3">
+                <button class="filter-button active" data-filter="all">All Categories</button>
+                <button class="filter-button" data-filter="ACTIVE">Active</button>
+                <button class="filter-button" data-filter="INACTIVE">Inactive</button>
+                <button class="filter-button" data-filter="with-products">With Products</button>
+                <button class="filter-button" data-filter="empty">Empty</button>
+                <button class="filter-button" data-filter="recent">Recent</button>
             </div>
         </div>
     </div>
@@ -220,213 +590,733 @@
     <div class="glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in" style="animation-delay: 0.6s;">
 
         <!-- Table Header -->
-        <div class="px-6 py-6 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-gray-100">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="px-3.5 py-3 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-gray-100">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900">Category Directory</h3>
-                    <p class="text-sm text-gray-600 mt-1">Manage all your product categories in one place</p>
+                    <h3 class="text-lg font-bold text-gray-900">Category Directory</h3>
+                    <p class="text-xs text-gray-600 mt-1">
+                        Showing <span id="resultCount" th:text="${#lists.size(categories)}">0</span> categories
+                    </p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <input type="text" id="categorySearch" placeholder="Search categories..."
-                           class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm shadow-sm">
-                    <div id="searchFeedback" class="text-xs text-gray-500"></div>
+                    <button type="button" onclick="categoryManager.selectAllCategories()"
+                            class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-xl text-blue-600 bg-blue-100 hover:bg-blue-200 transition-colors duration-200">
+                        <i class="bi bi-check-square-fill mr-2"></i>Select All
+                    </button>
+                    <button type="button" onclick="categoryManager.bulkToggleStatus()" disabled id="bulkToggleBtn"
+                            class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-xl text-green-600 bg-green-100 hover:bg-green-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="bi bi-toggle-on mr-2"></i>Bulk Toggle
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Table Content -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full">
+        <div class="overflow-x-auto relative">
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                <div class="text-center">
+                    <div class="spinner"></div>
+                    <p class="mt-4 text-gray-600 font-medium">Searching categories...</p>
+                </div>
+            </div>
+
+            <table class="categories-table">
                 <thead class="bg-gray-50/80">
                 <tr>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Category</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Description</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Products</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Created</th>
-                    <th class="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
+                    <th class="col-category text-xs font-bold text-gray-700 uppercase tracking-wider">Category</th>
+                    <th class="col-description text-xs font-bold text-gray-700 uppercase tracking-wider">Description</th>
+                    <th class="col-status text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                    <th class="col-products text-xs font-bold text-gray-700 uppercase tracking-wider">Products</th>
+                    <th class="col-created text-xs font-bold text-gray-700 uppercase tracking-wider">Created</th>
+                    <th class="col-actions text-xs font-bold text-gray-700 uppercase tracking-wider text-right">Actions</th>
                 </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200/50">
-
-                <!-- Empty State -->
-                <tr th:if="${#lists.isEmpty(categories)}">
-                    <td colspan="6" class="px-6 py-20 text-center">
-                        <div class="flex flex-col items-center">
-                            <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-4">
-                                <i class="bi bi-tags text-gray-400 text-4xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">No Categories Found</h3>
-                            <p class="text-gray-500 mb-6 max-w-md">Start organizing your products by creating your first category. Categories help you manage and find products efficiently.</p>
-                            <a href="/categories/create"
-                               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
-                                <i class="bi bi-plus-circle-fill mr-2"></i>Create First Category
-                            </a>
-                        </div>
-                    </td>
-                </tr>
+                <tbody class="bg-white divide-y divide-gray-200/50" id="categoriesTableBody">
 
                 <!-- Category Rows -->
-                <tr th:each="category : ${categories}" class="table-row">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 category-icon rounded-xl flex items-center justify-center mr-4">
-                                <i class="bi bi-tags-fill text-white text-lg"></i>
-                            </div>
-                            <div>
-                                <div class="text-sm font-bold text-gray-900">
-                                    <a th:href="@{/categories/{id}(id=${category.id})}"
-                                       th:text="${category.name}"
-                                       class="hover:text-blue-600 transition-colors duration-200"></a>
+                <tr th:each="category : ${categories}" class="table-row category-row"
+                    th:data-category-id="${category.id}"
+                    th:data-name="${category.name ?: ''}"
+                    th:data-description="${category.description ?: ''}"
+                    th:data-status="${category.status ?: 'ACTIVE'}"
+                    th:data-products="${category.productCount ?: 0}"
+                    th:data-date="${category.createdDate}">
+
+
+                    <!-- Category Column -->
+                    <td class="col-category">
+                        <div class="category-info">
+                            <div class="category-icon-wrapper">
+                                <div class="w-6 h-6 category-icon rounded-xl flex items-center justify-center">
+                                    <i class="bi bi-tags-fill text-white text-sm"></i>
                                 </div>
-                                <div class="text-xs text-gray-500" th:text="'ID: ' + ${category.id}"></div>
+                            </div>
+                            <div class="category-details">
+                                <a th:href="@{/categories/{id}(id=${category.id})}"
+                                   th:text="${category.name}"
+                                   class="category-name"></a>
+                                <div class="category-id" th:text="'ID: ' + ${category.id}">ID: 0</div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900 max-w-xs"
+
+                    <!-- Description Column -->
+                    <td class="col-description">
+                        <div class="description-text"
                              th:text="${category.description ?: 'No description provided'}"
                              th:title="${category.description}"></div>
                     </td>
-                    <td class="px-6 py-4">
-                            <span class="inline-flex px-3 py-1 text-xs font-bold rounded-full text-white"
-                                  th:classappend="${(category.status == null or category.status == 'ACTIVE') ? 'status-active' : 'status-inactive'}"
-                                  th:text="${category.status ?: 'ACTIVE'}">ACTIVE</span>
+
+                    <!-- Status Column -->
+                    <td class="col-status">
+                        <span class="status-badge"
+                              th:classappend="${(category.status == null or category.status == 'ACTIVE') ? 'status-active' : 'status-inactive'}"
+                              th:text="${category.status ?: 'ACTIVE'}">ACTIVE</span>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-800"
-                                      th:text="${category.productCount ?: 0}">0</span>
-                            <span class="ml-2 text-xs text-gray-500">items</span>
+
+                    <!-- Products Column -->
+                    <td class="col-products">
+                        <div class="products-count">
+                            <span class="products-badge"
+                                  th:text="${category.productCount ?: 0}">0</span>
+                            <span class="products-label">items</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900"
-                             th:text="${category.createdDate != null ? #temporals.format(category.createdDate, 'MMM dd, yyyy') : 'Unknown'}">Unknown</div>
-                        <div class="text-xs text-gray-500"
-                             th:text="${category.createdDate != null ? #temporals.format(category.createdDate, 'HH:mm') : ''}"></div>
+
+<!--                     Created Column-->
+                    <td class="col-created">
+                        <div class="date-info">
+                            <div class="date-primary" th:text="${category.createdDate != null ? #temporals.format(category.createdDate, 'MMM dd') : 'N/A'}">N/A</div>
+                            <div class="date-secondary" th:text="${category.createdDate != null ? #temporals.format(category.createdDate, 'HH:mm') : ''}"></div>
+                        </div>
                     </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end space-x-2">
+
+                    <!-- Actions Column -->
+                    <td class="col-actions">
+                        <div class="action-buttons">
                             <a th:href="@{/categories/{id}(id=${category.id})}"
-                               class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-blue-600 bg-blue-100 hover:bg-blue-200 transition-colors duration-200">
-                                <i class="bi bi-eye-fill mr-1"></i>View
+                               class="action-btn btn-view"
+                               title="View Category">
+                                <i class="bi bi-eye-fill"></i>View
                             </a>
                             <a th:href="@{/categories/{id}/products(id=${category.id})}"
-                               class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-200">
-                                <i class="bi bi-box-fill mr-1"></i>Products
+                               class="action-btn btn-products"
+                               title="View Products">
+                                <i class="bi bi-box-fill"></i>Products
                             </a>
-                            <form th:action="@{/categories/{id}/delete(id=${category.id})}" method="post" class="inline">
-                                <button type="submit"
-                                        class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-red-600 bg-red-100 hover:bg-red-200 transition-colors duration-200"
-                                        onclick="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">
-                                    <i class="bi bi-trash-fill mr-1"></i>Delete
-                                </button>
-                            </form>
+                            <button type="button"
+                                    th:onclick="'categoryManager.deleteCategory(' + ${category.id} + ')'"
+                                    class="action-btn btn-delete"
+                                    title="Delete Category">
+                                <i class="bi bi-trash-fill"></i>Delete
+                            </button>
                         </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No categories found</h3>
+                <p class="text-gray-600 mb-6">Try adjusting your search criteria or filters</p>
+                <button class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold" onclick="categoryManager.clearAllFilters()">
+                    <i class="bi bi-arrow-clockwise mr-2"></i>Clear Filters
+                </button>
+            </div>
+
+            <!-- No Categories State (when no categories exist) -->
+            <div th:if="${#lists.isEmpty(categories)}" class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No Categories Found</h3>
+                <p class="text-gray-500 mb-6 max-w-md">Start organizing your products by creating your first category. Categories help you manage and find products efficiently.</p>
+                <a href="/categories/create"
+                   class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold">
+                    <i class="bi bi-plus-circle-fill mr-2"></i>Create First Category
+                </a>
+            </div>
         </div>
+
     </div>
 
     <!-- Analytics & Quick Actions -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
         <!-- Category Analytics -->
-        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.7s;">
-            <h3 class="text-xl font-bold text-gray-900 mb-6">
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.7s;">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">
                 <i class="bi bi-graph-up text-blue-600 mr-2"></i>Category Analytics
             </h3>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Average Products per Category</span>
-                    <span class="text-lg font-bold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerCategory ?: 0, 1, 1)}">0.0</span>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Average Products per Category</span>
+                    <span class="text-sm font-bold text-blue-600" th:text="${#numbers.formatDecimal(avgProductsPerCategory ?: 0, 1, 1)}">0.0</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Categories with Products</span>
-                    <span class="text-lg font-bold text-green-600" th:text="${categoriesWithProducts ?: 0}">0</span>
+                <div class="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Categories with Products</span>
+                    <span class="text-sm font-bold text-green-600" th:text="${categoriesWithProducts ?: 0}">0</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Empty Categories</span>
-                    <span class="text-lg font-bold text-orange-600" th:text="${(totalCategories ?: 0) - (categoriesWithProducts ?: 0)}">0</span>
+                <div class="flex justify-between items-center p-2 bg-orange-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">Empty Categories</span>
+                    <span class="text-sm font-bold text-orange-600" th:text="${(totalCategories ?: 0) - (categoriesWithProducts ?: 0)}">0</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">New This Month</span>
-                    <span class="text-lg font-bold text-purple-600" th:text="${newCategoriesThisMonth ?: 0}">0</span>
+                <div class="flex justify-between items-center p-2 bg-purple-50 rounded-lg">
+                    <span class="text-xs font-medium text-gray-700">New This Month</span>
+                    <span class="text-sm font-bold text-purple-600" th:text="${newCategoriesThisMonth ?: 0}">0</span>
                 </div>
             </div>
         </div>
 
         <!-- Quick Actions -->
-        <div class="glass-card rounded-2xl shadow-2xl p-6 animate-fade-in" style="animation-delay: 0.8s;">
-            <h3 class="text-xl font-bold text-gray-900 mb-6">
+        <div class="glass-card rounded-2xl shadow-2xl p-4 animate-fade-in" style="animation-delay: 0.8s;">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">
                 <i class="bi bi-lightning-charge-fill text-yellow-500 mr-2"></i>Quick Actions
             </h3>
-            <div class="space-y-3">
+            <div class="space-y-2">
                 <a href="/categories/create"
-                   class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block">
+                   class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block text-xs">
                     <i class="bi bi-plus-circle-fill mr-2"></i>Create New Category
                 </a>
                 <a href="/products/create"
-                   class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block">
+                   class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block text-xs">
                     <i class="bi bi-box-seam-fill mr-2"></i>Add New Product
                 </a>
                 <button onclick="exportCategories()"
-                        class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold">
+                        class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
                     <i class="bi bi-download mr-2"></i>Export Category Data
                 </button>
-<!--                <a href="/analytics/categories"-->
-<!--                   class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-center block">-->
-<!--                    <i class="bi bi-graph-up mr-2"></i>View Detailed Analytics-->
-<!--                </a>-->
+                <button onclick="categoryManager.bulkToggleStatus()"
+                        class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-xs">
+                    <i class="bi bi-toggle-on mr-2"></i>Bulk Toggle Status
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Delete Category Confirmation Modal -->
+    <div id="deleteCategoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-2xl bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Delete Category</h3>
+                    <button onclick="categoryManager.hideModal('deleteCategoryModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="bi bi-x text-xl"></i>
+                    </button>
+                </div>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500 mb-4">Are you sure you want to delete this category? This action cannot be undone.</p>
+                    <div id="deleteCategoryDetails" class="mt-4 p-3 bg-gray-50 rounded-lg text-sm"></div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">What should happen to products in this category?</label>
+                        <select id="productAction" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="uncategorized">Move to Uncategorized</option>
+                            <option value="delete">Delete products too</option>
+                            <option value="reassign">Reassign to another category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end px-4 py-3 space-x-3">
+                    <button onclick="categoryManager.hideModal('deleteCategoryModal')"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button id="confirmDeleteCategory"
+                            class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 rounded-lg hover:shadow-lg">
+                        Delete Category
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Toggle Status Modal -->
+    <div id="bulkToggleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-2xl bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Bulk Toggle Status</h3>
+                    <button onclick="categoryManager.hideModal('bulkToggleModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="bi bi-x text-xl"></i>
+                    </button>
+                </div>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500 mb-4">Select the new status for the selected categories:</p>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">New Status</label>
+                        <select id="bulkStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end px-4 py-3 space-x-3">
+                    <button onclick="categoryManager.hideModal('bulkToggleModal')"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button id="confirmBulkToggle"
+                            class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:shadow-lg">
+                        Update Status
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
 </div>
 
+<!-- Enhanced JavaScript Implementation -->
 <th:block layout:fragment="scripts">
     <script>
-        // Auto-hide flash messages
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.success-alert, .error-alert');
-            alerts.forEach(function(alert) {
-                alert.style.transition = 'opacity 0.5s ease-out';
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 500);
-            });
-        }, 5000);
+        // Category Management System - Enhanced Implementation
+        class CategoryManager {
+            constructor() {
+                this.allCategories = [];
+                this.filteredCategories = [];
+                this.currentFilter = 'all';
+                this.currentSort = 'name-asc';
+                this.searchTerm = '';
+                this.selectedCategoryId = null;
 
-        // Enhanced search functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('categorySearch');
-            const searchFeedback = document.getElementById('searchFeedback');
+                // Initialize when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => this.init());
+                } else {
+                    this.init();
+                }
+            }
 
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('tbody tr:not(:first-child)');
-                    let visibleCount = 0;
+            init() {
+                console.log('Initializing Category Manager...');
+                this.initializeCategories();
+                this.setupEventListeners();
+                this.autoHideFlashMessages();
+                console.log('Category Manager initialized with', this.allCategories.length, 'categories');
+            }
 
-                    rows.forEach(function(row) {
-                        const text = row.textContent.toLowerCase();
-                        const isVisible = text.includes(searchTerm);
-                        row.style.display = isVisible ? '' : 'none';
-                        if (isVisible) visibleCount++;
+            initializeCategories() {
+                const categoryRows = document.querySelectorAll('.category-row');
+                this.allCategories = Array.from(categoryRows).map(row => ({
+                    element: row,
+                    id: row.dataset.categoryId,
+                    name: (row.dataset.name || '').toLowerCase(),
+                    description: (row.dataset.description || '').toLowerCase(),
+                    status: row.dataset.status || 'ACTIVE',
+                    products: parseInt(row.dataset.products || 0),
+                    date: new Date(row.dataset.date || Date.now())
+                }));
+
+                this.filteredCategories = [...this.allCategories];
+                this.updateResultCount();
+            }
+
+            setupEventListeners() {
+                // Search functionality
+                const searchInput = document.getElementById('categorySearch');
+                const clearSearchBtn = document.getElementById('clearSearch');
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => this.handleSearch(e));
+                }
+
+                if (clearSearchBtn) {
+                    clearSearchBtn.addEventListener('click', () => this.clearSearch());
+                }
+
+                // Filter buttons
+                const filterButtons = document.querySelectorAll('.filter-button');
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', (e) => this.handleFilter(e));
+                });
+
+                // Sort dropdown
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) {
+                    sortSelect.addEventListener('change', (e) => this.handleSort(e));
+                }
+
+                // Modal events
+                const confirmDeleteCategory = document.getElementById('confirmDeleteCategory');
+                const confirmBulkToggle = document.getElementById('confirmBulkToggle');
+
+                if (confirmDeleteCategory) {
+                    confirmDeleteCategory.addEventListener('click', () => this.confirmDeleteCategory());
+                }
+
+                if (confirmBulkToggle) {
+                    confirmBulkToggle.addEventListener('click', () => this.confirmBulkToggle());
+                }
+            }
+
+            handleSearch(e) {
+                this.searchTerm = e.target.value.toLowerCase().trim();
+                const clearBtn = document.getElementById('clearSearch');
+
+                // Show/hide clear button
+                if (clearBtn) {
+                    clearBtn.style.display = this.searchTerm ? 'block' : 'none';
+                }
+
+                // Debounce search
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.applyFilters();
+                    this.updateSearchFeedback();
+                }, 300);
+            }
+
+            clearSearch() {
+                const searchInput = document.getElementById('categorySearch');
+                const clearBtn = document.getElementById('clearSearch');
+
+                if (searchInput) {
+                    searchInput.value = '';
+                    this.searchTerm = '';
+                }
+
+                if (clearBtn) {
+                    clearBtn.style.display = 'none';
+                }
+
+                this.applyFilters();
+                this.updateSearchFeedback();
+
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+
+            handleFilter(e) {
+                const button = e.target;
+                this.currentFilter = button.dataset.filter;
+
+                // Update active state
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+
+                this.applyFilters();
+            }
+
+            handleSort(e) {
+                this.currentSort = e.target.value;
+                this.applyFilters();
+            }
+
+            applyFilters() {
+                this.showLoading(true);
+
+                setTimeout(() => {
+                    // Apply search and filter
+                    this.filteredCategories = this.allCategories.filter(category => {
+                        // Search filter
+                        if (this.searchTerm) {
+                            const searchableText = [
+                                category.name,
+                                category.description
+                            ].join(' ');
+
+                            if (!searchableText.includes(this.searchTerm)) {
+                                return false;
+                            }
+                        }
+
+                        // Status/Type filter
+                        if (this.currentFilter !== 'all') {
+                            switch (this.currentFilter) {
+                                case 'ACTIVE':
+                                case 'INACTIVE':
+                                    return category.status === this.currentFilter;
+                                case 'with-products':
+                                    return category.products > 0;
+                                case 'empty':
+                                    return category.products === 0;
+                                case 'recent':
+                                    const oneWeekAgo = new Date();
+                                    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                                    return category.date > oneWeekAgo;
+                                default:
+                                    return true;
+                            }
+                        }
+
+                        return true;
                     });
 
-                    // Update search feedback
-                    if (searchTerm) {
-                        searchFeedback.textContent = `${visibleCount} categories found`;
-                        searchFeedback.className = 'text-xs text-blue-600 font-medium';
+                    // Apply sorting
+                    this.sortCategories();
+                    this.updateDisplay();
+                    this.showLoading(false);
+                }, 200);
+            }
+
+            sortCategories() {
+                switch (this.currentSort) {
+                    case 'name-asc':
+                        this.filteredCategories.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                    case 'name-desc':
+                        this.filteredCategories.sort((a, b) => b.name.localeCompare(a.name));
+                        break;
+                    case 'products-low':
+                        this.filteredCategories.sort((a, b) => a.products - b.products);
+                        break;
+                    case 'products-high':
+                        this.filteredCategories.sort((a, b) => b.products - a.products);
+                        break;
+                    case 'date-asc':
+                        this.filteredCategories.sort((a, b) => a.date - b.date);
+                        break;
+                    case 'date-desc':
+                        this.filteredCategories.sort((a, b) => b.date - a.date);
+                        break;
+                }
+            }
+
+            updateDisplay() {
+                const emptyState = document.getElementById('emptyState');
+                const tableBody = document.getElementById('categoriesTableBody');
+
+                // Hide all categories first
+                this.allCategories.forEach(category => {
+                    category.element.style.display = 'none';
+                });
+
+                if (this.filteredCategories.length === 0) {
+                    if (emptyState) {
+                        emptyState.style.display = 'block';
+                    }
+                } else {
+                    if (emptyState) {
+                        emptyState.style.display = 'none';
+                    }
+
+                    // Show filtered and sorted categories
+                    this.filteredCategories.forEach((category, index) => {
+                        category.element.style.display = '';
+                        // Reorder in DOM to reflect sort
+                        if (tableBody) {
+                            tableBody.appendChild(category.element);
+                        }
+                    });
+                }
+
+                this.updateResultCount();
+            }
+
+            updateResultCount() {
+                const resultCount = document.getElementById('resultCount');
+                if (resultCount) {
+                    resultCount.textContent = this.filteredCategories.length;
+                }
+            }
+
+            updateSearchFeedback() {
+                const feedback = document.getElementById('searchFeedback');
+                if (feedback) {
+                    if (this.searchTerm) {
+                        feedback.textContent = `${this.filteredCategories.length} categories found`;
+                        feedback.className = 'text-xs text-blue-600 font-medium mt-2';
                     } else {
-                        searchFeedback.textContent = '';
+                        feedback.textContent = '';
+                    }
+                }
+            }
+
+            clearAllFilters() {
+                // Reset all filters
+                this.searchTerm = '';
+                this.currentFilter = 'all';
+                this.currentSort = 'name-asc';
+
+                // Reset UI
+                const searchInput = document.getElementById('categorySearch');
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+
+                const clearBtn = document.getElementById('clearSearch');
+                if (clearBtn) {
+                    clearBtn.style.display = 'none';
+                }
+
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) {
+                    sortSelect.value = 'name-asc';
+                }
+
+                // Reset filter buttons
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.filter === 'all') {
+                        btn.classList.add('active');
                     }
                 });
+
+                this.applyFilters();
+                this.updateSearchFeedback();
             }
-        });
+
+            showLoading(show) {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = show ? 'flex' : 'none';
+                }
+            }
+
+            // Modal functions
+            showModal(modalId) {
+                document.getElementById(modalId).classList.remove('hidden');
+            }
+
+            hideModal(modalId) {
+                document.getElementById(modalId).classList.add('hidden');
+            }
+
+            // Category management functions
+            deleteCategory(categoryId) {
+                this.selectedCategoryId = categoryId;
+
+                // Find category details
+                const categoryRow = document.querySelector(`[data-category-id="${categoryId}"]`);
+                const categoryName = categoryRow ? categoryRow.dataset.name : 'Unknown';
+                const productCount = categoryRow ? categoryRow.dataset.products : '0';
+
+                document.getElementById('deleteCategoryDetails').innerHTML =
+                    `<strong>Category:</strong> ${categoryName}<br><strong>Products:</strong> ${productCount}`;
+
+                this.showModal('deleteCategoryModal');
+            }
+
+            confirmDeleteCategory() {
+                if (this.selectedCategoryId) {
+                    const productAction = document.getElementById('productAction').value;
+
+                    fetch(`/categories/${this.selectedCategoryId}/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `productAction=${productAction}`
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert('Failed to delete category');
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error deleting category');
+                    });
+
+                    this.hideModal('deleteCategoryModal');
+                }
+            }
+
+            // Bulk operations
+            toggleSelectAll() {
+                const selectAll = document.getElementById('selectAllCheckbox');
+                const checkboxes = document.querySelectorAll('.category-checkbox');
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+
+                this.updateBulkActions();
+            }
+
+            selectAllCategories() {
+                const selectAll = document.getElementById('selectAllCheckbox');
+                selectAll.checked = true;
+                this.toggleSelectAll();
+            }
+
+            updateBulkActions() {
+                const checkedBoxes = document.querySelectorAll('.category-checkbox:checked');
+                const bulkToggleBtn = document.getElementById('bulkToggleBtn');
+
+                if (checkedBoxes.length > 0) {
+                    bulkToggleBtn.disabled = false;
+                } else {
+                    bulkToggleBtn.disabled = true;
+                }
+            }
+
+            bulkToggleStatus() {
+                const checkedBoxes = document.querySelectorAll('.category-checkbox:checked');
+                const categoryIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+                if (categoryIds.length === 0) {
+                    alert('Please select at least one category');
+                    return;
+                }
+
+                this.showModal('bulkToggleModal');
+            }
+
+            confirmBulkToggle() {
+                const checkedBoxes = document.querySelectorAll('.category-checkbox:checked');
+                const categoryIds = Array.from(checkedBoxes).map(cb => cb.value);
+                const newStatus = document.getElementById('bulkStatus').value;
+
+                if (categoryIds.length === 0) {
+                    alert('Please select at least one category');
+                    return;
+                }
+
+                fetch(`/categories/bulk/toggle-status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        categoryIds: categoryIds,
+                        status: newStatus
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to update categories');
+                    }
+                })
+                .catch(error => {
+                    alert('Error performing bulk update');
+                });
+
+                this.hideModal('bulkToggleModal');
+            }
+
+            // Auto-hide flash messages
+            autoHideFlashMessages() {
+                setTimeout(() => {
+                    const alerts = document.querySelectorAll('.success-alert, .error-alert');
+                    alerts.forEach(alert => {
+                        alert.style.transition = 'opacity 0.5s ease-out';
+                        alert.style.opacity = '0';
+                        setTimeout(() => alert.remove(), 500);
+                    });
+                }, 5000);
+            }
+        }
+
+        // Initialize Category Manager
+        const categoryManager = new CategoryManager();
+
+        // Global functions for compatibility
+        window.deleteCategory = function(categoryId) {
+            categoryManager.deleteCategory(categoryId);
+        };
 
         // Export function
         function exportCategories() {

@@ -90,29 +90,29 @@
         }
         .modal-content {
             background-color: white;
-            margin: 5% auto;
+            margin: 8% auto;
             padding: 0;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 500px;
+            max-height: 75vh;
             overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
         .modal-header {
-            padding: 24px;
+            padding: 12px 16px;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .modal-body {
-            padding: 24px;
+            padding: 16px;
         }
         .close {
             color: #aaa;
             float: right;
-            font-size: 28px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             transition: color 0.3s;
@@ -143,8 +143,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 8px;
+            border-radius: 5px;
             margin-bottom: 8px;
             border-left: 4px solid transparent;
             transition: all 0.3s ease;
@@ -166,9 +166,9 @@
         }
 
         .stock-badge {
-            padding: 4px 8px;
+            padding: 2px 4px;
             border-radius: 12px;
-            font-size: 11px;
+            font-size: 8px;
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -206,7 +206,7 @@
         /* Small Chart Container */
         .small-chart-container {
             position: relative;
-            height: 250px;
+            height: 200px;
         }
     </style>
 </head>
@@ -216,16 +216,16 @@
     <!-- Enhanced Header with CTAs -->
     <div class="mb-8 flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-            <p class="mt-2 text-lg text-gray-600">Real-time business insights and performance metrics</p>
+            <h1 class="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
+            <p class="mt-2 text-base text-gray-600">Real-time business insights and performance metrics</p>
         </div>
         <div class="flex space-x-4">
             <a href="/products/create"
-               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm px-3 py-1.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
                 <i class="bi bi-plus-circle mr-2"></i>Add Product
             </a>
-            <a href="/orders/create"
-               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
+            <a href="/orders/sales/create"
+               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm px-3 py-1.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium pulse-animation">
                 <i class="bi bi-plus-circle mr-2"></i>Create New Order
             </a>
         </div>
@@ -234,73 +234,73 @@
     <!-- Key Metrics Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Net Profit Card -->
-        <div class="profit-card rounded-2xl text-white p-6 shadow-xl" onclick="openProfitModal()">
+        <div class="profit-card rounded-2xl text-white p-4 shadow-xl" onclick="openProfitModal()">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Net Profit (This Month)</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(monthlyProfit?.amount ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Net Profit (This Month)</p>
+                    <p class="text-xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(monthlyProfit?.amount ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i th:class="${monthlyProfit?.isIncrease ?: false} ? 'bi bi-arrow-up text-emerald-200 mr-1' : 'bi bi-arrow-down text-red-200 mr-1'"></i>
-                        <span th:class="${monthlyProfit?.isIncrease ?: false} ? 'text-emerald-200 text-sm font-medium' : 'text-red-200 text-sm font-medium'"
+                        <span th:class="${monthlyProfit?.isIncrease ?: false} ? 'text-emerald-200 text-xs font-medium' : 'text-red-200 text-xs font-medium'"
                               th:text="${#numbers.formatDecimal(monthlyProfit?.percentageChange ?: 0, 1, 1)} + '% vs last month'">0.0% vs last month</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-trending-up text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-trending-up text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Monthly Revenue Card -->
-        <div class="income-card rounded-2xl text-white p-6 shadow-xl" onclick="openRevenueModal()">
+        <div class="income-card rounded-2xl text-white p-4 shadow-xl" onclick="openRevenueModal()">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Monthly Revenue</p>
-                    <p class="text-3xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(monthlyRevenue?.amount ?: 0, 0, 0)}">₹0</p>
+                    <p class="text-white/80 text-xs font-medium">Monthly Revenue</p>
+                    <p class="text-xl font-bold mt-2" th:text="'₹' + ${#numbers.formatDecimal(monthlyRevenue?.amount ?: 0, 0, 0)}">₹0</p>
                     <div class="flex items-center mt-2">
                         <i th:class="${monthlyRevenue?.isIncrease ?: false} ? 'bi bi-arrow-up text-blue-200 mr-1' : 'bi bi-arrow-down text-red-200 mr-1'"></i>
-                        <span th:class="${monthlyRevenue?.isIncrease ?: false} ? 'text-blue-200 text-sm font-medium' : 'text-red-200 text-sm font-medium'"
+                        <span th:class="${monthlyRevenue?.isIncrease ?: false} ? 'text-blue-200 text-xs font-medium' : 'text-red-200 text-xs font-medium'"
                               th:text="${#numbers.formatDecimal(monthlyRevenue?.percentageChange ?: 0, 1, 1)} + '% growth'">0.0% growth</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-currency-rupee text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-currency-rupee text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Monthly Orders Card -->
-        <div class="orders-card rounded-2xl text-white p-6 shadow-xl" onclick="window.location.href='/orders'">
+        <div class="orders-card rounded-2xl text-white p-4 shadow-xl" onclick="window.location.href='/orders'">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Orders (This Month)</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${monthlyOrders?.count ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Orders (This Month)</p>
+                    <p class="text-xl font-bold mt-2" th:text="${monthlyOrders?.count ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i class="bi bi-arrow-up text-pink-200 mr-1"></i>
-                        <span class="text-pink-200 text-sm font-medium" th:text="'+' + ${monthlyOrders?.newOrders ?: 0} + ' new orders'">+0 new orders</span>
+                        <span class="text-pink-200 text-xs font-medium" th:text="'+' + ${monthlyOrders?.newOrders ?: 0} + ' new orders'">+0 new orders</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-receipt text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-receipt text-xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- Total Products Card -->
-        <div class="metric-card rounded-2xl text-white p-6 shadow-xl" onclick="window.location.href='/products'">
+        <div class="metric-card rounded-2xl text-white p-4 shadow-xl" onclick="window.location.href='/products'">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-white/80 text-sm font-medium">Total Products</p>
-                    <p class="text-3xl font-bold mt-2" th:text="${productCount ?: 0}">0</p>
+                    <p class="text-white/80 text-xs font-medium">Total Products</p>
+                    <p class="text-xl font-bold mt-2" th:text="${productCount ?: 0}">0</p>
                     <div class="flex items-center mt-2">
                         <i th:class="${lowStockCount > 0} ? 'bi bi-exclamation-triangle text-orange-200 mr-1' : 'bi bi-check-circle text-green-200 mr-1'"></i>
-                        <span th:class="${lowStockCount > 0} ? 'text-orange-200 text-sm font-medium' : 'text-green-200 text-sm font-medium'"
+                        <span th:class="${lowStockCount > 0} ? 'text-orange-200 text-xs font-medium' : 'text-green-200 text-xs font-medium'"
                               th:text="${lowStockCount != null ? lowStockCount : 0} + ' low stock items'"> 0 low stock items
                         </span>
                     </div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-boxes text-2xl"></i>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-boxes text-xl"></i>
                 </div>
             </div>
         </div>
@@ -309,8 +309,8 @@
     <!-- Row 1: Profit by Category & Stock Overview -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Profit by Category -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Profit by Category</h3>
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-3">
+            <h3 class="text-base font-semibold text-gray-900 mb-4">Profit by Category</h3>
             <div class="small-chart-container">
                 <canvas id="categoryProfitChart"></canvas>
                 <div id="categoryProfitLoading" class="loading-spinner">
@@ -323,17 +323,17 @@
         </div>
 
         <!-- Stock Overview Section -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-3">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Stock Overview</h3>
-                <div th:class="${lowStockCount == 0} ? 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium' : 'bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium'">
+                <h3 class="text-base font-semibold text-gray-900">Stock Overview</h3>
+                <div th:class="${lowStockCount == 0} ? 'bg-green-100 text-green-800 px-1.5 py-1 rounded-full text-xs font-medium' : 'bg-red-100 text-red-800 px-1.5 py-1 rounded-full text-xs font-medium'">
                     <span th:text="${lowStockCount == 0} ? 'Sufficient Stock' : 'Low Stock Alert'">Stock Status</span>
                 </div>
             </div>
 
             <!-- Stock Statistics -->
-            <div class="mb-6">
-                <div class="flex justify-between text-sm text-gray-600 mb-2">
+            <div class="mb-4">
+                <div class="flex justify-between text-xs text-gray-600 mb-2">
                     <span>Total Products</span>
                     <span class="font-semibold" th:text="${productCount ?: 0}">0</span>
                 </div>
@@ -343,7 +343,7 @@
                          th:style="${'width: ' + (productCount > 0 ? ((productCount - lowStockCount) * 100 / productCount) : 100) + '%'}">
                     </div>
                 </div>
-                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <div class="flex justify-between text-[9px] text-gray-500 mt-1">
                     <span th:text="${productCount > 0 ? #numbers.formatDecimal(((productCount - lowStockCount) * 100 / productCount), 0, 0) : 0} + '% In Stock'">100% In Stock</span>
                     <span th:text="${productCount > 0 ? #numbers.formatDecimal((lowStockCount * 100 / productCount), 0, 0) : 0} + '% Low Stock'">0% Low Stock</span>
                 </div>
@@ -351,8 +351,8 @@
 
             <!-- Stock Items Display -->
             <div class="space-y-2" id="stockItemsList">
-                <h4 class="font-medium text-gray-900 mb-3">Stock Status by Product</h4>
-                <div id="stockPlaceholder" class="text-center text-gray-500 py-4">
+                <h4 class="font-medium text-base text-gray-900 mb-3">Stock Status by Product</h4>
+                <div id="stockPlaceholder" class="text-center text-gray-500 py-2">
                     Loading stock details...
                 </div>
             </div>
@@ -504,35 +504,35 @@
     <div id="profitModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="text-xl font-bold text-gray-900">Profit Analysis</h2>
+                <h2 class="text-base font-bold text-gray-900">Profit Analysis</h2>
                 <span class="close" onclick="closeProfitModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="mb-6">
-                    <div class="flex space-x-4 mb-4">
-                        <button class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium" id="profitWeekBtn">Week</button>
-                        <button class="px-4 py-2 text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="profitMonthBtn">Month</button>
-                        <button class="px-4 py-2 text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="profitYearBtn">Year</button>
+                <div class="mb-3">
+                    <div class="flex space-x-2 mb-3">
+                        <button class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-lg font-medium" id="profitWeekBtn">Week</button>
+                        <button class="px-2 py-1 text-xs text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="profitMonthBtn">Month</button>
+                        <button class="px-2 py-1 text-xs text-gray-600 rounded-lg font-medium hover:bg-gray-100" id="profitYearBtn">Year</button>
                     </div>
-                    <div class="grid grid-cols-3 gap-4 mb-6" id="profitMetrics">
+                    <div class="grid grid-cols-3 gap-2 mb-3" id="profitMetrics">
                         <!-- Profit metrics will be populated by JavaScript -->
-                        <div class="text-center p-4 bg-green-50 rounded-lg">
-                            <div class="text-2xl font-bold text-green-600" id="currentPeriodProfit">₹0</div>
-                            <div class="text-sm text-gray-600">This Month</div>
+                        <div class="text-center p-2 bg-green-50 rounded-lg">
+                            <div class="text-sm font-bold text-green-600" id="currentPeriodProfit">₹0</div>
+                            <div class="text-[10px] text-gray-600">This Month</div>
                         </div>
-                        <div class="text-center p-4 bg-blue-50 rounded-lg">
-                            <div class="text-2xl font-bold text-blue-600" id="quarterProfit">₹0</div>
-                            <div class="text-sm text-gray-600">This Quarter</div>
+                        <div class="text-center p-2 bg-blue-50 rounded-lg">
+                            <div class="text-sm font-bold text-blue-600" id="quarterProfit">₹0</div>
+                            <div class="text-[10px] text-gray-600">This Quarter</div>
                         </div>
-                        <div class="text-center p-4 bg-purple-50 rounded-lg">
-                            <div class="text-2xl font-bold text-purple-600" id="yearProfit">₹0</div>
-                            <div class="text-sm text-gray-600">This Year</div>
+                        <div class="text-center p-2 bg-purple-50 rounded-lg">
+                            <div class="text-sm font-bold text-purple-600" id="yearProfit">₹0</div>
+                            <div class="text-[10px] text-gray-600">This Year</div>
                         </div>
                     </div>
                 </div>
 
-                <h3 class="text-lg font-semibold mb-4">Top 5 Products Contributing to Profit</h3>
-                <div class="space-y-3" id="topProfitProducts">
+                <h3 class="text-sm font-semibold mb-3">Top 5 Products Contributing to Profit</h3>
+                <div class="space-y-2" id="topProfitProducts">
                     <!-- Top profit products will be populated by JavaScript -->
                 </div>
             </div>
@@ -543,11 +543,11 @@
     <div id="revenueModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="text-xl font-bold text-gray-900">Revenue Analysis</h2>
+                <h2 class="text-lg font-bold text-gray-900">Revenue Analysis</h2>
                 <span class="close" onclick="closeRevenueModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="grid grid-cols-3 gap-4 mb-6" id="revenueMetrics">
+                <div class="grid grid-cols-3 gap-2 mb-3" id="revenueMetrics">
                     <!-- Revenue metrics will be populated by JavaScript -->
                 </div>
 
@@ -601,12 +601,12 @@
                     <div class="stock-item ${statusClass}">
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
-                                <span class="font-medium text-sm text-gray-900">${item.name}</span>
+                                <span class="font-medium text-xs text-gray-900">${item.name}</span>
                                 <span class="stock-badge ${statusClass}">${item.status}</span>
                             </div>
                             <div class="flex items-center justify-between mt-1">
-                                <span class="text-xs text-gray-500">${item.category}</span>
-                                <span class="text-xs font-medium" style="color: ${item.statusColor}">
+                                <span class="text-[9px] text-gray-500">${item.category}</span>
+                                <span class="text-[9px] font-medium" style="color: ${item.statusColor}">
                                     ${item.quantity} / ${item.threshold}
                                 </span>
                             </div>
